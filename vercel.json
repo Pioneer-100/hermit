@@ -1,16 +1,8 @@
 {
   "crons": [
     {
-      "path": "/api/crawl?category=newspapers",
-      "schedule": "0 */4 * * *"
-    },
-    {
-      "path": "/api/crawl?category=regulators",
-      "schedule": "0 */12 * * *"
-    },
-    {
-      "path": "/api/reports?type=daily",
-      "schedule": "0 16 * * *"
+      "path": "/api/crawl?category=all",
+      "schedule": "0 6 * * *"
     }
   ]
 }
