@@ -1,0 +1,169 @@
+'use client';
+
+import { Article } from '@/types';
+import { 
+  Building2, 
+  Clock, 
+  ExternalLink, 
+  ChevronRight, 
+  Sparkles, 
+  CheckCircle2, 
+  AlertCircle,
+  ShieldCheck,
+  Send
+} from 'lucide-react';
+
+interface ArticleCardProps {
+  article: Article;
+  onClick: (article: Article) => void;
+  onReviewToggle?: (id: number, reviewed: boolean) => void;
+  compact?: boolean;
+}
+
+const TYPE_CONFIG: Record<string, { label: string; badgeClass: string }> = {
+  tariff_change: { label: 'Tariff Revision', badgeClass: 'bg-rose-500/20 text-rose-300 border-rose-500/40' },
+  new_regulation: { label: 'Regulation', badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/40' },
+  funding_announcement: { label: 'DFI Funding', badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' },
+  project_update: { label: 'Infrastructure', badgeClass: 'bg-blue-500/20 text-blue-300 border-blue-500/40' },
+  policy_change: { label: 'Govt Policy', badgeClass: 'bg-amber-500/20 text-amber-300 border-amber-500/40' },
+  partnership: { label: 'PPA & Market', badgeClass: 'bg-teal-500/20 text-teal-300 border-teal-500/40' },
+  general: { label: 'Industry Intel', badgeClass: 'bg-emerald-900/40 text-emerald-200 border-emerald-700/40' },
+};
+
+export default function ArticleCard({ 
+  article, 
+  onClick, 
+  onReviewToggle,
+  compact = false 
+}: ArticleCardProps) {
+  const timeFormatted = article.publication_date || article.captured_at
+    ? new Date(article.publication_date || article.captured_at).toLocaleTimeString('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      })
+    : '08:00';
+
+  const typeInfo = TYPE_CONFIG[article.article_type] || { label: 'General', badgeClass: 'bg-emerald-900/40 text-emerald-200 border-emerald-700/40' };
+
+  const isHigh = article.relevance_level === 'high';
+  const isMed = article.relevance_level === 'medium';
+
+  const borderLeftClass = isHigh
+    ? 'border-l-4 border-l-rose-500 hover:border-l-rose-400'
+    : isMed
+    ? 'border-l-4 border-l-amber-500 hover:border-l-amber-400'
+    : 'border-l-4 border-l-emerald-500 hover:border-l-emerald-400';
+
+  return (
+    <div
+      onClick={() => onClick(article)}
+      className={`group bg-[#06261b]/70 backdrop-blur-md rounded-xl p-4 sm:p-5 shadow-lg hover:shadow-xl border border-emerald-500/25 hover:border-emerald-400/50 hover:bg-[#083525]/80 transition-all duration-150 cursor-pointer ${borderLeftClass} flex flex-col justify-between gap-3`}
+    >
+      {/* Top Meta Header */}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+          {/* Source Tag with Hermit Green Accent */}
+          <span className="font-bold text-xs text-emerald-200 bg-emerald-950/80 px-2.5 py-1 rounded-md border border-emerald-500/40 tracking-wide flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            {article.source_name}
+          </span>
+
+          {/* Type / Category Pill */}
+          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border uppercase tracking-wider ${typeInfo.badgeClass}`}>
+            {typeInfo.label}
+          </span>
+
+          {/* Quoted Stakeholder Pill */}
+          {article.key_stakeholders && article.key_stakeholders.length > 0 && (
+            <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-medium text-emerald-200/90 bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-700/40">
+              <Building2 className="w-2.5 h-2.5 text-emerald-400" />
+              <span>{article.key_stakeholders[0]}</span>
+              {article.key_stakeholders.length > 1 && (
+                <span className="text-emerald-400">+{article.key_stakeholders.length - 1}</span>
+              )}
+            </span>
+          )}
+        </div>
+
+        {/* Relevance Score Pill + Time */}
+        <div className="flex items-center gap-2">
+          {isHigh && (
+            <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 tracking-wider flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />
+              CRITICAL ({Math.round(article.relevance_score * 100)}%)
+            </span>
+          )}
+          {isMed && (
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 tracking-wider">
+              MEDIUM ({Math.round(article.relevance_score * 100)}%)
+            </span>
+          )}
+          {!isHigh && !isMed && (
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 tracking-wider">
+              INFO ({Math.round(article.relevance_score * 100)}%)
+            </span>
+          )}
+
+          <span className="text-[11px] font-mono text-emerald-300/60 flex items-center gap-1">
+            <Clock className="w-3 h-3 text-emerald-400/70" />
+            {timeFormatted}
+          </span>
+        </div>
+      </div>
+
+      {/* Main Headline */}
+      <div>
+        <h3 className="text-sm sm:text-base font-bold text-white group-hover:text-emerald-300 transition-colors leading-snug line-clamp-2">
+          {article.headline}
+        </h3>
+
+        {/* Digestible Summary Snippet */}
+        {!compact && (
+          <p className="text-xs text-emerald-100/75 mt-1.5 line-clamp-2 leading-relaxed font-normal">
+            {article.summary || article.headline}
+          </p>
+        )}
+      </div>
+
+      {/* Hermit Commercial Implication & Action Bar */}
+      <div className="pt-2.5 border-t border-emerald-900/40 flex flex-wrap items-center justify-between gap-2">
+        {/* Relevance to Hermit Snippet */}
+        <div className="flex items-center gap-1.5 text-xs text-emerald-100 bg-[#041a12]/85 border border-emerald-500/30 px-2.5 py-1 rounded-lg max-w-xl truncate">
+          <Sparkles className="w-3 h-3 text-emerald-400 shrink-0" />
+          <span className="font-bold text-emerald-300 shrink-0">Hermit Focus:</span>
+          <span className="truncate text-emerald-100/90">
+            {article.relevance_to_hermit || 'Assessed for renewable energy IPP portfolio impact.'}
+          </span>
+        </div>
+
+        {/* Right Status & Trigger */}
+        <div className="flex items-center gap-2 shrink-0 ml-auto">
+          {article.is_reviewed ? (
+            <span className="text-[10px] font-bold text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded-full flex items-center gap-1 border border-emerald-500/40">
+              <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+              Reviewed
+            </span>
+          ) : (
+            <span className="text-[10px] font-semibold text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded-full flex items-center gap-1 border border-amber-500/40">
+              <AlertCircle className="w-3 h-3 text-amber-400" />
+              Pending
+            </span>
+          )}
+
+          {article.is_alert_sent && (
+            <span className="text-[10px] font-bold text-blue-300 bg-blue-500/20 px-2 py-0.5 rounded-full flex items-center gap-1 border border-blue-500/40">
+              <Send className="w-2.5 h-2.5 text-blue-400" />
+              Alert Dispatched
+            </span>
+          )}
+
+          <div className="text-xs font-bold text-emerald-400 group-hover:text-emerald-300 flex items-center gap-0.5 pl-1 transition-colors">
+            <span>Review Memo</span>
+            <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform text-emerald-400" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
