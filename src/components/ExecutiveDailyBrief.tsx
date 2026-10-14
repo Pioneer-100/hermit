@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { DailyBrief, Article } from '@/types';
+import { useAuth } from '@/components/AuthContext';
 import { 
   Zap, 
   Sparkles, 
@@ -21,7 +22,9 @@ import {
   ChevronDown,
   ExternalLink,
   Radio,
-  FileText
+  FileText,
+  Users,
+  Check
 } from 'lucide-react';
 
 interface ExecutiveDailyBriefProps {
@@ -30,6 +33,8 @@ interface ExecutiveDailyBriefProps {
   onRegenerate: () => Promise<void>;
   isRegenerating: boolean;
   onViewLiveFeed: () => void;
+  onReviewToggle?: (id: number, reviewed: boolean) => void;
+  reviewedArticleIds?: number[];
 }
 
 export default function ExecutiveDailyBrief({
@@ -37,10 +42,21 @@ export default function ExecutiveDailyBrief({
   onSelectArticle,
   onRegenerate,
   isRegenerating,
-  onViewLiveFeed
+  onViewLiveFeed,
+  onReviewToggle,
+  reviewedArticleIds = []
 }: ExecutiveDailyBriefProps) {
+  const { currentUser } = useAuth();
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'pillars' | 'telemetry'>('overview');
+  const [claimedActions, setClaimedActions] = useState<Record<number, string>>({});
+
+  const handleClaimAction = (idx: number) => {
+    setClaimedActions(prev => ({
+      ...prev,
+      [idx]: prev[idx] ? '' : `${currentUser.full_name} (${currentUser.title || currentUser.role})`
+    }));
+  };
 
   useEffect(() => {
     return () => {
@@ -363,20 +379,60 @@ export default function ExecutiveDailyBrief({
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-emerald-900/40 flex items-center justify-between text-xs">
-                  <span className="text-[11px] text-emerald-300/60 font-mono">
-                    {pillar.source} &bull; {pillar.time}
-                  </span>
+                <div className="pt-2.5 border-t border-emerald-900/40 flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] text-emerald-300/60 font-mono">
+                      {pillar.source} &bull; {pillar.time}
+                    </span>
+                    {pillar.related_article_id && (
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border flex items-center gap-1 ${
+                        reviewedArticleIds.includes(pillar.related_article_id)
+                          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                          : 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                      }`}>
+                        {reviewedArticleIds.includes(pillar.related_article_id) ? (
+                          <>
+                            <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400" />
+                            <span>Signed Off</span>
+                          </>
+                        ) : (
+                          <>
+                            <Clock className="w-2.5 h-2.5 text-amber-400" />
+                            <span>Pending Sign-off</span>
+                          </>
+                        )}
+                      </span>
+                    )}
+                  </div>
 
-                  {pillar.related_article_id && (
-                    <button
-                      onClick={() => onSelectArticle(pillar.related_article_id!)}
-                      className="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 group"
-                    >
-                      <span>Inspect Raw Capture</span>
-                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                    </button>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {pillar.related_article_id && onReviewToggle && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const isReviewed = reviewedArticleIds.includes(pillar.related_article_id!);
+                          onReviewToggle(pillar.related_article_id!, !isReviewed);
+                        }}
+                        className={`text-[10px] font-bold px-2 py-1 rounded-md border transition-all ${
+                          reviewedArticleIds.includes(pillar.related_article_id)
+                            ? 'bg-[#03180f] text-emerald-400 border-emerald-700/50 hover:bg-[#062418]'
+                            : 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400/40 shadow-sm'
+                        }`}
+                      >
+                        {reviewedArticleIds.includes(pillar.related_article_id) ? 'Revoke' : 'Sign Off'}
+                      </button>
+                    )}
+
+                    {pillar.related_article_id && (
+                      <button
+                        onClick={() => onSelectArticle(pillar.related_article_id!)}
+                        className="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 group py-1"
+                      >
+                        <span>Full Dossier</span>
+                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
@@ -398,23 +454,50 @@ export default function ExecutiveDailyBrief({
           </div>
 
           <div className="space-y-2">
-            {brief.management_actions.map((act, i) => (
-              <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-xl bg-[#06261b]/80 backdrop-blur-sm border border-emerald-500/25 shadow-md text-xs">
-                <div className="flex items-start gap-2.5">
-                  <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider shrink-0 mt-0.5 ${
-                    act.priority === 'immediate'
-                      ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
-                      : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                  }`}>
-                    {act.priority}
-                  </span>
-                  <span className="text-emerald-100 font-medium leading-relaxed">{act.action}</span>
+            {brief.management_actions.map((act, i) => {
+              const isClaimed = Boolean(claimedActions[i]);
+              return (
+                <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-xl bg-[#06261b]/80 backdrop-blur-sm border border-emerald-500/25 shadow-md text-xs">
+                  <div className="flex items-start gap-2.5">
+                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider shrink-0 mt-0.5 ${
+                      act.priority === 'immediate'
+                        ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                        : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                    }`}>
+                      {act.priority}
+                    </span>
+                    <span className="text-emerald-100 font-medium leading-relaxed">{act.action}</span>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                    <span className="text-[11px] font-bold text-emerald-300 bg-emerald-950/80 px-2.5 py-1 rounded-lg border border-emerald-500/40">
+                      {isClaimed ? `Assigned: ${claimedActions[i]}` : `Dept: ${act.owner}`}
+                    </span>
+
+                    <button
+                      onClick={() => handleClaimAction(i)}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider flex items-center gap-1 transition-all border ${
+                        isClaimed
+                          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                          : 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400/40 shadow-sm'
+                      }`}
+                    >
+                      {isClaimed ? (
+                        <>
+                          <Check className="w-3 h-3 text-emerald-400" />
+                          <span>Claimed</span>
+                        </>
+                      ) : (
+                        <>
+                          <Users className="w-3 h-3" />
+                          <span>Take Ownership</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
-                <span className="text-[11px] font-bold text-emerald-300 bg-emerald-950/80 px-2.5 py-1 rounded-lg border border-emerald-500/40 shrink-0 self-end sm:self-center">
-                  Owner: {act.owner}
-                </span>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

@@ -153,3 +153,39 @@ export interface TrendAnalytics {
   primaryRiskTopic: string;
   averageRiskIndex: number;
 }
+
+export type UserRole = 'executive' | 'director' | 'analyst' | 'engineer';
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  full_name: string;
+  role: UserRole;
+  title?: string;
+  avatar_url?: string;
+}
+
+export interface HermitProject {
+  id: number;
+  name: string;
+  technology: 'Solar PV' | 'Solar + BESS' | 'Hydro' | 'Wind';
+  capacity_mw: number;
+  location: string;
+  status: 'pipeline' | 'under_construction' | 'operational' | 'feasibility';
+  target_cod?: string;
+  lead_manager?: string;
+  key_tags?: string[];
+}
+
+export interface ActionTask {
+  id: number;
+  title: string;
+  priority: 'immediate' | 'medium' | 'standard';
+  status: 'pending' | 'in_progress' | 'completed';
+  article_id?: number;
+  project_id?: number;
+  assigned_to_name?: string;
+  assigned_to_role?: string;
+  due_date?: string;
+  notes?: string;
+}

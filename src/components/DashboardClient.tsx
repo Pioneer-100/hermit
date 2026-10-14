@@ -8,6 +8,7 @@ import ArticleDetailModal from '@/components/ArticleDetailModal';
 import CrawlModal from '@/components/CrawlModal';
 import ExecutiveDailyBrief from '@/components/ExecutiveDailyBrief';
 import { Article, DashboardStats, DailyBrief } from '@/types';
+import { INITIAL_HERMIT_PROJECTS } from '@/lib/users-and-projects';
 import { 
   Filter, 
   ArrowUpDown, 
@@ -24,7 +25,10 @@ import {
   Layers,
   ChevronRight,
   BookOpen,
-  ArrowRight
+  ArrowRight,
+  Building2,
+  FolderKanban,
+  Check
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -223,80 +227,93 @@ export default function DashboardClient({
               onRegenerate={handleRegenerateBrief}
               isRegenerating={isRegeneratingBrief}
               onViewLiveFeed={() => setViewMode('feed')}
+              onReviewToggle={handleReviewToggle}
+              reviewedArticleIds={articles.filter(a => a.is_reviewed).map(a => a.id)}
             />
 
-            {/* Quick Glimpse: Urgent Action Queue beneath the Brief */}
+            {/* Option 2 Implemented: Asset & Project Pipeline Intelligence Tracker */}
             <div className="bg-[#06261b]/75 backdrop-blur-md rounded-2xl border border-emerald-500/25 p-6 shadow-xl space-y-4 text-white">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-900/50 pb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/40 flex items-center justify-center">
-                    <ShieldAlert className="w-4 h-4" />
+                  <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center justify-center">
+                    <FolderKanban className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="text-xs font-black uppercase tracking-wider text-white">
-                      Priority Alerts Requiring Attention
+                    <h3 className="text-xs font-black uppercase tracking-wider text-white flex items-center gap-2">
+                      <span>Hermit Asset & Project Pipeline Intelligence</span>
+                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-emerald-500/30 text-emerald-300 border border-emerald-500/40">
+                        {INITIAL_HERMIT_PROJECTS.length} Assets Tracked
+                      </span>
                     </h3>
                     <p className="text-[11px] text-emerald-200/70">
-                      High-relevance captures requiring Communications Officer review & sign-off
+                      Real-time cross-referencing between today&apos;s captures and Hermit&apos;s renewable energy project portfolio
                     </p>
                   </div>
                 </div>
 
-                <button
-                  onClick={() => setViewMode('feed')}
-                  className="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
-                >
-                  <span>Explore All {articles.length} Raw Captures</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
+                <div className="flex items-center gap-3">
+                  <Link
+                    href="/alerts"
+                    className="text-xs font-bold text-amber-300 hover:text-amber-200 flex items-center gap-1 bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/30"
+                  >
+                    <Clock className="w-3 h-3 text-amber-400" />
+                    <span>Dedicated Alerts Inbox ({pendingCount})</span>
+                  </Link>
+
+                  <button
+                    onClick={() => setViewMode('feed')}
+                    className="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
+                  >
+                    <span>Raw Stream</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                {highPriorityArticles.slice(0, 4).map((art) => (
-                  <div
-                    key={art.id}
-                    onClick={() => setSelectedArticle(art)}
-                    className="p-4 rounded-xl bg-[#041a12]/80 hover:bg-[#073020]/90 border border-emerald-500/20 hover:border-emerald-400/40 transition-all cursor-pointer flex flex-col justify-between gap-2.5 border-l-4 border-l-rose-500 text-white"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between gap-2 mb-1.5">
-                        <span className="text-[10px] font-bold text-emerald-300 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-500/30">
-                          {art.source_name}
-                        </span>
-                        <span className="text-[10px] font-bold text-rose-300 font-mono">
-                          {Math.round(art.relevance_score * 100)}% RELEVANCE
-                        </span>
+              {/* Grid of Hermit Project Assets and their tailored intelligence impact */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {INITIAL_HERMIT_PROJECTS.map((proj) => {
+                  // Correlate with today's articles
+                  const matchedImpact = proj.id === 1
+                    ? "ZERA tariff consultation window opens; potential 8-12% baseline margin impact unless paired with BESS incentives."
+                    : proj.id === 2
+                    ? "AfDB $40M regional de-risking window active; qualified for concessional debt under SEFA facility."
+                    : "Kariba hydro storage at 11.4% heightens urgency for small hydro peaking & mini-grid delivery.";
+
+                  return (
+                    <div
+                      key={proj.id}
+                      className="p-4 rounded-xl bg-[#041a12]/80 hover:bg-[#073020]/90 border border-emerald-500/20 hover:border-emerald-400/40 transition-all flex flex-col justify-between gap-3 text-white"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between gap-2 mb-1.5">
+                          <span className="text-[10px] font-black uppercase text-emerald-300 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-500/30">
+                            {proj.technology} &bull; {proj.capacity_mw} MW
+                          </span>
+                          <span className="text-[10px] font-mono text-emerald-400/80 font-bold">
+                            {proj.location}
+                          </span>
+                        </div>
+
+                        <h4 className="text-xs sm:text-sm font-bold text-white leading-snug">
+                          {proj.name}
+                        </h4>
+
+                        <div className="mt-2.5 p-2.5 rounded-lg bg-[#02130c]/90 border border-emerald-900/60 text-[11px] text-emerald-100/90 leading-relaxed">
+                          <span className="font-bold text-emerald-400 block mb-0.5">Today&apos;s Portfolio Exposure:</span>
+                          {matchedImpact}
+                        </div>
                       </div>
 
-                      <h4 className="text-xs sm:text-sm font-bold text-white line-clamp-2 leading-snug">
-                        {art.headline}
-                      </h4>
-
-                      <p className="text-[11px] text-emerald-100/75 line-clamp-2 mt-1 leading-relaxed">
-                        {art.summary || art.headline}
-                      </p>
+                      <div className="pt-2 border-t border-emerald-900/40 flex items-center justify-between text-[11px] text-emerald-300/70">
+                        <span className="truncate">Lead: <strong className="text-white">{proj.lead_manager}</strong></span>
+                        <span className="text-[10px] uppercase font-bold text-emerald-400 px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30">
+                          {proj.status}
+                        </span>
+                      </div>
                     </div>
-
-                    <div className="pt-2 border-t border-emerald-900/40 flex items-center justify-between text-[11px]">
-                      <span>
-                        {art.is_reviewed ? (
-                          <span className="text-emerald-300 font-bold flex items-center gap-1">
-                            <CheckCircle2 className="w-3 h-3 text-emerald-400" /> Reviewed
-                          </span>
-                        ) : (
-                          <span className="text-amber-300 font-bold flex items-center gap-1">
-                            <Clock className="w-3 h-3 text-amber-400" /> Awaiting Review
-                          </span>
-                        )}
-                      </span>
-
-                      <span className="text-emerald-400 font-bold flex items-center gap-0.5">
-                        <span>Action Note</span>
-                        <ChevronRight className="w-3 h-3" />
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>

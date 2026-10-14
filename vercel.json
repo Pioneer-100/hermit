@@ -1,8 +1,12 @@
 {
   "crons": [
     {
-      "path": "/api/crawl?category=all",
-      "schedule": "0 6 * * *"
+      "path": "/api/crawl",
+      "schedule": "0 5 * * *"
+    },
+    {
+      "path": "/api/crawl",
+      "schedule": "0 15 * * *"
     }
   ]
 }

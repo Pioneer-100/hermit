@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Article } from '@/types';
+import { useAuth } from '@/components/AuthContext';
 import { 
   X, 
   CheckCircle, 
@@ -32,6 +33,7 @@ export default function ArticleDetailModal({
   onReviewToggle,
   onDispatchAlert
 }: ArticleDetailModalProps) {
+  const { currentUser } = useAuth();
   const [isSending, setIsSending] = useState(false);
   const [alertSuccess, setAlertSuccess] = useState(false);
 
@@ -246,21 +248,26 @@ export default function ArticleDetailModal({
               )}
             </div>
 
-            {/* Quick Review & Escalate within Memo Card */}
+            {/* User Attribution Sign-off within Memo Card */}
             <div className="pt-3 border-t border-emerald-900/40 flex items-center justify-between gap-2">
-              <span className="text-[11px] text-emerald-200/70 font-medium">
-                Communications Officer Sign-off:
-              </span>
+              <div className="min-w-0">
+                <span className="text-[11px] text-emerald-200/70 font-medium block">
+                  Sign-off by {currentUser.full_name}:
+                </span>
+                <span className="text-[10px] text-emerald-400/80 font-mono">
+                  Role: {currentUser.title || currentUser.role}
+                </span>
+              </div>
 
               <button
                 onClick={handleReview}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border shrink-0 ${
                   isReviewed
                     ? 'bg-[#041a12] text-emerald-300 border-emerald-700/50 hover:bg-[#072418]'
-                    : 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400/40'
+                    : 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400/40 shadow-sm'
                 }`}
               >
-                {isReviewed ? 'Revoke Review' : 'Mark Reviewed ✓'}
+                {isReviewed ? 'Revoke Review' : 'Sign Off as ' + currentUser.full_name.split(' ')[0]}
               </button>
             </div>
           </div>
