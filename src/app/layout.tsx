@@ -1,9 +1,7 @@
-﻿import type { Metadata } from 'next';
+import type { Metadata } from 'next';
 import './globals.css';
 import Sidebar from '@/components/Sidebar';
 import MobileNav from '@/components/MobileNav';
-import SilentCrawler from '@/components/SilentCrawler';
-
 export const metadata: Metadata = {
   title: 'Hermit Investments — Energy Sector Intelligence & Media Monitor',
   description: 'AI-assisted web surveillance and executive media monitoring platform covering Zimbabwean renewable energy, IPPs, tariff policies, and infrastructure.',
@@ -17,8 +15,6 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body className="h-full flex bg-[#03130c] text-emerald-50 antialiased font-sans overflow-hidden">
-        <SilentCrawler />
-        
         {/* Fixed Left Executive Sidebar (Hidden on mobile) */}
         <div className="hidden md:flex">
           <Sidebar />

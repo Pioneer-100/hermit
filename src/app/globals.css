@@ -71,3 +71,56 @@ body {
 .hermit-emerald-gradient {
   background: linear-gradient(135deg, rgba(7, 36, 25, 0.85) 0%, rgba(13, 60, 44, 0.85) 50%, rgba(6, 30, 20, 0.85) 100%);
 }
+
+/* Executive Print Styles for Clean PDF & Hardcopy Export */
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    overflow: visible !important;
+  }
+
+  /* Hide navigation, background images, and interactive controls */
+  aside,
+  nav,
+  header,
+  button,
+  .no-print,
+  [class*="pointer-events-none"],
+  [style*="background-image"] {
+    display: none !important;
+  }
+
+  /* Expand full container width */
+  main,
+  .max-w-7xl,
+  .max-w-5xl {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Transform translucent dark cards into crisp white executive document sheets */
+  div[class*="bg-[#"],
+  div[class*="backdrop-blur"],
+  .hermit-glass-panel,
+  .hermit-glass-card {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Ensure text headings and paragraphs are dark for clear laser printing */
+  h1, h2, h3, h4, p, span, strong {
+    color: #0f172a !important;
+    text-shadow: none !important;
+  }
+
+  /* Avoid page breaks inside strategic pillar cards */
+  .grid > div {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+}

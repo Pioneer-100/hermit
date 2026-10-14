@@ -3,6 +3,7 @@ import { analyzeArticleWithGemini } from './gemini';
 import { insertArticle, insertAlertLog } from './supabase';
 import { sendEmailAlert } from './email-service';
 import { Article } from '@/types';
+import { XMLParser } from 'fast-xml-parser';
 
 export interface CrawlResult {
   sourceName: string;
@@ -13,6 +14,14 @@ export interface CrawlResult {
   articles: Article[];
 }
 
+const parser = new XMLParser({
+  ignoreAttributes: false,
+  attributeNamePrefix: '@_',
+  textNodeName: '#text',
+  trimValues: true,
+  parseTagValue: false
+});
+
 export async function crawlSource(sourceId: number): Promise<CrawlResult> {
   const source = MONITORED_SOURCES.find(s => s.id === sourceId);
   if (!source) {
@@ -22,23 +31,45 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
   const rawItems: Array<{ headline: string; link: string; summary: string; pubDate?: string; author?: string }> = [];
 
   // Attempt live crawl if RSS feed is defined
-  if (source.feedUrl) {
+  const targetUrl = source.feedUrl || `https://news.google.com/rss/search?q=${encodeURIComponent(source.name + ' Zimbabwe energy')}&hl=en-ZW&gl=ZW&ceid=ZW:en`;
+
+  try {
+    const res = await fetch(targetUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) HermitEnergyMonitor/2.0',
+        'Accept': 'application/rss+xml, application/xml, text/xml, application/atom+xml, */*'
+      },
+      signal: AbortSignal.timeout(8000)
+    });
+
+    if (res.ok) {
+      const xml = await res.text();
+      const items = parseXmlFeed(xml, source.name);
+      rawItems.push(...items.slice(0, 3));
+    }
+  } catch (e) {
+    console.warn(`Primary feed fetch failed for ${source.name}:`, e);
+  }
+
+  // If live feed returned nothing, try fallback query for national energy headlines
+  if (rawItems.length === 0) {
     try {
-      const res = await fetch(source.feedUrl, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) HermitEnergyMonitor/1.0' },
-        signal: AbortSignal.timeout(5000)
+      const fallbackUrl = `https://news.google.com/rss/search?q=${encodeURIComponent('Zimbabwe solar energy power ZERA')}&hl=en-ZW&gl=ZW&ceid=ZW:en`;
+      const fallbackRes = await fetch(fallbackUrl, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) HermitEnergyMonitor/2.0' },
+        signal: AbortSignal.timeout(6000)
       });
-      if (res.ok) {
-        const xml = await res.text();
-        const items = parseXmlFeed(xml);
-        rawItems.push(...items.slice(0, 3));
+      if (fallbackRes.ok) {
+        const xml = await fallbackRes.text();
+        const items = parseXmlFeed(xml, source.name);
+        rawItems.push(...items.slice(0, 2));
       }
-    } catch (e) {
-      console.warn(`Live feed fetch failed for ${source.name}, generating simulated live capture:`, e);
+    } catch (fbErr) {
+      console.warn('Fallback search query failed, using offline heuristic capture:', fbErr);
     }
   }
 
-  // If live feed returned nothing or source is web/social, generate a realistic contextual capture
+  // If completely offline or network blocked, generate contextual presentation capture
   if (rawItems.length === 0) {
     rawItems.push(generateContextualHeadline(source));
   }
@@ -47,7 +78,7 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
   let highCount = 0;
 
   for (const item of rawItems) {
-    // Process through Gemini AI
+    // Process through Gemini AI (or intelligent heuristics fallback)
     const analysis = await analyzeArticleWithGemini(item.headline, item.summary, source.name);
     
     const articlePayload: Omit<Article, 'id'> = {
@@ -89,7 +120,7 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
         dispatched_at: new Date().toISOString()
       });
 
-      // Dispatch email (logs locally or sends via Resend)
+      // Dispatch email (sends via Resend or logs locally in dev)
       await sendEmailAlert(savedArticle);
     }
   }
@@ -104,36 +135,107 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
   };
 }
 
-function parseXmlFeed(xml: string): Array<{ headline: string; link: string; summary: string; pubDate?: string }> {
-  const items: Array<{ headline: string; link: string; summary: string; pubDate?: string }> = [];
-  const itemMatches = xml.match(/<item>([\s\S]*?)<\/item>/gi) || xml.match(/<entry>([\s\S]*?)<\/entry>/gi) || [];
+/**
+ * Robust XML parser supporting RSS 2.0, RDF, and Atom feeds.
+ * Replaces fragile regular expression parsing.
+ */
+export function parseXmlFeed(xml: string, defaultAuthor: string = 'Energy Desk'): Array<{ headline: string; link: string; summary: string; pubDate: string; author: string }> {
+  const items: Array<{ headline: string; link: string; summary: string; pubDate: string; author: string }> = [];
 
-  for (const itemXml of itemMatches) {
-    const titleMatch = itemXml.match(/<title>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/i);
-    const linkMatch = itemXml.match(/<link(?:>([\s\S]*?)<\/link>|[^>]*href=["']([^"']*)["'])/i);
-    const descMatch = itemXml.match(/<(?:description|summary)>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/(?:description|summary)>/i);
-    const dateMatch = itemXml.match(/<(?:pubDate|published|updated)>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/(?:pubDate|published|updated)>/i);
+  try {
+    const parsed = parser.parse(xml);
+    let rawList: any[] = [];
 
-    const headline = titleMatch ? cleanText(titleMatch[1]) : '';
-    const link = linkMatch ? (linkMatch[1] || linkMatch[2] || '').trim() : '';
-    const summary = descMatch ? cleanText(descMatch[1]) : '';
-    const pubDate = dateMatch ? new Date(dateMatch[1]).toISOString() : new Date().toISOString();
-
-    if (headline && (isEnergyRelated(headline) || isEnergyRelated(summary))) {
-      items.push({ headline, link, summary, pubDate });
+    if (parsed.rss?.channel?.item) {
+      rawList = Array.isArray(parsed.rss.channel.item) ? parsed.rss.channel.item : [parsed.rss.channel.item];
+    } else if (parsed['rdf:RDF']?.item) {
+      rawList = Array.isArray(parsed['rdf:RDF'].item) ? parsed['rdf:RDF'].item : [parsed['rdf:RDF'].item];
+    } else if (parsed.feed?.entry) {
+      rawList = Array.isArray(parsed.feed.entry) ? parsed.feed.entry : [parsed.feed.entry];
     }
+
+    for (const item of rawList) {
+      const headline = cleanText(extractString(item.title));
+      if (!headline) continue;
+
+      // Extract link
+      let link = '';
+      if (typeof item.link === 'string') {
+        link = item.link.trim();
+      } else if (item.link?.['@_href']) {
+        link = item.link['@_href'].trim();
+      } else if (Array.isArray(item.link)) {
+        const alt = item.link.find((l: any) => l['@_rel'] === 'alternate') || item.link[0];
+        link = (alt?.['@_href'] || alt?.['#text'] || '').trim();
+      } else if (item.guid?.['#text']) {
+        link = item.guid['#text'].trim();
+      }
+
+      // Extract description/summary
+      const rawDesc = extractString(item.description || item.summary || item['content:encoded'] || item.content || '');
+      const summary = cleanText(rawDesc);
+
+      // Extract publication date
+      const rawDate = item.pubDate || item.published || item.updated || item['dc:date'];
+      let pubDate = new Date().toISOString();
+      if (rawDate) {
+        const parsedD = new Date(rawDate);
+        if (!isNaN(parsedD.getTime())) {
+          pubDate = parsedD.toISOString();
+        }
+      }
+
+      // Extract author
+      const rawAuthor = extractString(item['dc:creator'] || item.author?.name || item.author || defaultAuthor);
+      const author = cleanText(rawAuthor) || defaultAuthor;
+
+      if (headline.length > 5 && (isEnergyRelated(headline) || isEnergyRelated(summary) || headline.length > 20)) {
+        items.push({
+          headline,
+          link: link || `https://hermitinvestments.com/feed/${Date.now()}`,
+          summary: summary || headline,
+          pubDate,
+          author
+        });
+      }
+    }
+  } catch (err) {
+    console.warn('FastXMLParser error:', err);
   }
 
   return items;
 }
 
+function extractString(val: any): string {
+  if (!val) return '';
+  if (typeof val === 'string') return val;
+  if (typeof val === 'object') {
+    if (val['#text']) return String(val['#text']);
+    if (val['__cdata']) return String(val['__cdata']);
+    return '';
+  }
+  return String(val);
+}
+
 function cleanText(text: string): string {
-  return text.replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').trim();
+  return text
+    .replace(/<[^>]*>/g, '')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function isEnergyRelated(text: string): boolean {
   const lower = text.toLowerCase();
-  const keywords = ['energy', 'power', 'solar', 'grid', 'tariff', 'zesa', 'zera', 'kariba', 'hwange', 'mw', 'renewable', 'climate', 'battery', 'bess', 'water', 'mining', 'electricity'];
+  const keywords = [
+    'energy', 'power', 'solar', 'grid', 'tariff', 'zesa', 'zera', 
+    'kariba', 'hwange', 'mw', 'renewable', 'climate', 'battery', 
+    'bess', 'water', 'mining', 'electricity', 'wheeling', 'ipp', 'infrastructure'
+  ];
   return keywords.some(k => lower.includes(k));
 }
 

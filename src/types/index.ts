@@ -129,3 +129,27 @@ export interface DashboardStats {
   sourcesMonitored: number;
   sourcesActive: number;
 }
+
+export interface TrendTopic {
+  topic: string;
+  count: number;
+  trend: string;
+  riskLevel: 'HIGH' | 'MED' | 'LOW';
+  category: string;
+  color: string;
+  velocity: string;
+}
+
+export interface TrendDataPoint {
+  date: string;
+  count: number;
+  label: string;
+}
+
+export interface TrendAnalytics {
+  topics: TrendTopic[];
+  timeline: TrendDataPoint[];
+  totalMentions: number;
+  primaryRiskTopic: string;
+  averageRiskIndex: number;
+}

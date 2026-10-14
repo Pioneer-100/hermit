@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DailyBrief, Article } from '@/types';
 import { 
   Zap, 
@@ -42,8 +42,42 @@ export default function ExecutiveDailyBrief({
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'pillars' | 'telemetry'>('overview');
 
+  useEffect(() => {
+    return () => {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
+
   const toggleAudio = () => {
-    setIsPlayingAudio(!isPlayingAudio);
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      alert('Speech synthesis is not supported in your browser.');
+      return;
+    }
+
+    if (isPlayingAudio) {
+      window.speechSynthesis.cancel();
+      setIsPlayingAudio(false);
+    } else {
+      window.speechSynthesis.cancel();
+      const speechText = `Hermit Investments Executive Intelligence Briefing for ${brief.date}. Market sentiment is ${brief.market_sentiment}, with a risk index of ${brief.risk_index} out of 100, classified as ${brief.risk_label}. Today's lead development: ${brief.headline}. Executive summary: ${brief.executive_summary}`;
+      const utterance = new SpeechSynthesisUtterance(speechText);
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+
+      const voices = window.speechSynthesis.getVoices();
+      const voice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Daniel') || v.name.includes('Samantha'))) || voices.find(v => v.lang.startsWith('en'));
+      if (voice) {
+        utterance.voice = voice;
+      }
+
+      utterance.onend = () => setIsPlayingAudio(false);
+      utterance.onerror = () => setIsPlayingAudio(false);
+
+      window.speechSynthesis.speak(utterance);
+      setIsPlayingAudio(true);
+    }
   };
 
   return (
@@ -68,11 +102,11 @@ export default function ExecutiveDailyBrief({
                     HERMIT INVESTMENTS &bull; EXECUTIVE INTELLIGENCE BRIEFING
                   </span>
                   <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-emerald-400/20 text-emerald-300 border border-emerald-400/40">
-                    OFFICIAL
+                    TODAY&apos;S REPORT
                   </span>
                 </div>
                 <p className="text-xs text-emerald-200/80 font-medium">
-                  {brief.date} &bull; Synthesized from 70+ Portals &bull; Cycle: 08:00 CAT
+                  {brief.date} &bull; What&apos;s Up Today &bull; Synthesized across {brief.total_articles_scanned} live sources
                 </p>
               </div>
             </div>
