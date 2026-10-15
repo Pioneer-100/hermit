@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Space_Grotesk, Inter } from 'next/font/google';
 import './globals.css';
 import Sidebar from '@/components/Sidebar';
 import MobileNav from '@/components/MobileNav';
@@ -6,6 +7,21 @@ import { AuthProvider } from '@/components/AuthContext';
 import AuthGuard from '@/components/AuthGuard';
 import { DrawerProvider } from '@/components/DrawerContext';
 import AIChatDrawer from '@/components/AIChatDrawer';
+
+// Display / heading font — geometric, techy, distinctive
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-display',
+  weight: ['300', '400', '500', '600', '700'],
+});
+
+// Body / UI font — humanist, highly legible at all sizes
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-body',
+});
 
 export const metadata: Metadata = {
   title: 'Hermit Investments — Energy Sector Intelligence & Media Monitor',
@@ -18,7 +34,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className={`h-full ${spaceGrotesk.variable} ${inter.variable}`}>
       <body className="h-full flex bg-[#03130c] text-emerald-50 antialiased font-sans overflow-hidden">
         <AuthProvider>
           <AuthGuard>

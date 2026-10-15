@@ -59,7 +59,7 @@ export default function AlertsPage() {
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
               Real-Time Push Escalations
             </div>
-            <h2 className="text-lg sm:text-2xl font-black">Executive Priority Escalation Queue</h2>
+            <h2 className="font-display text-lg sm:text-2xl font-black">Executive Priority Escalation Queue</h2>
             <p className="text-xs sm:text-sm text-emerald-100/90 leading-relaxed">
               Every energy item scoring &ge; 75% relevance generates an immediate AI impact brief. Communications Officer signs off before automatic dispatch to Management inboxes.
             </p>
@@ -67,13 +67,13 @@ export default function AlertsPage() {
 
           <div className="grid grid-cols-2 gap-2.5 sm:gap-3 w-full md:w-auto shrink-0">
             <div className="bg-[#052216]/80 border border-emerald-400/30 p-3 sm:p-3.5 px-4 sm:px-5 rounded-xl text-center shadow-inner">
-              <div className="text-xl sm:text-3xl font-black text-white">{articles.length}</div>
-              <div className="text-[9px] sm:text-[10px] text-emerald-300 font-bold uppercase tracking-wider">High-Relevance</div>
+              <div className="font-display tabular text-xl sm:text-3xl font-black text-white">{articles.length}</div>
+              <div className="text-[10px] text-emerald-300 font-bold uppercase tracking-wider">High-Relevance</div>
             </div>
 
             <div className="bg-[#052216]/80 border border-emerald-400/30 p-3 sm:p-3.5 px-4 sm:px-5 rounded-xl text-center shadow-inner">
-              <div className="text-xl sm:text-3xl font-black text-amber-300">{pendingCount}</div>
-              <div className="text-[9px] sm:text-[10px] text-amber-300 font-bold uppercase tracking-wider">Pending Sign-off</div>
+              <div className="font-display tabular text-xl sm:text-3xl font-black text-amber-300">{pendingCount}</div>
+              <div className="text-[10px] text-amber-300 font-bold uppercase tracking-wider">Pending Sign-off</div>
             </div>
           </div>
         </div>

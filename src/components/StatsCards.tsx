@@ -57,7 +57,7 @@ export default function StatsCards({ stats }: StatsCardsProps) {
             className={`bg-[#06291b]/70 backdrop-blur-md rounded-2xl p-3 sm:p-4.5 shadow-lg border border-emerald-500/25 hover:border-emerald-400/50 hover:bg-[#083624]/80 transition-all ${c.accentBorder} flex flex-col justify-between`}
           >
             <div className="flex items-center justify-between gap-1.5 mb-1.5">
-              <span className="text-[10px] sm:text-[11px] font-bold text-emerald-300/80 uppercase tracking-wider truncate">
+              <span className="text-[10px] sm:text-xs font-bold text-emerald-300/80 uppercase tracking-wider truncate">
                 {c.title}
               </span>
               <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-lg flex items-center justify-center shrink-0 border ${c.iconBg}`}>
@@ -66,7 +66,7 @@ export default function StatsCards({ stats }: StatsCardsProps) {
             </div>
 
             <div className="flex flex-col xs:flex-row items-start xs:items-baseline justify-between gap-1 mt-0.5">
-              <div className="text-xl sm:text-3xl font-black text-white tracking-tight">
+              <div className="font-display tabular text-xl sm:text-3xl font-black text-white tracking-tight">
                 {c.value}
               </div>
               <span className="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-emerald-950/70 text-emerald-300 border border-emerald-500/30 shrink-0">
@@ -74,7 +74,7 @@ export default function StatsCards({ stats }: StatsCardsProps) {
               </span>
             </div>
 
-            <div className="text-[10px] sm:text-[11px] text-emerald-200/70 font-medium mt-2 pt-1.5 sm:pt-2 border-t border-emerald-900/40 flex items-center justify-between">
+            <div className="text-[10px] sm:text-xs text-emerald-200/70 font-medium mt-2 pt-1.5 sm:pt-2 border-t border-emerald-900/40 flex items-center justify-between">
               <span className="truncate">{c.subtext}</span>
             </div>
           </div>

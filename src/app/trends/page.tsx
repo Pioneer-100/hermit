@@ -79,11 +79,11 @@ export default function TrendsPage() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                <h2 className="text-sm sm:text-base font-extrabold text-white">
+                <h2 className="font-display text-sm sm:text-base font-bold text-white">
                   Media Mention Frequency & Velocity Curve
                 </h2>
               </div>
-              <p className="text-[11px] sm:text-xs text-emerald-200/70 mt-0.5">
+              <p className="text-xs text-emerald-200/70 mt-0.5">
                 Dynamic cross-portal volume spike detection aggregated across monitored captures in Supabase
               </p>
             </div>
@@ -183,8 +183,8 @@ export default function TrendsPage() {
         <div className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4 text-white">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-900/50 pb-3">
             <div>
-              <h3 className="text-sm sm:text-base font-extrabold text-white">Priority Tracked Topics</h3>
-              <p className="text-[11px] sm:text-xs text-emerald-200/70">
+              <h3 className="font-display text-sm sm:text-base font-bold text-white">Priority Tracked Topics</h3>
+              <p className="text-xs text-emerald-200/70">
                 Calculated from real article mentions across national press and statutory gazettes
               </p>
             </div>

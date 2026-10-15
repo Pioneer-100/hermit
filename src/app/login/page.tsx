@@ -100,12 +100,20 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen w-full flex flex-col justify-center items-center px-3.5 py-6 sm:py-12 relative z-20">
-      {/* Container Box with Frosted Glass styling */}
-      <div className="w-full max-w-md bg-[#020e08]/85 backdrop-blur-2xl border border-emerald-500/25 rounded-2xl shadow-2xl p-4 sm:p-8 relative overflow-hidden">
+      {/* Container Box with Frosted Glass styling & Cyber-Mesh Background */}
+      <div className="w-full max-w-md bg-[#020e08]/90 backdrop-blur-2xl border border-emerald-500/35 rounded-2xl shadow-2xl p-4 sm:p-8 relative overflow-hidden">
         
+        {/* Custom Cyber Network Artwork Background */}
+        <div 
+          className="absolute inset-0 pointer-events-none z-0 bg-cover bg-center bg-no-repeat opacity-45 mix-blend-screen contrast-125 brightness-110"
+          style={{ backgroundImage: "url('/login_bg.jpg')" }}
+        />
+        {/* Protective deep emerald atmospheric gradient for crisp typography and input contrast */}
+        <div className="absolute inset-0 pointer-events-none z-0 bg-gradient-to-b from-[#020e08]/75 via-[#021810]/60 to-[#020e08]/85" />
+
         {/* Glow ambient accent */}
-        <div className="absolute -top-24 -left-24 w-48 h-48 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-emerald-600/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -top-24 -left-24 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-emerald-600/20 rounded-full blur-3xl pointer-events-none" />
 
         {/* Brand Header */}
         <div className="flex flex-col items-center text-center mb-5 sm:mb-6 relative z-10">
@@ -117,13 +125,13 @@ export default function LoginPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <h1 className="text-lg sm:text-xl font-black tracking-wider text-white">HERMIT INVESTMENTS</h1>
-            <span className="text-[10px] px-1.5 py-0.5 rounded font-extrabold uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+            <h1 className="font-display text-lg sm:text-xl font-black tracking-wider text-white">HERMIT INVESTMENTS</h1>
+            <span className="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
               PRO
             </span>
           </div>
           
-          <p className="text-[11px] sm:text-xs text-emerald-300/80 font-medium mt-0.5">
+          <p className="text-xs text-emerald-300/80 font-medium mt-0.5">
             Energy Sector Surveillance & Strategic Intelligence
           </p>
 
@@ -141,7 +149,7 @@ export default function LoginPage() {
             </div>
 
             <div className="text-center space-y-1">
-              <h2 className="text-sm font-bold text-white">Check Your Email</h2>
+              <h2 className="font-display text-sm font-bold text-white">Check Your Email</h2>
               <p className="text-xs text-emerald-200/80 leading-relaxed">
                 We sent a confirmation link to:
               </p>
@@ -344,6 +352,7 @@ export default function LoginPage() {
             </form>
 
             {/* Quick Demo Personas - 1-Click Access */}
+            {/*
             <div className="mt-5 pt-4 border-t border-emerald-900/50 relative z-10">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400/80">
@@ -386,6 +395,7 @@ export default function LoginPage() {
                 ))}
               </div>
             </div>
+            */}
 
             {/* Security Note */}
             <div className="mt-4 text-center text-[10px] text-emerald-400/50 flex items-center justify-center gap-1.5">

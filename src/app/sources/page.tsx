@@ -121,7 +121,7 @@ export default function SourcesPage() {
                     </span>
                   </div>
 
-                  <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
+                  <h3 className="font-display text-sm font-bold text-white flex items-center gap-1.5">
                     <span>{source.name}</span>
                   </h3>
 

@@ -66,7 +66,7 @@ export default function MobileNav() {
           <div className="flex items-center justify-between pb-3 border-b border-emerald-900/50">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-xs font-black uppercase tracking-wider text-emerald-300">
+              <span className="font-display text-xs font-black uppercase tracking-wider text-emerald-300">
                 Hermit Executive Hub
               </span>
             </div>

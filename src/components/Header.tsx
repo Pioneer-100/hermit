@@ -37,7 +37,7 @@ export default function Header({
       <div className="flex items-center gap-3 min-w-0 mr-2">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <h1 className="text-sm sm:text-lg lg:text-xl font-black text-white tracking-tight truncate">
+            <h1 className="font-display text-sm sm:text-lg lg:text-xl font-black text-white tracking-tight truncate">
               {title}
             </h1>
             <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shrink-0">
@@ -46,7 +46,7 @@ export default function Header({
             </span>
           </div>
 
-          <p className="text-[11px] sm:text-xs text-emerald-300/70 mt-0.5 truncate flex items-center gap-2">
+          <p className="text-xs sm:text-xs text-emerald-300/70 mt-0.5 truncate flex items-center gap-2">
             <span>{subtitle || `${currentDate} · 70+ Portals Tracked`}</span>
           </p>
         </div>
@@ -91,7 +91,7 @@ export default function Header({
           >
             <Play className={`w-3 h-3 fill-current ${isCrawling ? 'animate-spin' : ''}`} />
             <span className="hidden sm:inline">{isCrawling ? 'Crawling...' : 'Live Crawl Source'}</span>
-            <span className="sm:hidden text-[11px]">{isCrawling ? '...' : 'Crawl'}</span>
+            <span className="sm:hidden text-xs">{isCrawling ? '...' : 'Crawl'}</span>
           </button>
         )}
 
@@ -112,7 +112,7 @@ export default function Header({
               {currentUser.full_name.charAt(0)}
             </div>
             <div className="text-left min-w-0">
-              <div className="text-[11px] font-bold text-white leading-tight truncate max-w-[130px]">
+              <div className="text-xs font-bold text-white leading-tight truncate max-w-[130px]">
                 {currentUser.full_name}
               </div>
               <div className="text-[9px] text-emerald-400 font-mono capitalize">

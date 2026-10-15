@@ -25,7 +25,7 @@ const NAV_ITEMS = [
   { href: '/reports', label: 'Executive Reports', icon: FileText, subtext: 'Daily & Weekly' },
   { href: '/trends', label: 'Trends & Signals', icon: TrendingUp, subtext: 'Early warnings' },
   { href: '/sources', label: 'Source Directory', icon: Globe2, badge: '70+', badgeColor: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' },
-  { href: '/settings', label: 'Integrations & Stack', icon: Settings },
+  //{ href: '/settings', label: 'Integrations & Stack', icon: Settings },
 ];
 
 export default function Sidebar() {
@@ -49,20 +49,20 @@ export default function Sidebar() {
 
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
-              <h1 className="font-extrabold text-sm tracking-wider text-white">HERMIT</h1>
+              <h1 className="font-display font-bold text-sm tracking-wider text-white">HERMIT</h1>
               <span className="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                 PRO
               </span>
             </div>
-            <p className="text-[11px] text-emerald-400/90 font-medium truncate">Energy Sector Monitor</p>
+            <p className="text-xs text-emerald-400/90 font-medium truncate">Energy Sector Monitor</p>
           </div>
         </div>
       </div>
 
       {/* Navigation Links */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-emerald-500/60">
-          Intelligence Navigation
+        <div className="px-3 pb-2 text-[10px] font-display font-bold uppercase tracking-wider text-emerald-500/60">
+          Navigation
         </div>
 
         {NAV_ITEMS.map((item) => {
@@ -102,19 +102,19 @@ export default function Sidebar() {
       {/* User Profile Card & Role Switcher */}
       <UserProfileBar />
 
-      {/* Bottom Live System Status Box */}
+      {/* Bottom Live System Status Box
       <div className="p-3 m-3 mt-1 bg-[#03150d]/75 backdrop-blur-md rounded-xl border border-emerald-500/20 shadow-md">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-            <span className="text-[11px] font-bold text-white tracking-wide">Live Surveillance</span>
+            <span className="text-xs font-bold text-white tracking-wide">Live Surveillance</span>
           </div>
           <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-400/20 text-emerald-300 font-mono font-bold">
             GEMINI 2.0
           </span>
         </div>
 
-        <p className="text-[10.5px] text-emerald-200/70 leading-relaxed mb-2.5">
+        <p className="text-xs text-emerald-200/70 leading-relaxed mb-2.5">
           Autonomous multi-source crawling & commercial impact classification active.
         </p>
 
@@ -126,6 +126,7 @@ export default function Sidebar() {
           <span className="font-mono text-slate-400">70+ Sources</span>
         </div>
       </div>
+       */}
     </aside>
   );
 }

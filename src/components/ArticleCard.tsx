@@ -61,7 +61,7 @@ export default function ArticleCard({
       <div className="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2">
         <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
           {/* Source Tag with Hermit Green Accent */}
-          <span className="font-bold text-[11px] sm:text-xs text-emerald-200 bg-emerald-950/80 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md border border-emerald-500/40 tracking-wide flex items-center gap-1.5">
+          <span className="font-bold text-xs sm:text-xs text-emerald-200 bg-emerald-950/80 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md border border-emerald-500/40 tracking-wide flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
             {article.source_name}
           </span>
@@ -102,7 +102,7 @@ export default function ArticleCard({
             </span>
           )}
 
-          <span className="text-[10px] sm:text-[11px] font-mono text-emerald-300/60 flex items-center gap-1">
+          <span className="text-[10px] sm:text-xs font-mono text-emerald-300/60 flex items-center gap-1">
             <Clock className="w-3 h-3 text-emerald-400/70" />
             {timeFormatted}
           </span>
@@ -111,7 +111,7 @@ export default function ArticleCard({
 
       {/* Main Headline */}
       <div>
-        <h3 className="text-sm sm:text-base font-bold text-white group-hover:text-emerald-300 transition-colors leading-snug line-clamp-2">
+        <h3 className="font-display text-sm sm:text-base font-bold text-white group-hover:text-emerald-300 transition-colors leading-snug line-clamp-2">
           {article.headline}
         </h3>
 
@@ -126,7 +126,7 @@ export default function ArticleCard({
       {/* Hermit Commercial Implication & Action Bar - Fully responsive wrapping */}
       <div className="pt-2 sm:pt-2.5 border-t border-emerald-900/40 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         {/* Relevance to Hermit Snippet */}
-        <div className="flex items-center gap-1.5 text-[11px] sm:text-xs text-emerald-100 bg-[#041a12]/85 border border-emerald-500/30 px-2.5 py-1 rounded-xl w-full sm:max-w-xl truncate">
+        <div className="flex items-center gap-1.5 text-xs sm:text-xs text-emerald-100 bg-[#041a12]/85 border border-emerald-500/30 px-2.5 py-1 rounded-xl w-full sm:max-w-xl truncate">
           <Sparkles className="w-3 h-3 text-emerald-400 shrink-0" />
           <span className="font-bold text-emerald-300 shrink-0">Hermit Focus:</span>
           <span className="truncate text-emerald-100/90">

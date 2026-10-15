@@ -72,9 +72,9 @@ export default function ReportsPage() {
           <div>
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <h2 className="text-sm sm:text-base font-extrabold text-white">Executive Reporting Cadence</h2>
+              <h2 className="font-display text-sm sm:text-base font-bold text-white">Executive Reporting Cadence</h2>
             </div>
-            <p className="text-[11px] sm:text-xs text-emerald-200/70 mt-0.5">Synthesized from Supabase media captures and routed to Communications Officer for Management</p>
+            <p className="text-xs text-emerald-200/70 mt-0.5">Synthesized from Supabase media captures and routed to Communications Officer for Management</p>
           </div>
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
