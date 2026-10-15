@@ -214,40 +214,104 @@ export default function ExecutiveDailyBrief({
           {/* 3 Visual Digest Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
             
-            {/* Chart 1: Sector Concentration Distribution (5 cols) */}
-            <div className="lg:col-span-5 bg-[#06281c]/75 backdrop-blur-sm p-3.5 sm:p-4.5 rounded-2xl border border-emerald-500/25 shadow-md space-y-3">
+            {/* Chart 1: Media Topic Allocation Donut Chart (5 cols) */}
+            <div className="lg:col-span-5 bg-[#06281c]/75 backdrop-blur-sm p-3.5 sm:p-4.5 rounded-2xl border border-emerald-500/25 shadow-md flex flex-col justify-between space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-emerald-200 uppercase tracking-wide">
-                  Media Topic Allocation
+                <div>
+                  <span className="text-xs font-bold text-emerald-200 uppercase tracking-wide">
+                    Media Topic Allocation
+                  </span>
+                  <p className="text-[10px] text-emerald-300/60 font-mono mt-0.5">Coverage Share by Sector</p>
+                </div>
+                <span className="text-[10px] font-mono text-emerald-400 font-bold bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                  100% Normalized
                 </span>
-                <span className="text-[10px] font-mono text-emerald-400 font-bold">100% Normalized</span>
               </div>
 
-              {/* Progress Stack Bar */}
-              <div className="w-full h-3 rounded-full overflow-hidden flex bg-emerald-950/80">
-                {brief.sector_breakdown.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="h-full transition-all hover:opacity-80"
-                    style={{ width: `${item.percentage}%`, backgroundColor: item.color }}
-                    title={`${item.category}: ${item.percentage}% (${item.count} items)`}
-                  />
-                ))}
-              </div>
+              {/* Donut Chart Visualization */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 py-1">
+                {/* SVG Ring / Donut */}
+                <div className="relative w-36 h-36 shrink-0 flex items-center justify-center">
+                  <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                    {/* Background ring track */}
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="36"
+                      className="stroke-[#02180e]"
+                      strokeWidth="14"
+                      fill="none"
+                    />
+                    {/* Donut Segments */}
+                    {(() => {
+                      const radius = 36;
+                      const circumference = 2 * Math.PI * radius; // ≈ 226.19
+                      let accumulatedPercentage = 0;
 
-              {/* Legend Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1 text-xs">
-                {brief.sector_breakdown.map((item, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-1.5 px-2 rounded-xl bg-[#03180f]/80 border border-emerald-900/50">
-                    <div className="flex items-center gap-1.5 truncate">
-                      <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
-                      <span className="text-emerald-200 font-medium truncate text-[11px]">{item.category}</span>
-                    </div>
-                    <span className="font-bold text-white font-mono text-[11px] shrink-0 ml-1">
-                      {item.percentage}%
+                      return brief.sector_breakdown.map((item, idx) => {
+                        const strokeDasharray = `${(item.percentage / 100) * circumference} ${circumference}`;
+                        const strokeDashoffset = -((accumulatedPercentage / 100) * circumference);
+                        accumulatedPercentage += item.percentage;
+
+                        return (
+                          <circle
+                            key={idx}
+                            cx="50"
+                            cy="50"
+                            r={radius}
+                            fill="none"
+                            stroke={item.color}
+                            strokeWidth="14"
+                            strokeDasharray={strokeDasharray}
+                            strokeDashoffset={strokeDashoffset}
+                            className="transition-all duration-500 hover:opacity-85"
+                          >
+                            <title>{`${item.category}: ${item.percentage}% (${item.count} captures)`}</title>
+                          </circle>
+                        );
+                      });
+                    })()}
+                  </svg>
+
+                  {/* Donut Center Core Display */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
+                    <span className="text-lg font-black text-white font-mono leading-none">
+                      {brief.sector_breakdown.reduce((sum, item) => sum + item.count, 0)}
+                    </span>
+                    <span className="text-[9px] uppercase tracking-wider text-emerald-300 font-bold mt-0.5">
+                      Stories
                     </span>
                   </div>
-                ))}
+                </div>
+
+                {/* Donut Legend */}
+                <div className="w-full sm:flex-1 space-y-1.5">
+                  {brief.sector_breakdown.map((item, idx) => (
+                    <div 
+                      key={idx} 
+                      className="flex items-center justify-between p-1.5 px-2.5 rounded-xl bg-[#03180f]/80 border border-emerald-900/50 hover:border-emerald-500/40 transition-colors"
+                      title={`${item.category}: ${item.count} stories`}
+                    >
+                      <div className="flex items-center gap-2 truncate">
+                        <span 
+                          className="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm" 
+                          style={{ backgroundColor: item.color }} 
+                        />
+                        <span className="text-emerald-200 font-medium truncate text-[11px]">
+                          {item.category}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0 ml-1">
+                        <span className="text-[10px] text-emerald-300/60 font-mono">
+                          {item.count}
+                        </span>
+                        <span className="font-bold text-white font-mono text-[11px] bg-emerald-950/90 px-1.5 py-0.5 rounded border border-emerald-500/25">
+                          {item.percentage}%
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 

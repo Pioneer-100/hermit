@@ -72,6 +72,7 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              prefetch={true}
               className={`group flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-150 ${
                 isActive
                   ? 'bg-emerald-500/20 text-white font-semibold shadow-inner border border-emerald-400/40 backdrop-blur-sm'

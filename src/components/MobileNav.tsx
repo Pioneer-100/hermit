@@ -153,6 +153,7 @@ export default function MobileNav() {
           <div className="space-y-1.5">
             <Link
               href="/trends"
+              prefetch={true}
               onClick={() => setIsMenuOpen(false)}
               className={`flex items-center justify-between p-3 rounded-xl text-xs font-semibold border transition-all ${
                 pathname === '/trends'
@@ -172,6 +173,7 @@ export default function MobileNav() {
 
             <Link
               href="/sources"
+              prefetch={true}
               onClick={() => setIsMenuOpen(false)}
               className={`flex items-center justify-between p-3 rounded-xl text-xs font-semibold border transition-all ${
                 pathname === '/sources'
@@ -191,6 +193,7 @@ export default function MobileNav() {
 
             <Link
               href="/settings"
+              prefetch={true}
               onClick={() => setIsMenuOpen(false)}
               className={`flex items-center justify-between p-3 rounded-xl text-xs font-semibold border transition-all ${
                 pathname === '/settings'
@@ -262,6 +265,7 @@ export default function MobileNav() {
             <Link
               key={item.href}
               href={item.href}
+              prefetch={true}
               className={`relative flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all min-w-[56px] ${
                 isActive ? 'text-emerald-300 bg-emerald-900/40 font-bold shadow-inner border border-emerald-500/20' : 'text-slate-400 hover:text-emerald-400'
               }`}

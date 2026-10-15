@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import { Report } from '@/types';
 import { FileText, Plus, CheckCircle, Calendar, Sparkles, Zap, Printer, BookOpen, Archive } from 'lucide-react';
+import { INITIAL_REPORTS } from '@/lib/mock-data';
 
 export default function ReportsPage() {
-  const [reports, setReports] = useState<Report[]>([]);
-  const [selectedReport, setSelectedReport] = useState<Report | null>(null);
+  const [reports, setReports] = useState<Report[]>(INITIAL_REPORTS);
+  const [selectedReport, setSelectedReport] = useState<Report | null>(INITIAL_REPORTS[0] || null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [reportTypeToGen, setReportTypeToGen] = useState<'daily' | 'weekly' | 'monthly' | 'special'>('daily');
   const [mobileTab, setMobileTab] = useState<'report' | 'archive'>('report');

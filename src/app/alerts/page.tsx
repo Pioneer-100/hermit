@@ -12,9 +12,11 @@ import {
   Sparkles 
 } from 'lucide-react';
 
+import { INITIAL_ARTICLES, INITIAL_ALERTS } from '@/lib/mock-data';
+
 export default function AlertsPage() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [alertLogs, setAlertLogs] = useState<AlertLog[]>([]);
+  const [articles, setArticles] = useState<Article[]>(() => INITIAL_ARTICLES.filter(a => a.relevance_level === 'high'));
+  const [alertLogs, setAlertLogs] = useState<AlertLog[]>(INITIAL_ALERTS);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
 
   const loadData = async () => {
