@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       try {
         const topHeadlines = articles.slice(0, 12).map(a => `- [${a.source_name}] (${a.article_type}): ${a.headline} (Relevance: ${a.relevance_level})`).join('\n');
         
-        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`;
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${apiKey}`;
         const prompt = `You are the Chief Intelligence Officer at Hermit Investments (Zimbabwe).
 Synthesize today's monitored energy sector captures into an executive macro report answering "What's Up Today" for management.
 Make the headline dynamic, crisp, and informative (NOT generic, NO static text).

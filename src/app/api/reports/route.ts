@@ -59,25 +59,41 @@ Return ONLY valid JSON with these exact keys:
   "executive_takeaway": "2-3 sentence strategic recommendation for Hermit Investments Management, including specific next steps"
 }`;
 
-        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.3, responseMimeType: 'application/json' }
-          }),
-          signal: AbortSignal.timeout(15000)
-        });
+        const candidateModels = [
+          'gemini-3.5-flash-lite',
+          'gemini-3.1-flash-lite',
+          'gemini-3-flash-preview',
+          'gemini-2.5-flash-lite',
+          'gemini-3.7-flash',
+          'gemini-3.5-flash'
+        ];
 
-        if (res.ok) {
-          const data = await res.json();
-          const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (text) {
-            const parsed = JSON.parse(text);
-            if (parsed.summary && parsed.highlights) {
-              geminiReport = parsed;
+        for (const model of candidateModels) {
+          try {
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+            const res = await fetch(endpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: { temperature: 0.3, responseMimeType: 'application/json' }
+              }),
+              signal: AbortSignal.timeout(15000)
+            });
+
+            if (res.ok) {
+              const data = await res.json();
+              const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+              if (text) {
+                const parsed = JSON.parse(text);
+                if (parsed.summary && parsed.highlights) {
+                  geminiReport = parsed;
+                  break;
+                }
+              }
             }
+          } catch (modelErr) {
+            console.warn(`Report generation with ${model} failed, trying next:`, modelErr);
           }
         }
       } catch (geminiErr) {

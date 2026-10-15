@@ -32,6 +32,29 @@ export default function AIChatDrawer() {
     scrollToBottom();
   }, [messages, isChatOpen]);
 
+  const streamIncomingMessage = async (fullText: string) => {
+    // Add an empty assistant message entry to stream into
+    setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+    
+    // Split by newlines, preserving empty lines
+    const lines = fullText.split('\n');
+    let accumulated = '';
+    
+    for (let i = 0; i < lines.length; i++) {
+      accumulated += (i > 0 ? '\n' : '') + lines[i];
+      const snapshot = accumulated;
+      setMessages(prev => {
+        const next = [...prev];
+        if (next.length > 0 && next[next.length - 1].role === 'assistant') {
+          next[next.length - 1] = { role: 'assistant', content: snapshot };
+        }
+        return next;
+      });
+      // Delay each line for a smooth, readable progressive reveal
+      await new Promise(resolve => setTimeout(resolve, 80));
+    }
+  };
+
   const sendMessage = async (textToSend?: string) => {
     const query = (textToSend || input).trim();
     if (!query) return;
@@ -47,13 +70,12 @@ export default function AIChatDrawer() {
       });
       if (!resp.ok) throw new Error('Chat API error');
       const data = await resp.json();
-      const assistantMsg = { role: 'assistant' as const, content: data.answer };
-      setMessages(prev => [...prev, assistantMsg]);
+      setLoading(false);
+      await streamIncomingMessage(data.answer || 'No response generated.');
     } catch {
+      setLoading(false);
       const errMsg = { role: 'assistant' as const, content: 'Sorry, I could not process your request at this moment.' };
       setMessages(prev => [...prev, errMsg]);
-    } finally {
-      setLoading(false);
     }
   };
 

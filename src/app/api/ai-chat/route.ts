@@ -49,36 +49,59 @@ ${query.trim()}
 
 Respond in clear, professional markdown. Use bullet points or short paragraphs for readability.`;
 
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`;
+    // Resilient model fallback list (prioritizing high-availability, instant-response models)
+    const candidateModels = [
+      'gemini-3.5-flash-lite',
+      'gemini-3.1-flash-lite',
+      'gemini-3-flash-preview',
+      'gemini-2.5-flash-lite',
+      'gemini-3.7-flash',
+      'gemini-3.5-flash'
+    ];
 
-    const res = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [{ text: systemPrompt }]
+    let answer = '';
+    let lastError = '';
+
+    for (const model of candidateModels) {
+      try {
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: systemPrompt }] }],
+            generationConfig: {
+              temperature: 0.3,
+              maxOutputTokens: 1000
+            }
+          }),
+          signal: AbortSignal.timeout(12000)
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) {
+            answer = text;
+            break;
           }
-        ],
-        generationConfig: {
-          temperature: 0.3,
-          maxOutputTokens: 1000
+        } else {
+          lastError = await res.text();
+          console.warn(`Model ${model} returned status ${res.status}`);
         }
-      }),
-      signal: AbortSignal.timeout(15000)
-    });
+      } catch (err: any) {
+        lastError = err?.message || String(err);
+        console.warn(`Model ${model} failed:`, lastError);
+      }
+    }
 
-    if (!res.ok) {
-      const errText = await res.text();
-      console.error('Gemini API error:', res.status, errText);
+    if (!answer) {
+      console.error('All Gemini candidate models failed. Last error:', lastError);
       return NextResponse.json(
         { answer: 'An error occurred while communicating with the Gemini intelligence service. Please try again in a moment.' },
         { status: 200 }
       );
     }
-
-    const data = await res.json();
-    const answer = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response generated.';
 
     return NextResponse.json({ answer });
   } catch (error: any) {

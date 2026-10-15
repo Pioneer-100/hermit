@@ -19,10 +19,16 @@ export async function analyzeArticleWithGemini(
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (apiKey && !apiKey.includes('AIzaSy_fake') && apiKey.length > 10) {
-    try {
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    const candidateModels = [
+      'gemini-3.5-flash-lite',
+      'gemini-3.1-flash-lite',
+      'gemini-3-flash-preview',
+      'gemini-2.5-flash-lite',
+      'gemini-3.7-flash',
+      'gemini-3.5-flash'
+    ];
 
-      const prompt = `You are the Senior Energy Intelligence Analyst at Hermit Investments, a Zimbabwean energy investment firm specializing in renewable energy IPPs, commercial solar development, grid integration, and clean energy financing.
+    const prompt = `You are the Senior Energy Intelligence Analyst at Hermit Investments, a Zimbabwean energy investment firm specializing in renewable energy IPPs, commercial solar development, grid integration, and clean energy financing.
 
 Analyze this new media capture:
 SOURCE: ${sourceName}
@@ -41,38 +47,43 @@ Analyze the strategic implications and return ONLY a valid JSON object with thes
   "suggested_actions": ["Action 1", "Action 2", "Action 3"]
 }`;
 
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.2,
-            responseMimeType: 'application/json'
-          }
-        }),
-        signal: AbortSignal.timeout(12000)
-      });
+    for (const model of candidateModels) {
+      try {
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
-      if (response.ok) {
-        const data = await response.json();
-        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (text) {
-          const parsed = JSON.parse(text);
-          return {
-            article_type: parsed.article_type || 'general',
-            relevance_score: Number(parsed.relevance_score) || 0.7,
-            relevance_level: parsed.relevance_level || 'medium',
-            relevance_to_hermit: parsed.relevance_to_hermit || 'Relevant to Zimbabwe energy sector developments.',
-            key_stakeholders: Array.isArray(parsed.key_stakeholders) ? parsed.key_stakeholders : [sourceName],
-            ai_summary: parsed.ai_summary || headline,
-            ai_impact_note: parsed.ai_impact_note || 'Monitor further implementation announcements.',
-            suggested_actions: Array.isArray(parsed.suggested_actions) ? parsed.suggested_actions : ['Review with communications team']
-          };
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: {
+              temperature: 0.2,
+              responseMimeType: 'application/json'
+            }
+          }),
+          signal: AbortSignal.timeout(12000)
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) {
+            const parsed = JSON.parse(text);
+            return {
+              article_type: parsed.article_type || 'general',
+              relevance_score: Number(parsed.relevance_score) || 0.7,
+              relevance_level: parsed.relevance_level || 'medium',
+              relevance_to_hermit: parsed.relevance_to_hermit || 'Relevant to Zimbabwe energy sector developments.',
+              key_stakeholders: Array.isArray(parsed.key_stakeholders) ? parsed.key_stakeholders : [sourceName],
+              ai_summary: parsed.ai_summary || headline,
+              ai_impact_note: parsed.ai_impact_note || 'Monitor further implementation announcements.',
+              suggested_actions: Array.isArray(parsed.suggested_actions) ? parsed.suggested_actions : ['Review with communications team']
+            };
+          }
         }
+      } catch (err) {
+        console.warn(`Gemini analysis with ${model} failed, trying next model:`, err);
       }
-    } catch (err) {
-      console.warn('Gemini API call failed or timed out, using fallback heuristics:', err);
     }
   }
 

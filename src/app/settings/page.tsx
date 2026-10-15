@@ -57,7 +57,7 @@ export default function SettingsPage() {
                 <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center justify-center shrink-0">
                   <Sparkles className="w-4 h-4" />
                 </div>
-                <h3 className="font-display text-sm font-bold text-white">Google Gemini 2.0 Flash</h3>
+                <h3 className="font-display text-sm font-bold text-white">Google Gemini Flash</h3>
               </div>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
                 ACTIVE
@@ -67,8 +67,8 @@ export default function SettingsPage() {
               Performs real-time energy sector classification (tariff change, regulation, funding), relevance scoring (0-100%), and Hermit commercial impact drafting.
             </p>
             <div className="text-[11px] text-emerald-300/60 font-mono pt-2 border-t border-emerald-900/40 flex items-center justify-between">
-              <span>Model: gemini-2.0-flash</span>
-              <span className="text-emerald-400 font-bold">15 RPM Free Tier</span>
+              <span>Model: gemini-3.5-flash-lite / auto-fallback</span>
+              <span className="text-emerald-400 font-bold">Free Tier</span>
             </div>
           </div>
 
