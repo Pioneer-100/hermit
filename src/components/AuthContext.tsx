@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { UserProfile, UserRole } from '@/types';
 import { INITIAL_HERMIT_USERS } from '@/lib/users-and-projects';
 import { getSupabaseClient } from '@/lib/supabase';
+import { User } from '@supabase/supabase-js';
 
 interface AuthContextType {
   currentUser: UserProfile | null;
@@ -12,7 +13,8 @@ interface AuthContextType {
   isLoading: boolean;
   isSupabaseConfigured: boolean;
   signIn: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
-  signUp: (email: string, password: string, fullName: string, role?: UserRole, title?: string) => Promise<{ success: boolean; error?: string }>;
+  signUp: (email: string, password: string, fullName: string, role?: UserRole, title?: string) => Promise<{ success: boolean; requiresEmailConfirmation?: boolean; error?: string }>;
+  resendConfirmationEmail: (email: string) => Promise<{ success: boolean; error?: string }>;
   loginAsDemoUser: (userId: string) => void;
   switchUser: (userId: string) => void;
   logout: () => Promise<void>;
@@ -26,7 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isSupabaseConfigured, setIsSupabaseConfigured] = useState<boolean>(false);
 
   // Sync or fetch profile from Supabase user_profiles table
-  const fetchOrCreateProfile = useCallback(async (sbUser: any): Promise<UserProfile> => {
+  const fetchOrCreateProfile = useCallback(async (sbUser: User): Promise<UserProfile> => {
     const sb = getSupabaseClient();
     const fallbackProfile: UserProfile = {
       id: sbUser.id,
@@ -111,7 +113,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (isMounted) setIsLoading(false);
       });
 
-      // 2. Listen to Supabase Auth state changes
+      // 2. Listen to Supabase Auth state changes (including email confirmation redirects)
       const { data: { subscription } } = sb.auth.onAuthStateChange(async (event, session) => {
         if (!isMounted) return;
         if (session?.user) {
@@ -177,8 +179,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { success: true };
       }
       return { success: false, error: 'Sign in failed.' };
-    } catch (err: any) {
-      return { success: false, error: err?.message || 'Network error during sign in.' };
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Network error during sign in.';
+      return { success: false, error: msg };
     }
   };
 
@@ -188,13 +191,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     fullName: string,
     role: UserRole = 'analyst',
     title: string = 'Intelligence Officer'
-  ): Promise<{ success: boolean; error?: string }> => {
+  ): Promise<{ success: boolean; requiresEmailConfirmation?: boolean; error?: string }> => {
     const sb = getSupabaseClient();
     if (!sb) {
       return { success: false, error: 'Supabase is not configured. Configure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to enable user registration.' };
     }
 
     try {
+      const redirectUrl = typeof window !== 'undefined'
+        ? `${window.location.origin}/auth/confirm`
+        : undefined;
+
       const { data, error } = await sb.auth.signUp({
         email,
         password,
@@ -203,7 +210,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             full_name: fullName,
             role,
             title
-          }
+          },
+          emailRedirectTo: redirectUrl
         }
       });
 
@@ -211,14 +219,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { success: false, error: error.message };
       }
 
-      if (data.user) {
+      // When Supabase email confirmations are enabled:
+      // data.user is created with confirmed_at = null, and data.session is null.
+      if (data.user && !data.session) {
+        return { 
+          success: true, 
+          requiresEmailConfirmation: true 
+        };
+      }
+
+      // If email confirmation is disabled or session is immediately established:
+      if (data.session && data.user) {
         const profile = await fetchOrCreateProfile(data.user);
         setCurrentUser(profile);
-        return { success: true };
+        localStorage.removeItem('hermit_demo_user_id');
+        return { success: true, requiresEmailConfirmation: false };
       }
-      return { success: false, error: 'Registration succeeded, please check your email for confirmation.' };
-    } catch (err: any) {
-      return { success: false, error: err?.message || 'Network error during sign up.' };
+
+      return { success: true, requiresEmailConfirmation: true };
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Network error during sign up.';
+      return { success: false, error: msg };
+    }
+  };
+
+  const resendConfirmationEmail = async (email: string): Promise<{ success: boolean; error?: string }> => {
+    const sb = getSupabaseClient();
+    if (!sb) {
+      return { success: false, error: 'Supabase is not configured.' };
+    }
+
+    try {
+      const redirectUrl = typeof window !== 'undefined'
+        ? `${window.location.origin}/auth/confirm`
+        : undefined;
+
+      const { error } = await sb.auth.resend({
+        type: 'signup',
+        email,
+        options: {
+          emailRedirectTo: redirectUrl
+        }
+      });
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      return { success: true };
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error resending confirmation email.';
+      return { success: false, error: msg };
     }
   };
 
@@ -263,6 +314,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isSupabaseConfigured,
         signIn,
         signUp,
+        resendConfirmationEmail,
         loginAsDemoUser,
         switchUser,
         logout
