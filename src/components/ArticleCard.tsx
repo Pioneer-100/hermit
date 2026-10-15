@@ -4,12 +4,10 @@ import { Article } from '@/types';
 import { 
   Building2, 
   Clock, 
-  ExternalLink, 
   ChevronRight, 
   Sparkles, 
   CheckCircle2, 
   AlertCircle,
-  ShieldCheck,
   Send
 } from 'lucide-react';
 
@@ -33,7 +31,6 @@ const TYPE_CONFIG: Record<string, { label: string; badgeClass: string }> = {
 export default function ArticleCard({ 
   article, 
   onClick, 
-  onReviewToggle,
   compact = false 
 }: ArticleCardProps) {
   const timeFormatted = article.publication_date || article.captured_at
@@ -58,19 +55,19 @@ export default function ArticleCard({
   return (
     <div
       onClick={() => onClick(article)}
-      className={`group bg-[#06261b]/70 backdrop-blur-md rounded-xl p-4 sm:p-5 shadow-lg hover:shadow-xl border border-emerald-500/25 hover:border-emerald-400/50 hover:bg-[#083525]/80 transition-all duration-150 cursor-pointer ${borderLeftClass} flex flex-col justify-between gap-3`}
+      className={`group bg-[#06261b]/70 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 shadow-lg hover:shadow-xl border border-emerald-500/25 hover:border-emerald-400/50 hover:bg-[#083525]/80 transition-all duration-150 cursor-pointer ${borderLeftClass} flex flex-col justify-between gap-2.5 sm:gap-3`}
     >
       {/* Top Meta Header */}
-      <div className="flex flex-wrap items-center justify-between gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2">
         <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
           {/* Source Tag with Hermit Green Accent */}
-          <span className="font-bold text-xs text-emerald-200 bg-emerald-950/80 px-2.5 py-1 rounded-md border border-emerald-500/40 tracking-wide flex items-center gap-1.5">
+          <span className="font-bold text-[11px] sm:text-xs text-emerald-200 bg-emerald-950/80 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md border border-emerald-500/40 tracking-wide flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
             {article.source_name}
           </span>
 
           {/* Type / Category Pill */}
-          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border uppercase tracking-wider ${typeInfo.badgeClass}`}>
+          <span className={`text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-md border uppercase tracking-wider ${typeInfo.badgeClass}`}>
             {typeInfo.label}
           </span>
 
@@ -87,25 +84,25 @@ export default function ArticleCard({
         </div>
 
         {/* Relevance Score Pill + Time */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {isHigh && (
-            <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 tracking-wider flex items-center gap-1">
+            <span className="text-[9px] sm:text-[10px] font-black px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 tracking-wider flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />
               CRITICAL ({Math.round(article.relevance_score * 100)}%)
             </span>
           )}
           {isMed && (
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 tracking-wider">
+            <span className="text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 tracking-wider">
               MEDIUM ({Math.round(article.relevance_score * 100)}%)
             </span>
           )}
           {!isHigh && !isMed && (
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 tracking-wider">
+            <span className="text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 tracking-wider">
               INFO ({Math.round(article.relevance_score * 100)}%)
             </span>
           )}
 
-          <span className="text-[11px] font-mono text-emerald-300/60 flex items-center gap-1">
+          <span className="text-[10px] sm:text-[11px] font-mono text-emerald-300/60 flex items-center gap-1">
             <Clock className="w-3 h-3 text-emerald-400/70" />
             {timeFormatted}
           </span>
@@ -120,16 +117,16 @@ export default function ArticleCard({
 
         {/* Digestible Summary Snippet */}
         {!compact && (
-          <p className="text-xs text-emerald-100/75 mt-1.5 line-clamp-2 leading-relaxed font-normal">
+          <p className="text-xs text-emerald-100/75 mt-1 sm:mt-1.5 line-clamp-2 leading-relaxed font-normal">
             {article.summary || article.headline}
           </p>
         )}
       </div>
 
-      {/* Hermit Commercial Implication & Action Bar */}
-      <div className="pt-2.5 border-t border-emerald-900/40 flex flex-wrap items-center justify-between gap-2">
+      {/* Hermit Commercial Implication & Action Bar - Fully responsive wrapping */}
+      <div className="pt-2 sm:pt-2.5 border-t border-emerald-900/40 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         {/* Relevance to Hermit Snippet */}
-        <div className="flex items-center gap-1.5 text-xs text-emerald-100 bg-[#041a12]/85 border border-emerald-500/30 px-2.5 py-1 rounded-lg max-w-xl truncate">
+        <div className="flex items-center gap-1.5 text-[11px] sm:text-xs text-emerald-100 bg-[#041a12]/85 border border-emerald-500/30 px-2.5 py-1 rounded-xl w-full sm:max-w-xl truncate">
           <Sparkles className="w-3 h-3 text-emerald-400 shrink-0" />
           <span className="font-bold text-emerald-300 shrink-0">Hermit Focus:</span>
           <span className="truncate text-emerald-100/90">
@@ -137,26 +134,28 @@ export default function ArticleCard({
           </span>
         </div>
 
-        {/* Right Status & Trigger */}
-        <div className="flex items-center gap-2 shrink-0 ml-auto">
-          {article.is_reviewed ? (
-            <span className="text-[10px] font-bold text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded-full flex items-center gap-1 border border-emerald-500/40">
-              <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-              Reviewed
-            </span>
-          ) : (
-            <span className="text-[10px] font-semibold text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded-full flex items-center gap-1 border border-amber-500/40">
-              <AlertCircle className="w-3 h-3 text-amber-400" />
-              Pending
-            </span>
-          )}
+        {/* Status Badges & Action Trigger */}
+        <div className="flex items-center justify-between sm:justify-end gap-2 shrink-0 w-full sm:w-auto">
+          <div className="flex items-center gap-1.5">
+            {article.is_reviewed ? (
+              <span className="text-[9px] sm:text-[10px] font-bold text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded-full flex items-center gap-1 border border-emerald-500/40">
+                <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                Reviewed
+              </span>
+            ) : (
+              <span className="text-[9px] sm:text-[10px] font-semibold text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded-full flex items-center gap-1 border border-amber-500/40">
+                <AlertCircle className="w-3 h-3 text-amber-400" />
+                Pending
+              </span>
+            )}
 
-          {article.is_alert_sent && (
-            <span className="text-[10px] font-bold text-blue-300 bg-blue-500/20 px-2 py-0.5 rounded-full flex items-center gap-1 border border-blue-500/40">
-              <Send className="w-2.5 h-2.5 text-blue-400" />
-              Alert Dispatched
-            </span>
-          )}
+            {article.is_alert_sent && (
+              <span className="text-[9px] sm:text-[10px] font-bold text-blue-300 bg-blue-500/20 px-2 py-0.5 rounded-full flex items-center gap-1 border border-blue-500/40">
+                <Send className="w-2.5 h-2.5 text-blue-400" />
+                Alerted
+              </span>
+            )}
+          </div>
 
           <div className="text-xs font-bold text-emerald-400 group-hover:text-emerald-300 flex items-center gap-0.5 pl-1 transition-colors">
             <span>Review Memo</span>

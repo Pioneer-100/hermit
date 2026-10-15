@@ -4,19 +4,12 @@ import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import ArticleDetailModal from '@/components/ArticleDetailModal';
 import { Article, AlertLog } from '@/types';
-import { INITIAL_ARTICLES, INITIAL_ALERTS } from '@/lib/mock-data';
 import { 
   ShieldAlert, 
-  Bell, 
   CheckCircle2, 
-  Send, 
   Clock, 
-  Building2, 
-  AlertTriangle,
-  Mail,
-  ExternalLink,
-  ChevronRight,
-  Sparkles
+  Mail, 
+  Sparkles 
 } from 'lucide-react';
 
 export default function AlertsPage() {
@@ -58,35 +51,35 @@ export default function AlertsPage() {
         alertCount={pendingCount}
       />
 
-      <main className="p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-6">
+      <main className="p-3.5 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-5 sm:space-y-6">
         {/* Banner with Green Aesthetic */}
-        <div className="bg-gradient-to-r from-[#072c1e]/90 via-[#0d422f]/90 to-[#072c1e]/90 text-white p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-5 shadow-2xl shadow-emerald-950/40 border border-emerald-500/30 backdrop-blur-md">
+        <div className="bg-gradient-to-r from-[#072c1e]/90 via-[#0d422f]/90 to-[#072c1e]/90 text-white p-4 sm:p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5 shadow-2xl shadow-emerald-950/40 border border-emerald-500/30 backdrop-blur-md">
           <div className="space-y-1.5 max-w-2xl">
             <div className="flex items-center gap-2 text-emerald-400 text-xs font-black uppercase tracking-wider">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
               Real-Time Push Escalations
             </div>
-            <h2 className="text-xl sm:text-2xl font-black">Executive Priority Escalation Queue</h2>
+            <h2 className="text-lg sm:text-2xl font-black">Executive Priority Escalation Queue</h2>
             <p className="text-xs sm:text-sm text-emerald-100/90 leading-relaxed">
               Every energy item scoring &ge; 75% relevance generates an immediate AI impact brief. Communications Officer signs off before automatic dispatch to Management inboxes.
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
-            <div className="bg-[#052216]/80 border border-emerald-400/30 p-3.5 px-5 rounded-xl text-center shadow-inner">
-              <div className="text-2xl sm:text-3xl font-black text-white">{articles.length}</div>
-              <div className="text-[10px] text-emerald-300 font-bold uppercase tracking-wider">High-Relevance Alerts</div>
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-3 w-full md:w-auto shrink-0">
+            <div className="bg-[#052216]/80 border border-emerald-400/30 p-3 sm:p-3.5 px-4 sm:px-5 rounded-xl text-center shadow-inner">
+              <div className="text-xl sm:text-3xl font-black text-white">{articles.length}</div>
+              <div className="text-[9px] sm:text-[10px] text-emerald-300 font-bold uppercase tracking-wider">High-Relevance</div>
             </div>
 
-            <div className="bg-[#052216]/80 border border-emerald-400/30 p-3.5 px-5 rounded-xl text-center shadow-inner">
-              <div className="text-2xl sm:text-3xl font-black text-amber-300">{pendingCount}</div>
-              <div className="text-[10px] text-amber-300 font-bold uppercase tracking-wider">Pending Sign-off</div>
+            <div className="bg-[#052216]/80 border border-emerald-400/30 p-3 sm:p-3.5 px-4 sm:px-5 rounded-xl text-center shadow-inner">
+              <div className="text-xl sm:text-3xl font-black text-amber-300">{pendingCount}</div>
+              <div className="text-[9px] sm:text-[10px] text-amber-300 font-bold uppercase tracking-wider">Pending Sign-off</div>
             </div>
           </div>
         </div>
 
         {/* 2-Column Split: Active Alerts & Email Dispatch Audit Trail */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
           
           {/* Left Column (7 cols): Active Priority Alerts */}
           <div className="lg:col-span-7 space-y-3.5">
@@ -102,22 +95,22 @@ export default function AlertsPage() {
               {articles.map((art) => (
                 <div
                   key={art.id}
-                  className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 hover:border-emerald-400/50 hover:bg-[#083525]/85 rounded-2xl p-5 shadow-xl transition-all border-l-4 border-l-rose-500 space-y-3 text-white"
+                  className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 hover:border-emerald-400/50 hover:bg-[#083525]/85 rounded-2xl p-4 sm:p-5 shadow-xl transition-all border-l-4 border-l-rose-500 space-y-2.5 sm:space-y-3 text-white"
                 >
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-emerald-200 bg-emerald-950/80 px-2.5 py-0.5 rounded-md border border-emerald-500/40">
+                  <div className="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="text-[11px] sm:text-xs font-bold text-emerald-200 bg-emerald-950/80 px-2 sm:px-2.5 py-0.5 rounded-md border border-emerald-500/40">
                         {art.source_name}
                       </span>
-                      <span className="px-2 py-0.5 text-[10px] font-black bg-rose-500/20 text-rose-300 rounded-full border border-rose-500/40">
+                      <span className="px-2 py-0.5 text-[9px] sm:text-[10px] font-black bg-rose-500/20 text-rose-300 rounded-full border border-rose-500/40">
                         {Math.round(art.relevance_score * 100)}% RELEVANCE
                       </span>
-                      <span className="px-2 py-0.5 text-[10px] font-bold bg-emerald-900/40 text-emerald-200 rounded-md border border-emerald-700/40 uppercase">
+                      <span className="px-2 py-0.5 text-[9px] sm:text-[10px] font-bold bg-emerald-900/40 text-emerald-200 rounded-md border border-emerald-700/40 uppercase">
                         {art.article_type.replace('_', ' ')}
                       </span>
                     </div>
 
-                    <span className="text-xs text-emerald-300/60 font-mono">
+                    <span className="text-[10px] sm:text-xs text-emerald-300/60 font-mono">
                       {new Date(art.captured_at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
@@ -134,11 +127,11 @@ export default function AlertsPage() {
                     <Sparkles className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
                     <div>
                       <span className="font-bold text-emerald-300">Executive Impact Note: </span>
-                      <span className="text-emerald-100/90 line-clamp-1">{art.relevance_to_hermit}</span>
+                      <span className="text-emerald-100/90 line-clamp-2 sm:line-clamp-1">{art.relevance_to_hermit}</span>
                     </div>
                   </div>
 
-                  <div className="pt-2 border-t border-emerald-900/40 flex flex-wrap items-center justify-between gap-2">
+                  <div className="pt-2 border-t border-emerald-900/40 flex flex-col xs:flex-row xs:items-center justify-between gap-2">
                     <div className="text-[11px]">
                       {art.is_reviewed ? (
                         <span className="text-emerald-300 font-bold flex items-center gap-1">
@@ -151,7 +144,7 @@ export default function AlertsPage() {
                       )}
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-end gap-2">
                       <a
                         href={art.source_link}
                         target="_blank"
@@ -163,7 +156,7 @@ export default function AlertsPage() {
 
                       <button
                         onClick={() => setSelectedArticle(art)}
-                        className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-1.5 rounded-xl transition-all shadow-md flex items-center gap-1.5"
+                        className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-1.5 rounded-xl transition-all shadow-md flex items-center gap-1.5 active:scale-95"
                       >
                         <ShieldAlert className="w-3.5 h-3.5 text-emerald-200" />
                         <span>Review & Escalate</span>
@@ -176,7 +169,7 @@ export default function AlertsPage() {
           </div>
 
           {/* Right Column (5 cols): Email Dispatch Audit Trail */}
-          <div className="lg:col-span-5 bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-5 shadow-xl space-y-4 text-white">
+          <div className="lg:col-span-5 bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3.5 sm:space-y-4 text-white">
             <div className="flex items-center justify-between border-b border-emerald-900/50 pb-3">
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-emerald-400" />

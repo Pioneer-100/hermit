@@ -11,11 +11,10 @@ import {
   Globe2, 
   Settings, 
   TrendingUp,
-  Sparkles,
   Zap,
-  Activity,
   ShieldCheck,
-  Users
+  Users,
+  LogOut
 } from 'lucide-react';
 import { useAuth } from '@/components/AuthContext';
 
@@ -31,6 +30,10 @@ const NAV_ITEMS = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+
+  if (pathname === '/login') {
+    return null;
+  }
 
   return (
     <aside className="w-64 bg-[#020e08]/70 backdrop-blur-xl text-slate-200 flex flex-col shrink-0 min-h-screen border-r border-emerald-500/20 shadow-2xl z-30 select-none">
@@ -128,8 +131,21 @@ export default function Sidebar() {
 }
 
 function UserProfileBar() {
-  const { currentUser, availableUsers, switchUser } = useAuth();
+  const { currentUser, availableUsers, switchUser, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+
+  if (!currentUser) {
+    return (
+      <div className="px-3 py-2 border-t border-emerald-500/20">
+        <Link
+          href="/login"
+          className="w-full flex items-center justify-center gap-2 p-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-all"
+        >
+          <span>Sign In to Hermit</span>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="px-3 py-2 border-t border-emerald-500/20 relative">
@@ -158,8 +174,9 @@ function UserProfileBar() {
       {/* Dropdown switch menu */}
       {isOpen && (
         <div className="absolute bottom-full left-3 right-3 mb-2 bg-[#03170e]/95 border border-emerald-500/35 rounded-xl shadow-2xl p-2 z-50 space-y-1 backdrop-blur-2xl">
-          <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-400 border-b border-emerald-900/50">
-            Switch Team Account
+          <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-400 border-b border-emerald-900/50 flex items-center justify-between">
+            <span>Switch Role / User</span>
+            <span className="text-[9px] text-emerald-300/60 font-mono">RBAC</span>
           </div>
           {availableUsers.map((u) => (
             <button
@@ -178,6 +195,19 @@ function UserProfileBar() {
               <span className="text-[10px] text-emerald-400/70">{u.title}</span>
             </button>
           ))}
+
+          <div className="pt-1.5 mt-1 border-t border-emerald-900/50">
+            <button
+              onClick={async () => {
+                setIsOpen(false);
+                await logout();
+              }}
+              className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-rose-300 hover:bg-rose-950/40 hover:text-rose-200 transition-colors"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Sign Out</span>
+            </button>
+          </div>
         </div>
       )}
     </div>

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { MONITORED_SOURCES, CATEGORY_LABELS } from '@/lib/sources';
-import { X, Play, Loader2, CheckCircle2, Sparkles, Zap, Radio } from 'lucide-react';
+import { X, Play, Loader2, CheckCircle2, Sparkles } from 'lucide-react';
 
 interface CrawlModalProps {
   isOpen: boolean;
@@ -40,39 +40,41 @@ export default function CrawlModal({ isOpen, onClose, onCrawlComplete }: CrawlMo
       } else {
         setResultMessage(data.error || 'Crawl failed to complete.');
       }
-    } catch (e: any) {
-      setResultMessage(e.message || 'Network error executing crawl');
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Network error executing crawl';
+      setResultMessage(msg);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 left-0 md:left-64 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-150">
+    <div className="fixed inset-0 left-0 md:left-64 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-150">
       <div className="bg-[#06261b]/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-emerald-500/30 w-full max-w-lg overflow-hidden text-white">
         
         {/* Header with Green Branding */}
-        <div className="bg-gradient-to-r from-[#072c1e]/95 via-[#0d422f]/95 to-[#072c1e]/95 text-white p-5 border-b border-emerald-500/30 flex items-center justify-between">
+        <div className="bg-gradient-to-r from-[#072c1e]/95 via-[#0d422f]/95 to-[#072c1e]/95 text-white p-4 sm:p-5 border-b border-emerald-500/30 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0">
               <Play className="w-4 h-4 fill-emerald-400 text-emerald-400" />
             </div>
             <div>
               <h3 className="font-extrabold text-white text-sm">Trigger Live Web Crawl</h3>
-              <p className="text-xs text-emerald-200/70">Poll energy portal & classify through Gemini AI</p>
+              <p className="text-[11px] sm:text-xs text-emerald-200/70">Poll energy portal & classify through Gemini AI</p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-emerald-300 hover:text-white hover:bg-emerald-800/60 transition-colors"
+            className="p-1.5 rounded-xl text-emerald-300 hover:text-white hover:bg-emerald-800/60 transition-colors"
+            aria-label="Close modal"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Form Body */}
-        <div className="p-6 space-y-4 bg-[#041a11]/90 text-white">
+        <div className="p-4 sm:p-6 space-y-3.5 sm:space-y-4 bg-[#041a11]/90 text-white">
           <div>
             <label className="block text-xs font-bold text-emerald-300 uppercase tracking-wider mb-1.5">
               Category Filter
@@ -106,7 +108,7 @@ export default function CrawlModal({ isOpen, onClose, onCrawlComplete }: CrawlMo
             </select>
           </div>
 
-          <div className="bg-[#03170e]/90 p-3.5 rounded-xl border border-emerald-500/30 text-xs text-emerald-100 leading-relaxed space-y-1">
+          <div className="bg-[#03170e]/90 p-3 sm:p-3.5 rounded-xl border border-emerald-500/30 text-xs text-emerald-100 leading-relaxed space-y-1">
             <div className="flex items-center gap-1.5 font-bold text-emerald-300">
               <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
               <span>Pipeline Stages:</span>
@@ -129,17 +131,17 @@ export default function CrawlModal({ isOpen, onClose, onCrawlComplete }: CrawlMo
         </div>
 
         {/* Footer */}
-        <div className="bg-[#051c14] border-t border-emerald-900/50 p-4 px-6 flex items-center justify-end gap-3">
+        <div className="bg-[#051c14] border-t border-emerald-900/50 p-3.5 sm:p-4 px-4 sm:px-6 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-xl text-xs font-semibold text-emerald-300 hover:text-white hover:bg-[#072418] transition-colors"
+            className="w-full sm:w-auto text-center px-4 py-2.5 sm:py-2 rounded-xl text-xs font-semibold text-emerald-300 hover:text-white hover:bg-[#072418] transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleCrawl}
             disabled={isLoading}
-            className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white px-5 py-2 rounded-xl text-xs font-black flex items-center gap-2 transition-all shadow-md shadow-emerald-950/40 disabled:opacity-50"
+            className="w-full sm:w-auto text-center justify-center bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white px-5 py-2.5 sm:py-2 rounded-xl text-xs font-black flex items-center gap-2 transition-all shadow-md shadow-emerald-950/40 disabled:opacity-50 active:scale-98"
           >
             {isLoading ? (
               <>

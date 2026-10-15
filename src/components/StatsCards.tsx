@@ -1,7 +1,7 @@
 'use client';
 
 import { DashboardStats } from '@/types';
-import { Layers, AlertTriangle, Clock, Globe2, TrendingUp, CheckCircle2 } from 'lucide-react';
+import { Layers, AlertTriangle, Clock, Globe2 } from 'lucide-react';
 
 interface StatsCardsProps {
   stats: DashboardStats;
@@ -13,7 +13,6 @@ export default function StatsCards({ stats }: StatsCardsProps) {
       title: 'Daily Media Captures',
       value: stats.capturedToday,
       subtext: '+28% vs 7-day average',
-      trend: 'up',
       icon: Layers,
       accentBorder: 'border-l-4 border-l-emerald-400',
       iconBg: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
@@ -23,7 +22,6 @@ export default function StatsCards({ stats }: StatsCardsProps) {
       title: 'High-Relevance Flags',
       value: stats.highRelevanceFlags,
       subtext: 'Relevance score ≥ 75%',
-      trend: 'alert',
       icon: AlertTriangle,
       accentBorder: 'border-l-4 border-l-rose-500',
       iconBg: 'bg-rose-500/20 text-rose-300 border-rose-500/30',
@@ -33,7 +31,6 @@ export default function StatsCards({ stats }: StatsCardsProps) {
       title: 'Pending Executive Review',
       value: stats.pendingReview,
       subtext: 'Awaiting Comms sign-off',
-      trend: 'pending',
       icon: Clock,
       accentBorder: 'border-l-4 border-l-amber-400',
       iconBg: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
@@ -43,7 +40,6 @@ export default function StatsCards({ stats }: StatsCardsProps) {
       title: 'Monitored Portals',
       value: `${stats.sourcesMonitored}+`,
       subtext: 'Across 7 ToR categories',
-      trend: 'stable',
       icon: Globe2,
       accentBorder: 'border-l-4 border-l-emerald-400',
       iconBg: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
@@ -52,33 +48,33 @@ export default function StatsCards({ stats }: StatsCardsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
       {cards.map((c, idx) => {
         const Icon = c.icon;
         return (
           <div
             key={idx}
-            className={`bg-[#06291b]/70 backdrop-blur-md rounded-xl p-4 sm:p-4.5 shadow-lg border border-emerald-500/25 hover:border-emerald-400/50 hover:bg-[#083624]/80 transition-all ${c.accentBorder} flex flex-col justify-between`}
+            className={`bg-[#06291b]/70 backdrop-blur-md rounded-2xl p-3 sm:p-4.5 shadow-lg border border-emerald-500/25 hover:border-emerald-400/50 hover:bg-[#083624]/80 transition-all ${c.accentBorder} flex flex-col justify-between`}
           >
-            <div className="flex items-center justify-between gap-2 mb-2">
-              <span className="text-[11px] font-bold text-emerald-300/80 uppercase tracking-wider truncate">
+            <div className="flex items-center justify-between gap-1.5 mb-1.5">
+              <span className="text-[10px] sm:text-[11px] font-bold text-emerald-300/80 uppercase tracking-wider truncate">
                 {c.title}
               </span>
-              <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border ${c.iconBg}`}>
-                <Icon className="w-3.5 h-3.5" />
+              <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-lg flex items-center justify-center shrink-0 border ${c.iconBg}`}>
+                <Icon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               </div>
             </div>
 
-            <div className="flex items-baseline justify-between gap-2 mt-0.5">
-              <div className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            <div className="flex flex-col xs:flex-row items-start xs:items-baseline justify-between gap-1 mt-0.5">
+              <div className="text-xl sm:text-3xl font-black text-white tracking-tight">
                 {c.value}
               </div>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950/70 text-emerald-300 border border-emerald-500/30 shrink-0">
+              <span className="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-emerald-950/70 text-emerald-300 border border-emerald-500/30 shrink-0">
                 {c.badge}
               </span>
             </div>
 
-            <div className="text-[11px] text-emerald-200/70 font-medium mt-2 pt-2 border-t border-emerald-900/40 flex items-center justify-between">
+            <div className="text-[10px] sm:text-[11px] text-emerald-200/70 font-medium mt-2 pt-1.5 sm:pt-2 border-t border-emerald-900/40 flex items-center justify-between">
               <span className="truncate">{c.subtext}</span>
             </div>
           </div>

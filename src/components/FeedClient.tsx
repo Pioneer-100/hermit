@@ -9,16 +9,12 @@ import { Article } from '@/types';
 import { 
   Search, 
   Filter, 
-  RefreshCw, 
   SlidersHorizontal, 
-  Layers, 
   CheckCircle2, 
   ShieldAlert, 
   Clock, 
   TrendingUp, 
-  ChevronRight, 
-  Zap, 
-  Radio 
+  ChevronRight
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -30,7 +26,6 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
   const [articles, setArticles] = useState<Article[]>(initialArticles);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [isCrawlModalOpen, setIsCrawlModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState('');
@@ -39,7 +34,6 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
   const [onlyUnreviewed, setOnlyUnreviewed] = useState(false);
 
   const loadArticles = async () => {
-    setIsLoading(true);
     try {
       const res = await fetch('/api/articles');
       if (res.ok) {
@@ -48,8 +42,6 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
       }
     } catch (e) {
       console.warn(e);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -110,16 +102,16 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
         alertCount={pendingCount}
       />
 
-      <main className="p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-5">
+      <main className="p-3.5 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-5">
         
         {/* Top Cockpit 2-Column Packed Grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
           
           {/* Left Column (8 cols): Packed Curated Feed */}
           <div className="lg:col-span-8 space-y-4">
             
             {/* Search & Filter Control Bar (Sticky on Scroll) */}
-            <div className="sticky top-[69px] z-20 bg-[#06261b]/80 backdrop-blur-md border border-emerald-500/30 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3.5">
+            <div className="sticky top-14 sm:top-[69px] z-20 bg-[#06261b]/85 backdrop-blur-md border border-emerald-500/30 rounded-2xl p-3.5 sm:p-5 shadow-xl space-y-3">
               {/* Search Input & Category Dropdown */}
               <div className="flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center justify-between">
                 {/* Search Input */}
@@ -129,7 +121,7 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search by keywords, quoted stakeholders (e.g. ZERA, Kariba, AfDB, solar, tariff)..."
+                    placeholder="Search by keywords, quoted stakeholders (e.g. ZERA, Kariba, AfDB)..."
                     className="w-full pl-9 pr-4 py-2 text-xs border border-emerald-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-[#03170e]/80 text-white placeholder:text-emerald-300/50 font-medium"
                   />
                   {searchQuery && (
@@ -160,7 +152,7 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
               </div>
 
               {/* Secondary Filter Badges */}
-              <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-emerald-900/40 text-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-2 border-t border-emerald-900/40 text-xs">
                 <div className="flex flex-wrap items-center gap-1.5">
                   <span className="text-[11px] font-bold text-emerald-300/80 flex items-center gap-1 mr-1">
                     <Filter className="w-3 h-3 text-emerald-400" />
@@ -171,7 +163,7 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
                     <button
                       key={lvl}
                       onClick={() => setSelectedRelevance(lvl)}
-                      className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-colors ${
+                      className={`px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all active:scale-95 ${
                         selectedRelevance === lvl
                           ? lvl === 'high'
                             ? 'bg-rose-500 text-white shadow-sm'
@@ -181,15 +173,15 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
                           : 'bg-[#041a12] text-emerald-200/80 hover:bg-[#083525] border border-emerald-900/50'
                       }`}
                     >
-                      {lvl === 'all' ? 'All (100%)' : lvl.toUpperCase()}
+                      {lvl === 'all' ? 'All' : lvl.toUpperCase()}
                     </button>
                   ))}
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
                   <button
                     onClick={() => setOnlyUnreviewed(!onlyUnreviewed)}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-colors flex items-center gap-1.5 ${
+                    className={`px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold border transition-colors flex items-center gap-1.5 active:scale-95 ${
                       onlyUnreviewed
                         ? 'bg-amber-500/20 text-amber-300 border-amber-400/50'
                         : 'bg-[#041a12] text-emerald-200/80 hover:bg-[#083525] border-emerald-900/50'
@@ -199,8 +191,8 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
                     <span>Unreviewed ({pendingCount})</span>
                   </button>
 
-                  <span className="text-emerald-300/70 font-mono text-[11px] font-bold">
-                    Showing {filtered.length} of {articles.length}
+                  <span className="text-emerald-300/70 font-mono text-[10px] sm:text-[11px] font-bold">
+                    {filtered.length} of {articles.length} items
                   </span>
                 </div>
               </div>
@@ -209,7 +201,7 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
             {/* Articles Stream */}
             <div className="space-y-3">
               {filtered.length === 0 ? (
-                <div className="bg-[#06261b]/70 backdrop-blur-md rounded-2xl border border-emerald-500/20 p-12 text-center text-emerald-200/70 text-xs space-y-3">
+                <div className="bg-[#06261b]/70 backdrop-blur-md rounded-2xl border border-emerald-500/20 p-8 sm:p-12 text-center text-emerald-200/70 text-xs space-y-3">
                   <SlidersHorizontal className="w-8 h-8 text-emerald-400/60 mx-auto" />
                   <p className="font-bold text-white text-sm">No media captures match active filters</p>
                   <p>Try broadening your search keywords or resetting relevance filter pills.</p>
@@ -232,7 +224,7 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
           <div className="lg:col-span-4 space-y-4">
             
             {/* Widget 1: Priority Escalation Queue */}
-            <div className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-5 shadow-xl space-y-3.5 text-white">
+            <div className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3 text-white">
               <div className="flex items-center justify-between pb-3 border-b border-emerald-900/50">
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/40 flex items-center justify-center">
@@ -255,7 +247,7 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
                   <div
                     key={art.id}
                     onClick={() => setSelectedArticle(art)}
-                    className="p-3 rounded-xl bg-[#041a12]/80 hover:bg-[#073020]/90 border border-emerald-500/20 hover:border-emerald-400/40 transition-all cursor-pointer space-y-1.5 border-l-4 border-l-rose-500 text-white"
+                    className="p-3 rounded-xl bg-[#041a12]/80 hover:bg-[#073020]/90 border border-emerald-500/20 hover:border-emerald-400/40 transition-all cursor-pointer space-y-1.5 border-l-4 border-l-rose-500 text-white active:scale-99"
                   >
                     <div className="flex items-center justify-between text-[10px]">
                       <span className="font-bold text-emerald-300 bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-500/30">
@@ -298,7 +290,7 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
             </div>
 
             {/* Widget 2: Energy Sector Intelligence Radar */}
-            <div className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-5 shadow-xl space-y-3.5 text-white">
+            <div className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3.5 text-white">
               <div className="flex items-center gap-2 pb-3 border-b border-emerald-900/50">
                 <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center justify-center">
                   <TrendingUp className="w-3.5 h-3.5" />
@@ -365,7 +357,7 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
             </div>
 
             {/* Widget 3: Live Surveillance Engine Card */}
-            <div className="bg-gradient-to-br from-[#072c1e]/85 to-[#041a12]/90 border border-emerald-500/30 rounded-2xl p-5 text-white shadow-xl space-y-3">
+            <div className="bg-gradient-to-br from-[#072c1e]/85 to-[#041a12]/90 border border-emerald-500/30 rounded-2xl p-4 sm:p-5 text-white shadow-xl space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
