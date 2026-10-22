@@ -32,7 +32,7 @@ export default function Header({
   });
 
   return (
-    <header className="bg-[#072c1e]/75 backdrop-blur-xl border-b border-emerald-400/30 px-3.5 sm:px-8 py-2.5 sm:py-3.5 flex items-center justify-between sticky top-0 z-20 shadow-md shadow-emerald-950/20">
+    <header className="bg-[#083825]/55 backdrop-blur-2xl border-b border-emerald-400/25 px-3.5 sm:px-8 py-2.5 sm:py-3.5 flex items-center justify-between sticky top-0 z-20 shadow-md shadow-emerald-950/20">
       {/* Title & Context */}
       <div className="flex items-center gap-3 min-w-0 mr-2">
         <div className="min-w-0">
@@ -47,7 +47,7 @@ export default function Header({
           </div>
 
           <p className="text-xs sm:text-xs text-emerald-300/70 mt-0.5 truncate flex items-center gap-2">
-            <span>{subtitle || `${currentDate} · 70+ Portals Tracked`}</span>
+            <span>{subtitle || `${currentDate} · 55 Clean Portals Tracked`}</span>
           </p>
         </div>
       </div>

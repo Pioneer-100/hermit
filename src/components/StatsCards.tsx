@@ -38,8 +38,8 @@ export default function StatsCards({ stats }: StatsCardsProps) {
     },
     {
       title: 'Monitored Portals',
-      value: `${stats.sourcesMonitored}+`,
-      subtext: 'Across 7 ToR categories',
+      value: stats.sourcesMonitored || 55,
+      subtext: 'Across 6 Clean Pillars',
       icon: Globe2,
       accentBorder: 'border-l-4 border-l-emerald-400',
       iconBg: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
@@ -54,7 +54,7 @@ export default function StatsCards({ stats }: StatsCardsProps) {
         return (
           <div
             key={idx}
-            className={`bg-[#06291b]/70 backdrop-blur-md rounded-2xl p-3 sm:p-4.5 shadow-lg border border-emerald-500/25 hover:border-emerald-400/50 hover:bg-[#083624]/80 transition-all ${c.accentBorder} flex flex-col justify-between`}
+            className={`bg-[#083825]/45 backdrop-blur-xl rounded-2xl p-3 sm:p-4.5 shadow-lg border border-emerald-400/25 hover:border-emerald-300/40 hover:bg-[#0d4f34]/60 transition-all ${c.accentBorder} flex flex-col justify-between`}
           >
             <div className="flex items-center justify-between gap-1.5 mb-1.5">
               <span className="text-[10px] sm:text-xs font-bold text-emerald-300/80 uppercase tracking-wider truncate">

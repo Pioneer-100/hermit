@@ -47,8 +47,8 @@ export default function SourcesPage() {
   return (
     <div className="flex-1 flex flex-col min-h-screen bg-transparent">
       <Header
-        title="Source Coverage Directory"
-        subtitle="70+ Energy Sector Portals Organized into 7 ToR Categories (Section 3.4)"
+        title="Clean Energy Source Directory"
+        subtitle="55 Curated Portals Across 6 Clean Energy Intelligence Pillars"
         onTriggerCrawl={() => setIsCrawlModalOpen(true)}
       />
 
@@ -71,24 +71,24 @@ export default function SourcesPage() {
         )}
 
         {/* Filter Bar */}
-        <div className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-3.5 sm:p-4 shadow-xl flex flex-col md:flex-row gap-2.5 sm:gap-3 items-stretch md:items-center justify-between text-white">
+        <div className="bg-[#083825]/45 backdrop-blur-xl border border-emerald-400/25 rounded-2xl p-3.5 sm:p-4 shadow-xl flex flex-col md:flex-row gap-2.5 sm:gap-3 items-stretch md:items-center justify-between text-white">
           <div className="relative flex-1">
             <Search className="w-4 h-4 text-emerald-400/80 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search portal by name or description (ZERA, AfDB, Herald, REF, SAPP)..."
-              className="w-full pl-10 pr-4 py-2 text-xs border border-emerald-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-[#03170e]/80 text-white placeholder:text-emerald-300/50 font-medium"
+              placeholder="Search clean energy portal (ZERA, AfDB, SEFA, Mining Weekly, ZRA, SAPP)..."
+              className="w-full pl-10 pr-4 py-2 text-xs border border-emerald-400/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-[#052618]/50 text-white placeholder:text-emerald-300/60 font-medium"
             />
           </div>
 
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="text-xs border border-emerald-500/30 rounded-xl px-3.5 py-2 bg-[#041a12] text-emerald-100 font-bold focus:outline-none focus:ring-2 focus:ring-emerald-400"
+            className="text-xs border border-emerald-400/30 rounded-xl px-3.5 py-2 bg-[#052618]/60 text-emerald-100 font-bold focus:outline-none focus:ring-2 focus:ring-emerald-400"
           >
-            <option value="all">All 7 ToR Categories ({MONITORED_SOURCES.length})</option>
+            <option value="all">All 6 Clean Pillars ({MONITORED_SOURCES.length} Portals)</option>
             {Object.entries(CATEGORY_LABELS).map(([catKey, label]) => {
               const count = MONITORED_SOURCES.filter(s => s.category === catKey).length;
               return (
@@ -105,7 +105,7 @@ export default function SourcesPage() {
             return (
               <div
                 key={source.id}
-                className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 hover:border-emerald-400/50 hover:bg-[#083525]/85 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col justify-between gap-3 transition-all text-white"
+                className="bg-[#083825]/45 backdrop-blur-xl border border-emerald-400/25 hover:border-emerald-300/40 hover:bg-[#0d4f34]/60 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col justify-between gap-3 transition-all text-white"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-2">

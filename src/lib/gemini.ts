@@ -1,4 +1,24 @@
 import { ArticleType, RelevanceLevel } from '@/types';
+import { z } from 'zod';
+
+const GeminiResponseSchema = z.object({
+  article_type: z.enum([
+    'tariff_change',
+    'new_regulation',
+    'funding_announcement',
+    'project_update',
+    'policy_change',
+    'partnership',
+    'general'
+  ]).default('general'),
+  relevance_score: z.coerce.number().min(0).max(1).default(0.7),
+  relevance_level: z.enum(['high', 'medium', 'low']).default('medium'),
+  relevance_to_hermit: z.string().default('Relevant to Zimbabwe energy sector developments.'),
+  key_stakeholders: z.array(z.string()).default([]),
+  ai_summary: z.string().default(''),
+  ai_impact_note: z.string().default(''),
+  suggested_actions: z.array(z.string()).default([])
+});
 
 interface GeminiAnalysisResult {
   article_type: ArticleType;
@@ -68,17 +88,24 @@ Analyze the strategic implications and return ONLY a valid JSON object with thes
           const data = await response.json();
           const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
           if (text) {
-            const parsed = JSON.parse(text);
-            return {
-              article_type: parsed.article_type || 'general',
-              relevance_score: Number(parsed.relevance_score) || 0.7,
-              relevance_level: parsed.relevance_level || 'medium',
-              relevance_to_hermit: parsed.relevance_to_hermit || 'Relevant to Zimbabwe energy sector developments.',
-              key_stakeholders: Array.isArray(parsed.key_stakeholders) ? parsed.key_stakeholders : [sourceName],
-              ai_summary: parsed.ai_summary || headline,
-              ai_impact_note: parsed.ai_impact_note || 'Monitor further implementation announcements.',
-              suggested_actions: Array.isArray(parsed.suggested_actions) ? parsed.suggested_actions : ['Review with communications team']
-            };
+            // Remove markdown code fences if model enclosed JSON
+            const cleanText = text.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
+            const rawJson = JSON.parse(cleanText);
+            const validated = GeminiResponseSchema.safeParse(rawJson);
+            
+            if (validated.success) {
+              const parsed = validated.data;
+              return {
+                article_type: parsed.article_type,
+                relevance_score: parsed.relevance_score,
+                relevance_level: parsed.relevance_level,
+                relevance_to_hermit: parsed.relevance_to_hermit,
+                key_stakeholders: parsed.key_stakeholders.length > 0 ? parsed.key_stakeholders : [sourceName],
+                ai_summary: parsed.ai_summary || headline,
+                ai_impact_note: parsed.ai_impact_note || 'Monitor further implementation announcements.',
+                suggested_actions: parsed.suggested_actions.length > 0 ? parsed.suggested_actions : ['Review with communications team']
+              };
+            }
           }
         }
       } catch (err) {

@@ -7,8 +7,10 @@ import ArticleCard from '@/components/ArticleCard';
 import ArticleDetailModal from '@/components/ArticleDetailModal';
 import CrawlModal from '@/components/CrawlModal';
 import ExecutiveDailyBrief from '@/components/ExecutiveDailyBrief';
+import CleanEnergyPipelineDashboard from '@/components/CleanEnergyPipelineDashboard';
 import { Article, DashboardStats, DailyBrief } from '@/types';
 import { INITIAL_HERMIT_PROJECTS } from '@/lib/users-and-projects';
+import { getSupabaseClient } from '@/lib/supabase';
 import { 
   Search, 
   Radio, 
@@ -72,7 +74,16 @@ export default function DashboardClient({
   const handleRegenerateBrief = async () => {
     setIsRegeneratingBrief(true);
     try {
-      const res = await fetch('/api/daily-brief', { method: 'POST' });
+      let token = '';
+      const sb = getSupabaseClient();
+      if (sb) {
+        const { data } = await sb.auth.getSession();
+        token = data.session?.access_token || '';
+      }
+      const headers: Record<string, string> = {};
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      const res = await fetch('/api/daily-brief', { method: 'POST', headers });
       if (res.ok) {
         const data = await res.json();
         if (data.brief) setDailyBrief(data.brief);
@@ -143,7 +154,7 @@ export default function DashboardClient({
       {/* Header Bar - Completely Dynamic Daily Report Title */}
       <Header
         title={`Daily Energy Intelligence Brief — ${dailyBrief.date}`}
-        subtitle={`What's Up Today • Synthesized across ${dailyBrief.total_articles_scanned} captures from 70+ portals`}
+        subtitle={`What's Up Today • Synthesized across ${dailyBrief.total_articles_scanned} captures from 55 Clean Energy Portals (6 Pillars)`}
         onRefresh={loadData}
         onTriggerCrawl={() => setIsCrawlModalOpen(true)}
         alertCount={pendingCount}
@@ -152,9 +163,9 @@ export default function DashboardClient({
       <main className="p-3.5 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-5 sm:space-y-6">
         
         {/* Executive Mode Selector & Status Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#06261b]/75 backdrop-blur-md p-3 sm:p-4 rounded-2xl border border-emerald-500/25 shadow-lg">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#083825]/45 backdrop-blur-xl p-3 sm:p-4 rounded-2xl border border-emerald-400/25 shadow-lg">
           {/* View Mode Switcher Pills */}
-          <div className="flex items-center gap-1.5 sm:gap-2 bg-[#041a12]/80 p-1 rounded-xl border border-emerald-900/50 w-full sm:w-auto">
+          <div className="flex items-center gap-1.5 sm:gap-2 bg-[#052618]/50 p-1 rounded-xl border border-emerald-500/20 w-full sm:w-auto">
             <button
               onClick={() => setViewMode('brief')}
               className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs font-bold transition-all active:scale-95 ${
@@ -188,7 +199,7 @@ export default function DashboardClient({
 
           {/* Quick Info & Direct Jump */}
           <div className="flex items-center justify-between sm:justify-end gap-3 text-xs text-emerald-300/80 font-medium">
-            <span className="hidden md:inline">Continuous cycle active across <strong className="text-white">70+ portals</strong></span>
+            <span className="hidden md:inline">Continuous clean surveillance active across <strong className="text-white">55 portals (6 Pillars)</strong></span>
             <span className="hidden md:inline">&bull;</span>
             <button
               onClick={() => setIsCrawlModalOpen(true)}
@@ -216,90 +227,12 @@ export default function DashboardClient({
               reviewedArticleIds={articles.filter(a => a.is_reviewed).map(a => a.id)}
             />
 
-            {/* Asset & Project Pipeline Intelligence Tracker */}
-            <div className="bg-[#06261b]/75 backdrop-blur-md rounded-2xl border border-emerald-500/25 p-4 sm:p-6 shadow-xl space-y-3.5 sm:space-y-4 text-white">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-900/50 pb-3">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center justify-center shrink-0">
-                    <FolderKanban className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-black uppercase tracking-wider text-white flex flex-wrap items-center gap-1.5 sm:gap-2">
-                      <span>Hermit Asset & Project Pipeline Intelligence</span>
-                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-emerald-500/30 text-emerald-300 border border-emerald-500/40">
-                        {INITIAL_HERMIT_PROJECTS.length} Assets Tracked
-                      </span>
-                    </h3>
-                    <p className="text-[11px] text-emerald-200/70">
-                      Real-time cross-referencing between today&apos;s captures and Hermit&apos;s renewable energy project portfolio
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                  <Link
-                    href="/alerts"
-                    className="text-xs font-bold text-amber-300 hover:text-amber-200 flex items-center gap-1 bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/30 active:scale-95"
-                  >
-                    <Clock className="w-3 h-3 text-amber-400" />
-                    <span>Dedicated Alerts ({pendingCount})</span>
-                  </Link>
-
-                  <button
-                    onClick={() => setViewMode('feed')}
-                    className="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 active:scale-95"
-                  >
-                    <span>Raw Stream</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Grid of Hermit Project Assets and their tailored intelligence impact */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4">
-                {INITIAL_HERMIT_PROJECTS.map((proj) => {
-                  const matchedImpact = proj.id === 1
-                    ? "ZERA tariff consultation window opens; potential 8-12% baseline margin impact unless paired with BESS incentives."
-                    : proj.id === 2
-                    ? "AfDB $40M regional de-risking window active; qualified for concessional debt under SEFA facility."
-                    : "Kariba hydro storage at 11.4% heightens urgency for small hydro peaking & mini-grid delivery.";
-
-                  return (
-                    <div
-                      key={proj.id}
-                      className="p-4 rounded-xl bg-[#041a12]/80 hover:bg-[#073020]/90 border border-emerald-500/20 hover:border-emerald-400/40 transition-all flex flex-col justify-between gap-3 text-white"
-                    >
-                      <div>
-                        <div className="flex items-center justify-between gap-2 mb-1.5">
-                          <span className="text-[10px] font-black uppercase text-emerald-300 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-500/30">
-                            {proj.technology} &bull; {proj.capacity_mw} MW
-                          </span>
-                          <span className="text-[10px] font-mono text-emerald-400/80 font-bold">
-                            {proj.location}
-                          </span>
-                        </div>
-
-                        <h4 className="text-xs sm:text-sm font-bold text-white leading-snug">
-                          {proj.name}
-                        </h4>
-
-                        <div className="mt-2.5 p-2.5 rounded-lg bg-[#02130c]/90 border border-emerald-900/60 text-[11px] text-emerald-100/90 leading-relaxed">
-                          <span className="font-bold text-emerald-400 block mb-0.5">Today&apos;s Portfolio Exposure:</span>
-                          {matchedImpact}
-                        </div>
-                      </div>
-
-                      <div className="pt-2 border-t border-emerald-900/40 flex items-center justify-between text-[11px] text-emerald-300/70">
-                        <span className="truncate">Lead: <strong className="text-white">{proj.lead_manager}</strong></span>
-                        <span className="text-[10px] uppercase font-bold text-emerald-400 px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30">
-                          {proj.status}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            {/* Clean Energy Asset & Pipeline Intelligence Tracker */}
+            <CleanEnergyPipelineDashboard
+              projects={INITIAL_HERMIT_PROJECTS}
+              articles={articles}
+              onSelectArticleById={handleSelectArticleById}
+            />
           </div>
         )}
 
@@ -307,7 +240,7 @@ export default function DashboardClient({
         {viewMode === 'feed' && (
           <div className="space-y-4">
             {/* Filter controls */}
-            <div className="bg-[#06261b]/80 backdrop-blur-md border border-emerald-500/30 rounded-2xl p-3.5 sm:p-4 shadow-xl flex flex-col gap-3 text-white">
+            <div className="bg-[#083825]/45 backdrop-blur-xl border border-emerald-400/25 rounded-2xl p-3.5 sm:p-4 shadow-xl flex flex-col gap-3 text-white">
               <div className="relative w-full">
                 <Search className="w-4 h-4 text-emerald-400/80 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
@@ -315,7 +248,7 @@ export default function DashboardClient({
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Filter captures by headline, stakeholder, or keyword..."
-                  className="w-full pl-9 pr-4 py-2 text-xs border border-emerald-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-[#03170e]/80 text-white placeholder:text-emerald-300/50 font-medium"
+                  className="w-full pl-9 pr-4 py-2 text-xs border border-emerald-400/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-[#052618]/50 text-white placeholder:text-emerald-300/60 font-medium"
                 />
               </div>
 

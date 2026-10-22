@@ -55,7 +55,7 @@ export default function ArticleCard({
   return (
     <div
       onClick={() => onClick(article)}
-      className={`group bg-[#06261b]/70 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 shadow-lg hover:shadow-xl border border-emerald-500/25 hover:border-emerald-400/50 hover:bg-[#083525]/80 transition-all duration-150 cursor-pointer ${borderLeftClass} flex flex-col justify-between gap-2.5 sm:gap-3`}
+      className={`group bg-[#083825]/45 backdrop-blur-xl rounded-2xl p-3.5 sm:p-5 shadow-lg hover:shadow-xl border border-emerald-400/25 hover:border-emerald-300/40 hover:bg-[#0d4f34]/60 transition-all duration-150 cursor-pointer ${borderLeftClass} flex flex-col justify-between gap-2.5 sm:gap-3`}
     >
       {/* Top Meta Header */}
       <div className="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2">
@@ -126,7 +126,7 @@ export default function ArticleCard({
       {/* Hermit Commercial Implication & Action Bar - Fully responsive wrapping */}
       <div className="pt-2 sm:pt-2.5 border-t border-emerald-900/40 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         {/* Relevance to Hermit Snippet */}
-        <div className="flex items-center gap-1.5 text-xs sm:text-xs text-emerald-100 bg-[#041a12]/85 border border-emerald-500/30 px-2.5 py-1 rounded-xl w-full sm:max-w-xl truncate">
+        <div className="flex items-center gap-1.5 text-xs sm:text-xs text-emerald-100 bg-[#052618]/55 border border-emerald-400/25 px-2.5 py-1 rounded-xl w-full sm:max-w-xl truncate">
           <Sparkles className="w-3 h-3 text-emerald-400 shrink-0" />
           <span className="font-bold text-emerald-300 shrink-0">Hermit Focus:</span>
           <span className="truncate text-emerald-100/90">

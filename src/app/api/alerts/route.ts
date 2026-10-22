@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { fetchAlerts, insertAlertLog, fetchArticleById, getSupabaseAdminClient } from '@/lib/supabase';
 import { sendEmailAlert } from '@/lib/email-service';
+import { AlertDispatchSchema } from '@/lib/schemas';
+import { authenticateApiRequest } from '@/lib/api-auth';
+import { checkRateLimit } from '@/lib/rate-limiter';
 
 // In-memory rate limiting and deduplication cache (10 minutes cooldown per article)
 const recentDispatches = new Map<number, number>();
@@ -12,12 +15,26 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const articleId = Number(body.articleId);
-
-    if (!articleId || isNaN(articleId) || articleId <= 0) {
-      return NextResponse.json({ error: 'Valid articleId is required' }, { status: 400 });
+    const auth = await authenticateApiRequest(req);
+    if (!auth.isAuthenticated) {
+      return NextResponse.json({ error: auth.error || 'Unauthorized' }, { status: 401 });
     }
+
+    const clientId = auth.user?.id || req.headers.get('x-forwarded-for') || '127.0.0.1';
+    const rate = checkRateLimit(`alert_dispatch_${clientId}`, 20, 0.2);
+    if (!rate.allowed) {
+      return NextResponse.json(
+        { error: 'Alert dispatch rate limit exceeded.' },
+        { status: 429, headers: { 'Retry-After': String(rate.resetSeconds) } }
+      );
+    }
+
+    const body = await req.json();
+    const parsed = AlertDispatchSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Valid articleId is required', details: parsed.error.issues }, { status: 400 });
+    }
+    const articleId = parsed.data.articleId;
 
     const lastSent = recentDispatches.get(articleId);
     const now = Date.now();

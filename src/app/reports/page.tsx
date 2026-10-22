@@ -5,6 +5,7 @@ import Header from '@/components/Header';
 import { Report } from '@/types';
 import { FileText, Plus, CheckCircle, Calendar, Sparkles, Zap, Printer, BookOpen, Archive } from 'lucide-react';
 import { INITIAL_REPORTS } from '@/lib/mock-data';
+import { getSupabaseClient } from '@/lib/supabase';
 
 export default function ReportsPage() {
   const [reports, setReports] = useState<Report[]>(INITIAL_REPORTS);
@@ -39,9 +40,19 @@ export default function ReportsPage() {
   const handleGenerate = async () => {
     setIsGenerating(true);
     try {
+      let token = '';
+      const sb = getSupabaseClient();
+      if (sb) {
+        const { data } = await sb.auth.getSession();
+        token = data.session?.access_token || '';
+      }
+
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
       const res = await fetch('/api/reports', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ report_type: reportTypeToGen })
       });
       if (res.ok) {

@@ -1,29 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { crawlSource, CrawlResult } from '@/lib/crawler-service';
 import { MONITORED_SOURCES } from '@/lib/sources';
+import { CrawlRequestSchema } from '@/lib/schemas';
+import crypto from 'crypto';
+
+function safeCompare(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));
+}
 
 function verifyAuthorization(req: NextRequest): boolean {
   const cronSecret = process.env.CRON_SECRET;
-  // If no CRON_SECRET is configured or placeholder is present, allow in dev/demo mode
+  const isProduction = process.env.NODE_ENV === 'production';
+
+  // In production, CRON_SECRET must be explicitly set and not use default dev placeholders
   if (!cronSecret || cronSecret.includes('...') || cronSecret === 'hermit_super_secret_cron_token_2026') {
-    return true;
+    return !isProduction;
   }
 
   const authHeader = req.headers.get('authorization');
-  if (authHeader === `Bearer ${cronSecret}`) {
-    return true;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.substring(7);
+    if (safeCompare(token, cronSecret)) {
+      return true;
+    }
   }
 
   const { searchParams } = new URL(req.url);
-  if (searchParams.get('secret') === cronSecret || searchParams.get('token') === cronSecret) {
+  const secretParam = searchParams.get('secret') || searchParams.get('token');
+  if (secretParam && safeCompare(secretParam, cronSecret)) {
     return true;
   }
 
-  // Allow same-origin / internal requests
-  const host = req.headers.get('host') || '';
-  const referer = req.headers.get('referer') || '';
-  if (referer.includes(host) && host.length > 0) {
-    return true;
+  // Internal same-origin check ONLY allowed in non-production environments
+  if (!isProduction) {
+    const host = req.headers.get('host') || '';
+    const referer = req.headers.get('referer') || '';
+    if (host && referer.includes(host)) {
+      return true;
+    }
   }
 
   return false;
@@ -41,19 +56,31 @@ async function handleCrawl(req: NextRequest, isGet: boolean) {
     if (!isGet) {
       try {
         const body = await req.json();
-        sourceId = body.sourceId ? Number(body.sourceId) : undefined;
-        category = body.category;
+        const parsed = CrawlRequestSchema.safeParse(body);
+        if (!parsed.success) {
+          return NextResponse.json({ error: 'Invalid crawl payload', details: parsed.error.issues }, { status: 400 });
+        }
+        sourceId = parsed.data.sourceId;
+        category = parsed.data.category;
       } catch {
         // Body is optional
       }
     }
 
     const { searchParams } = new URL(req.url);
-    if (!sourceId && searchParams.get('sourceId')) {
-      sourceId = Number(searchParams.get('sourceId'));
+    const queryParsed = CrawlRequestSchema.safeParse({
+      sourceId: searchParams.get('sourceId') || undefined,
+      category: searchParams.get('category') || undefined
+    });
+    if (!queryParsed.success) {
+      return NextResponse.json({ error: 'Invalid query parameters', details: queryParsed.error.issues }, { status: 400 });
     }
-    if (!category && searchParams.get('category')) {
-      category = searchParams.get('category') || undefined;
+
+    if (!sourceId && queryParsed.data.sourceId) {
+      sourceId = queryParsed.data.sourceId;
+    }
+    if (!category && queryParsed.data.category) {
+      category = queryParsed.data.category;
     }
 
     const results: CrawlResult[] = [];

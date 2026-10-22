@@ -1,14 +1,43 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { fetchArticles } from '@/lib/supabase';
-import { Article } from '@/types';
+import { fetchArticles, fetchMarketPrecedents } from '@/lib/supabase';
+import { Article, MarketPrecedent } from '@/types';
+import { authenticateApiRequest } from '@/lib/api-auth';
+import { checkRateLimit } from '@/lib/rate-limiter';
+import { AIChatQuerySchema } from '@/lib/schemas';
 
 export async function POST(req: NextRequest) {
   try {
-    const { query } = await req.json();
-
-    if (!query || typeof query !== 'string' || !query.trim()) {
-      return NextResponse.json({ error: 'Query is required' }, { status: 400 });
+    // 1. Authenticate Request
+    const auth = await authenticateApiRequest(req);
+    if (!auth.isAuthenticated) {
+      return NextResponse.json({ error: auth.error || 'Unauthorized' }, { status: 401 });
     }
+
+    // 2. Rate limit LLM requests (30 queries per min per user/IP)
+    const clientIdentifier = auth.user?.id || req.headers.get('x-forwarded-for') || '127.0.0.1';
+    const rate = checkRateLimit(`chat_${clientIdentifier}`, 30, 0.5);
+    if (!rate.allowed) {
+      return NextResponse.json(
+        { error: 'AI rate limit exceeded. Please wait a moment before sending another query.' },
+        { status: 429, headers: { 'Retry-After': String(rate.resetSeconds) } }
+      );
+    }
+
+    let body: any;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    }
+
+    const parsed = AIChatQuerySchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid query', details: parsed.error.issues },
+        { status: 400 }
+      );
+    }
+    const query = parsed.data.query;
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
@@ -18,12 +47,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Retrieve industry articles to ground the response with factual Zimbabwean data
+    // Retrieve live industry articles and learned historical precedents
     let articles: Article[] = [];
+    let precedents: MarketPrecedent[] = [];
     try {
-      articles = await fetchArticles();
+      [articles, precedents] = await Promise.all([
+        fetchArticles(),
+        fetchMarketPrecedents()
+      ]);
     } catch {
       articles = [];
+      precedents = [];
     }
 
     // Format top 12 relevant articles as numbered context references
@@ -33,30 +67,36 @@ export async function POST(req: NextRequest) {
       return `[${num}] "${a.headline}" | Source: ${a.source_name} | Type: ${a.article_type} | Relevance: ${a.relevance_level} | Summary: ${snippet}`;
     }).join('\n');
 
+    // Format historical cause-and-effect rules
+    const precedentsList = precedents.map((p) => {
+      return `- Category: ${p.trigger_category} | When: "${p.trigger_event}" -> Historical Reaction: "${p.market_reaction}" -> Strategic Rule: "${p.strategic_rule}" (Confidence: ${Math.round((p.confidence_score || 0.85) * 100)}%)`;
+    }).join('\n');
+
     const systemPrompt = `You are the Hermit Intelligence Assistant — an elite Zimbabwean energy sector and policy intelligence advisor.
 You provide precise, reliable, and corporate-ready answers regarding Zimbabwean renewable energy (solar, hydro, biomass), IPPs, ZERA regulations, SAPP power trading, currency dynamics, and infrastructure developments.
 
 Ground your response in the provided monitored industry articles where applicable.
 Whenever you cite facts, quotes, policies, or announcements from the articles below, insert citation markers in the format [1], [2], etc., corresponding to the source number.
 
-If the user query cannot be fully answered by the sources, use your general knowledge of Zimbabwe's energy landscape (ZERA, ZESA, ZETDC, Kariba Dam, Hwange, IPP policy, net metering) while maintaining high analytical rigor.
+If you recognize a historical pattern or precedent from the learned market memory list, explicitly state:
+"Based on historical precedent in Zimbabwe's energy sector: [explain cause and effect, and what is likely to happen next]."
 
-Monitored Industry Context:
-${contextList || 'No recent articles retrieved.'}
+Available Monitored Articles:
+${contextList}
 
-User Query:
-${query.trim()}
+Learned Historical Precedents & Market Memory:
+${precedentsList}
 
-Respond in clear, professional markdown. Use bullet points or short paragraphs for readability.`;
+User Inquiry: ${query}
 
-    // Resilient model fallback list (prioritizing high-availability, instant-response models)
+Provide a well-structured, objective, and executive-level answer.`;
+
     const candidateModels = [
       'gemini-3.5-flash-lite',
-      'gemini-3.1-flash-lite',
+      'gemini-3.5-flash',
+      'gemini-3.8-flash',
       'gemini-3-flash-preview',
-      'gemini-2.5-flash-lite',
-      'gemini-3.7-flash',
-      'gemini-3.5-flash'
+      'gemini-3.1-flash-lite'
     ];
 
     let answer = '';

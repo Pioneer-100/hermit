@@ -96,7 +96,7 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
       {/* Header Bar */}
       <Header
         title="Live Intelligence Feed"
-        subtitle="Continuous multi-source surveillance across 70+ tracked energy portals in Zimbabwe"
+        subtitle="Continuous clean surveillance across 55 tracked portals in Zimbabwe (6 Pillars)"
         onRefresh={loadArticles}
         onTriggerCrawl={() => setIsCrawlModalOpen(true)}
         alertCount={pendingCount}
@@ -111,7 +111,7 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
           <div className="lg:col-span-8 space-y-4">
             
             {/* Search & Filter Control Bar (Sticky on Scroll) */}
-            <div className="sticky top-14 sm:top-[69px] z-20 bg-[#06261b]/85 backdrop-blur-md border border-emerald-500/30 rounded-2xl p-3.5 sm:p-5 shadow-xl space-y-3">
+            <div className="sticky top-14 sm:top-[69px] z-20 bg-[#083825]/45 backdrop-blur-xl border border-emerald-400/25 rounded-2xl p-3.5 sm:p-5 shadow-xl space-y-3">
               {/* Search Input & Category Dropdown */}
               <div className="flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center justify-between">
                 {/* Search Input */}
@@ -122,7 +122,7 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search by keywords, quoted stakeholders (e.g. ZERA, Kariba, AfDB)..."
-                    className="w-full pl-9 pr-4 py-2 text-xs border border-emerald-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-[#03170e]/80 text-white placeholder:text-emerald-300/50 font-medium"
+                    className="w-full pl-9 pr-4 py-2 text-xs border border-emerald-400/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-[#052618]/50 text-white placeholder:text-emerald-300/60 font-medium"
                   />
                   {searchQuery && (
                     <button
@@ -138,7 +138,7 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
                 <select
                   value={selectedType}
                   onChange={(e) => setSelectedType(e.target.value)}
-                  className="text-xs border border-emerald-500/30 rounded-xl px-3 py-2 bg-[#041a12] text-emerald-100 font-bold focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  className="text-xs border border-emerald-400/30 rounded-xl px-3 py-2 bg-[#052618]/60 text-emerald-100 font-bold focus:outline-none focus:ring-2 focus:ring-emerald-400"
                 >
                   <option value="all">All Article Types</option>
                   <option value="tariff_change">Tariff Revision</option>
@@ -224,7 +224,7 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
           <div className="lg:col-span-4 space-y-4">
             
             {/* Widget 1: Priority Escalation Queue */}
-            <div className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3 text-white">
+            <div className="bg-[#083825]/45 backdrop-blur-xl border border-emerald-400/25 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3 text-white">
               <div className="flex items-center justify-between pb-3 border-b border-emerald-900/50">
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/40 flex items-center justify-center">
@@ -247,7 +247,7 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
                   <div
                     key={art.id}
                     onClick={() => setSelectedArticle(art)}
-                    className="p-3 rounded-xl bg-[#041a12]/80 hover:bg-[#073020]/90 border border-emerald-500/20 hover:border-emerald-400/40 transition-all cursor-pointer space-y-1.5 border-l-4 border-l-rose-500 text-white active:scale-99"
+                    className="p-3 rounded-xl bg-[#052618]/55 hover:bg-[#0a452e]/70 border border-emerald-400/20 hover:border-emerald-300/40 transition-all cursor-pointer space-y-1.5 border-l-4 border-l-rose-500 text-white active:scale-99"
                   >
                     <div className="flex items-center justify-between text-[10px]">
                       <span className="font-bold text-emerald-300 bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-500/30">
@@ -290,7 +290,7 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
             </div>
 
             {/* Widget 2: Energy Sector Intelligence Radar */}
-            <div className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3.5 text-white">
+            <div className="bg-[#083825]/45 backdrop-blur-xl border border-emerald-400/25 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3.5 text-white">
               <div className="flex items-center gap-2 pb-3 border-b border-emerald-900/50">
                 <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center justify-center">
                   <TrendingUp className="w-3.5 h-3.5" />
@@ -357,7 +357,7 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
             </div>
 
             {/* Widget 3: Live Surveillance Engine Card */}
-            <div className="bg-gradient-to-br from-[#072c1e]/85 to-[#041a12]/90 border border-emerald-500/30 rounded-2xl p-4 sm:p-5 text-white shadow-xl space-y-3">
+            <div className="bg-gradient-to-br from-[#093c28]/60 to-[#062a1b]/65 backdrop-blur-xl border border-emerald-400/25 rounded-2xl p-4 sm:p-5 text-white shadow-xl space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />

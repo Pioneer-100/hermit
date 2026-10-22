@@ -35,21 +35,21 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`h-full ${spaceGrotesk.variable} ${inter.variable}`}>
-      <body className="h-full flex bg-[#03130c] text-emerald-50 antialiased font-sans overflow-hidden">
+      <body className="h-full flex bg-[#052418] text-emerald-50 antialiased font-sans overflow-hidden">
         <AuthProvider>
           <AuthGuard>
             <DrawerProvider>
             {/* Unified Full-Bleed Background: Kariba Dam Wall with Floating Solar Array */}
             <div 
-              className="fixed inset-0 pointer-events-none z-0 bg-cover bg-center bg-no-repeat transition-all duration-700 opacity-95 brightness-110 contrast-105"
+              className="fixed inset-0 pointer-events-none z-0 bg-cover bg-center bg-no-repeat transition-all duration-700 opacity-95 brightness-115 contrast-105"
               style={{ backgroundImage: "url('/kariba_dam_solar.jpg')" }}
             />
             {/* Lighter, translucent, sunlit emerald atmosphere */}
-            <div className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-b from-[#062c1d]/30 via-[#042015]/45 to-[#02140d]/65 backdrop-contrast-105" />
-            <div className="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(ellipse_100%_70%_at_50%_0%,rgba(52,211,153,0.18),transparent_75%)]" />
+            <div className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-b from-emerald-950/15 via-[#063020]/25 to-[#031d13]/35 backdrop-contrast-105" />
+            <div className="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(ellipse_100%_75%_at_50%_0%,rgba(16,185,129,0.22),transparent_75%)]" />
             
-            {/* Left-edge vignette gradient to ensure crisp, legible contrast behind the sidebar navigation (desktop only) */}
-            <div className="hidden md:block fixed inset-y-0 left-0 w-80 pointer-events-none z-0 bg-gradient-to-r from-[#020e07]/85 via-[#020e07]/50 to-transparent" />
+            {/* Left-edge vignette softened so background shines clearly through glassy sidebar */}
+            <div className="hidden md:block fixed inset-y-0 left-0 w-80 pointer-events-none z-0 bg-gradient-to-r from-emerald-950/15 via-transparent to-transparent" />
 
             {/* Fixed Left Executive Sidebar (Hidden on mobile) */}
             <div className="hidden md:flex relative z-20">

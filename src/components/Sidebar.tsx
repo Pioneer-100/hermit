@@ -72,7 +72,6 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              prefetch={true}
               className={`group flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-150 ${
                 isActive
                   ? 'bg-emerald-500/20 text-white font-semibold shadow-inner border border-emerald-400/40 backdrop-blur-sm'
@@ -103,31 +102,7 @@ export default function Sidebar() {
       {/* User Profile Card & Role Switcher */}
       <UserProfileBar />
 
-      {/* Bottom Live System Status Box
-      <div className="p-3 m-3 mt-1 bg-[#03150d]/75 backdrop-blur-md rounded-xl border border-emerald-500/20 shadow-md">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-            <span className="text-xs font-bold text-white tracking-wide">Live Surveillance</span>
-          </div>
-          <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-400/20 text-emerald-300 font-mono font-bold">
-            GEMINI 2.0
-          </span>
-        </div>
-
-        <p className="text-xs text-emerald-200/70 leading-relaxed mb-2.5">
-          Autonomous multi-source crawling & commercial impact classification active.
-        </p>
-
-        <div className="pt-2 border-t border-emerald-900/50 flex items-center justify-between text-[10px] text-slate-400">
-          <span className="flex items-center gap-1 text-emerald-400">
-            <ShieldCheck className="w-3 h-3 text-emerald-400" />
-            <span>ToR Compliant</span>
-          </span>
-          <span className="font-mono text-slate-400">70+ Sources</span>
-        </div>
-      </div>
-       */}
+      
     </aside>
   );
 }

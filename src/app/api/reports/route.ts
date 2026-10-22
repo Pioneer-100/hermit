@@ -1,21 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { fetchReports, insertReport, fetchArticles } from '@/lib/supabase';
 import { Report } from '@/types';
+import { authenticateApiRequest } from '@/lib/api-auth';
+import { checkRateLimit } from '@/lib/rate-limiter';
+import { getOrSetCache, invalidateCache } from '@/lib/cache';
+import { GenerateReportSchema } from '@/lib/schemas';
 
 export async function GET() {
-  const reports = await fetchReports();
+  const reports = await getOrSetCache<Report[]>('hermit_reports_list', 120, async () => {
+    return await fetchReports();
+  });
   return NextResponse.json({ reports });
 }
 
 export async function POST(req: NextRequest) {
   try {
+    const auth = await authenticateApiRequest(req);
+    if (!auth.isAuthenticated) {
+      return NextResponse.json({ error: auth.error || 'Unauthorized' }, { status: 401 });
+    }
+
+    const clientId = auth.user?.id || req.headers.get('x-forwarded-for') || '127.0.0.1';
+    const rate = checkRateLimit(`report_gen_${clientId}`, 5, 0.05); // max 5, refill 1 every 20s
+    if (!rate.allowed) {
+      return NextResponse.json(
+        { error: 'Report generation rate limit exceeded. Please wait.' },
+        { status: 429, headers: { 'Retry-After': String(rate.resetSeconds) } }
+      );
+    }
     let body: any = {};
     try {
       body = await req.json();
     } catch {
       body = {};
     }
-    const reportType = (body.report_type || 'daily') as 'daily' | 'weekly' | 'monthly' | 'special';
+    const parsed = GenerateReportSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Invalid report parameters', details: parsed.error.issues }, { status: 400 });
+    }
+    const reportType = parsed.data.report_type;
     
     const articles = await fetchArticles();
     const highArticles = articles.filter(a => a.relevance_level === 'high');
@@ -132,6 +155,7 @@ Return ONLY valid JSON with these exact keys:
     };
 
     const created = await insertReport(newReportPayload);
+    invalidateCache('hermit_reports_list');
     return NextResponse.json({ report: created, success: true, ai_powered: !!geminiReport }, { status: 201 });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 400 });

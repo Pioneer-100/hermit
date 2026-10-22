@@ -189,3 +189,16 @@ export interface ActionTask {
   due_date?: string;
   notes?: string;
 }
+
+export interface MarketPrecedent {
+  id: number;
+  trigger_category: string;
+  trigger_event: string;
+  historical_date: string;
+  market_reaction: string;
+  subsequent_policy_shift?: string;
+  strategic_rule: string;
+  confidence_score: number;
+  source_article_id?: number;
+  tags: string[];
+}

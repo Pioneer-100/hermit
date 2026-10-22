@@ -256,7 +256,7 @@ export default function MobileNav() {
       {/* Primary Fixed Bottom Navigation Bar */}
       <nav 
         aria-label="Mobile Navigation"
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#020e08]/90 border-t border-emerald-500/25 shadow-2xl flex items-center justify-around px-2 py-2 backdrop-blur-2xl pb-[max(0.5rem,env(safe-area-inset-bottom))]"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#03180f]/50 border-t border-emerald-400/25 shadow-2xl flex items-center justify-around px-2 py-2 backdrop-blur-2xl pb-[max(0.5rem,env(safe-area-inset-bottom))]"
       >
         {PRIMARY_NAV.map((item) => {
           const Icon = item.icon;
@@ -267,18 +267,20 @@ export default function MobileNav() {
               href={item.href}
               prefetch={true}
               className={`relative flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all min-w-[56px] ${
-                isActive ? 'text-emerald-300 bg-emerald-900/40 font-bold shadow-inner border border-emerald-500/20' : 'text-slate-400 hover:text-emerald-400'
+                isActive 
+                  ? 'text-white bg-gradient-to-r from-emerald-600 to-emerald-500 font-bold shadow-md shadow-emerald-950/60 border border-emerald-300/50' 
+                  : 'text-white/80 hover:text-white bg-[#031d13]/50 border border-emerald-500/20'
               }`}
             >
               <div className="relative">
-                <Icon className="w-5 h-5" />
+                <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-emerald-300'}`} />
                 {item.badge && (
-                  <span className="absolute -top-1 -right-2 w-3.5 h-3.5 rounded-full bg-rose-500 text-white text-[8px] font-black flex items-center justify-center ring-1 ring-[#020e08]">
+                  <span className="absolute -top-1 -right-2 w-3.5 h-3.5 rounded-full bg-rose-500 text-white text-[8px] font-black flex items-center justify-center ring-1 ring-[#020e08] shadow-sm">
                     {item.badge}
                   </span>
                 )}
               </div>
-              <span className="text-[10px] font-medium tracking-tight">{item.label}</span>
+              <span className="text-[10px] font-bold tracking-tight drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">{item.label}</span>
             </Link>
           );
         })}
@@ -290,15 +292,17 @@ export default function MobileNav() {
             setIsSwitchingUser(false);
           }}
           className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all min-w-[56px] relative ${
-            isMoreActive ? 'text-emerald-300 bg-emerald-900/40 font-bold border border-emerald-500/20' : 'text-slate-400 hover:text-emerald-400'
+            isMoreActive 
+              ? 'text-white bg-gradient-to-r from-emerald-600 to-emerald-500 font-bold shadow-md shadow-emerald-950/60 border border-emerald-300/50' 
+              : 'text-white/80 hover:text-white bg-[#031d13]/50 border border-emerald-500/20'
           }`}
           aria-label="Open More Menu"
         >
           <div className="relative">
-            <Menu className="w-5 h-5" />
+            <Menu className={`w-5 h-5 ${isMoreActive ? 'text-white' : 'text-emerald-300'}`} />
             <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400" />
           </div>
-          <span className="text-[10px] font-medium tracking-tight">More</span>
+          <span className="text-[10px] font-bold tracking-tight drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">More</span>
         </button>
       </nav>
     </>

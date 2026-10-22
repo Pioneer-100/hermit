@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useDrawer } from '@/components/DrawerContext';
+import { useAuth } from '@/components/AuthContext';
+import { getSupabaseClient } from '@/lib/supabase';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Sparkles, Send, X } from 'lucide-react';
@@ -63,18 +65,33 @@ export default function AIChatDrawer() {
     setInput('');
     setLoading(true);
     try {
+      let token = '';
+      const sb = getSupabaseClient();
+      if (sb) {
+        const { data } = await sb.auth.getSession();
+        token = data.session?.access_token || '';
+      }
+
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const resp = await fetch('/api/ai-chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ query: userMsg.content })
       });
-      if (!resp.ok) throw new Error('Chat API error');
+      if (!resp.ok) {
+        const errData = await resp.json().catch(() => ({}));
+        throw new Error(errData.error || 'Chat API error');
+      }
       const data = await resp.json();
       setLoading(false);
       await streamIncomingMessage(data.answer || 'No response generated.');
-    } catch {
+    } catch (err: any) {
       setLoading(false);
-      const errMsg = { role: 'assistant' as const, content: 'Sorry, I could not process your request at this moment.' };
+      const errMsg = { role: 'assistant' as const, content: err?.message || 'Sorry, I could not process your request at this moment.' };
       setMessages(prev => [...prev, errMsg]);
     }
   };

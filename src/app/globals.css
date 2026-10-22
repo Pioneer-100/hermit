@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --background: #03140d;
+  --background: #052418;
   --foreground: #f0fdf4;
-  --hermit-green-dark: #051d13;
-  --hermit-green-primary: #0b3d2b;
-  --hermit-green-accent: #10b981;
+  --hermit-green-dark: #083623;
+  --hermit-green-primary: #10593c;
+  --hermit-green-accent: #34d399;
   --hermit-green-light: #ecfdf5;
 
   /* ── Typography tokens ─────────────────────────────────────────────── */
@@ -31,7 +31,7 @@
 }
 
 body {
-  background-color: #03120c;
+  background-color: #052418;
   color: var(--foreground);
   font-family: var(--font-body);
   font-size: var(--text-body);
@@ -95,41 +95,41 @@ h3 { font-size: var(--text-subhead); }
 
 /* Translucent Green Glass Platform Components */
 .hermit-glass-panel {
-  background: rgba(6, 32, 22, 0.72);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(16, 185, 129, 0.25);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
+  background: rgba(7, 48, 32, 0.48);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(52, 211, 153, 0.28);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
 }
 
 .hermit-glass-card {
-  background: rgba(6, 34, 23, 0.68);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-  box-shadow: 0 6px 20px -2px rgba(0, 0, 0, 0.3);
+  background: rgba(8, 52, 35, 0.42);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(52, 211, 153, 0.22);
+  box-shadow: 0 6px 20px -2px rgba(0, 0, 0, 0.18);
 }
 
 .hermit-glass-card:hover {
-  background: rgba(8, 44, 30, 0.8);
+  background: rgba(12, 68, 46, 0.58);
   border-color: rgba(52, 211, 153, 0.45);
 }
 
 .hermit-glass-input {
-  background: rgba(4, 24, 16, 0.7);
+  background: rgba(6, 38, 25, 0.45);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(16, 185, 129, 0.28);
+  border: 1px solid rgba(52, 211, 153, 0.3);
   color: #f0fdf4;
 }
 
 .hermit-glass-input:focus {
-  border-color: #10b981;
-  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+  border-color: #34d399;
+  box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.25);
 }
 
 .hermit-emerald-gradient {
-  background: linear-gradient(135deg, rgba(7, 36, 25, 0.85) 0%, rgba(13, 60, 44, 0.85) 50%, rgba(6, 30, 20, 0.85) 100%);
+  background: linear-gradient(135deg, rgba(8, 48, 33, 0.65) 0%, rgba(16, 80, 56, 0.65) 50%, rgba(7, 42, 29, 0.65) 100%);
 }
 
 /* Executive Print Styles for Clean PDF & Hardcopy Export */

@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { Article, Report, AlertLog, DashboardStats, TrendAnalytics, TrendTopic, TrendDataPoint } from '@/types';
+import { Article, Report, AlertLog, DashboardStats, TrendAnalytics, TrendTopic, TrendDataPoint, MarketPrecedent } from '@/types';
 import { INITIAL_ARTICLES, INITIAL_STATS, INITIAL_REPORTS, INITIAL_ALERTS } from './mock-data';
 import { MONITORED_SOURCES } from './sources';
 
@@ -392,3 +392,51 @@ export async function getTrendAnalytics(): Promise<TrendAnalytics> {
     averageRiskIndex: Math.min(Math.max(avgRisk + 25, 40), 92)
   };
 }
+
+/**
+ * Retrieves learned historical precedents from Supabase market memory
+ */
+export async function fetchMarketPrecedents(): Promise<MarketPrecedent[]> {
+  const sb = getSupabaseClient();
+  if (sb) {
+    try {
+      const { data, error } = await sb
+        .from('market_precedents')
+        .select('*')
+        .order('confidence_score', { ascending: false });
+
+      if (!error && data) {
+        return data as MarketPrecedent[];
+      }
+    } catch (e) {
+      console.warn('Error fetching market precedents from Supabase:', e);
+    }
+  }
+
+  // Fallback initial precedents
+  return [
+    {
+      id: 1,
+      trigger_category: 'Tariff Revision',
+      trigger_event: 'ZERA revised commercial tariffs upward by 19% in response to ZETDC cost review.',
+      historical_date: '2024-10-15',
+      market_reaction: 'Intensive energy consumers expedited private rooftop and ground solar PPAs to hedge utility inflation.',
+      subsequent_policy_shift: 'ZERA raised net-metering cap to 5MW for commercial producers.',
+      strategic_rule: 'When ZETDC tariffs increase >15%, private C&I solar PPA pipeline velocity accelerates within 60 to 90 days.',
+      confidence_score: 0.92,
+      tags: ['tariff', 'zera', 'c&i', 'ppa']
+    },
+    {
+      id: 2,
+      trigger_category: 'Hydrological Deficit',
+      trigger_event: 'Lake Kariba usable live storage dropped below 12%, forcing ZRA generation capping under 300MW.',
+      historical_date: '2024-09-22',
+      market_reaction: 'Industrial off-takers faced 12-to-16 hour load curtailment, spiking diesel generator opex.',
+      subsequent_policy_shift: 'Cabinet fast-tracked grid-tied solar IPPs with sovereign economic stability guarantees.',
+      strategic_rule: 'Prolonged Kariba hydro deficits create immediate demand for daytime utility-scale solar injection and 4-hour battery storage.',
+      confidence_score: 0.95,
+      tags: ['kariba', 'hydro', 'drought', 'bess']
+    }
+  ];
+}
+
