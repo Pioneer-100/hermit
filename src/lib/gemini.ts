@@ -57,14 +57,20 @@ CONTENT EXCERPT: ${content}
 
 Analyze the strategic implications and return ONLY a valid JSON object with these exact keys:
 {
-  "article_type": "tariff_change" | "new_regulation" | "funding_announcement" | "project_update" | "policy_change" | "partnership" | "general",
+  "article_type": "tariff_change" | "new_regulation" | "funding_announcement" | "project_update" | "policy_change" | "partnership" | "general" | "nexus" | "waste_to_energy" | "event",
+  "sector": "Solar PV" | "Hydropower" | "Waste-to-Energy" | "Food-Water-Energy Nexus" | "BESS" | "Grid Policy" | "Climate Finance" | "General Renewables",
+  "country_market": "Zimbabwe" | "SADC / Regional" | "International",
+  "capacity_or_funding": "Project capacity (MW) or funding amount ($) if stated, else null",
+  "deadline": "YYYY-MM-DD deadline for tenders, RFPs, grant submissions, or the scheduled date of an upcoming event/conference/workshop. If a date is mentioned (e.g. 'November 15, 2026' or 'Q4 2026'), convert to closest YYYY-MM-DD. Else null",
+  "project_or_event_name": "Specific project name or conference/event/workshop title if mentioned, else null",
+  "contact_info": "Publicly available email, registration portal link, phone, or application submission address, else null",
   "relevance_score": number between 0.0 and 1.0,
   "relevance_level": "high" | "medium" | "low",
-  "relevance_to_hermit": "Clear, concise analysis of why this matters for Hermit Investments' commercial and pipeline interests in Zimbabwe",
-  "key_stakeholders": ["List of organizations or individuals quoted or involved"],
-  "ai_summary": "Factual 2-sentence synopsis of the development",
-  "ai_impact_note": "Strategic implications for Hermit Investments and 2-3 concrete recommended options for Management discussion",
-  "suggested_actions": ["Action 1", "Action 2", "Action 3"]
+  "relevance_to_hermit": "Answers: What is happening? Who is involved? What concrete commercial, sponsorship, or advisory participation opportunity does it create for Hermit Sustainability Advisory?",
+  "key_stakeholders": ["List of organizations, developers, DFIs, event organizers, or regulators involved"],
+  "ai_summary": "Factual 2-sentence synopsis of the development, including exact dates, locations, or deadline requirements",
+  "ai_impact_note": "Strategic advisory implications for HSA and recommended actions for management follow-up (e.g. register team, submit proposal, request bilateral meeting)",
+  "suggested_actions": ["Action 1 (e.g. Submit RFP before deadline)", "Action 2 (e.g. Register delegates for Victoria Falls expo)", "Action 3"]
 }`;
 
     for (const model of candidateModels) {

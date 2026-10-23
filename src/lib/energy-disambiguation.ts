@@ -23,6 +23,16 @@ const ENERGY_TECHNICAL_METRICS = [
 ];
 
 // Contextual keywords related to renewable energy and sector financing
+
+// Section 4.4, 4.7 & 5 of SoW: Events, Workshops, RFPs, EOIs and Funding Calls
+const EVENT_AND_FUNDING_TERMS = [
+  'call for proposals', 'request for proposals', 'rfp', 'expression of interest', 'eoi',
+  'tender', 'procurement', 'funding window', 'grant application', 'concessional finance',
+  'blended finance', 'conference', 'workshop', 'symposium', 'expo', 'forum', 'webinar',
+  'stakeholder consultation', 'energy summit', 'power forum', 'climate finance',
+  'project preparation facility', 'technical assistance'
+];
+
 const ENERGY_CONTEXTUAL_TERMS = [
   'solar', 'hydropower', 'hydroelectric', 'hydro-power', 'wind energy', 'biomass',
   'renewable energy', 'clean energy', 'battery storage', 'lithium battery',

@@ -653,6 +653,51 @@ export const MONITORED_SOURCES: SourceDefinition[] = [
     priority: 'high',
     description: 'Energy conferences, IPP stakeholder workshops, climate finance webinars, and SADC power-sector forums.',
   }
+  // 9. Dedicated Funding Calls, RFPs, Tenders & Events (SoW Section 4.3, 4.4, 4.7 & 5)
+  {
+    id: 70,
+    name: 'AfDB / SEFA Clean Energy Tenders & Calls',
+    url: 'https://www.afdb.org',
+    feedUrl: 'https://news.google.com/rss/search?q=%22African+Development+Bank%22+OR+%22SEFA%22+%22Zimbabwe%22+OR+%22Southern+Africa%22+tender+OR+%22call+for+proposals%22+OR+grant+energy&hl=en-ZW&gl=ZW&ceid=ZW:en',
+    category: 'tenders_events',
+    categoryLabel: 'Funding Calls & Industry Events',
+    sourceType: 'rss',
+    priority: 'high',
+    description: 'Active grant funding windows, concessional finance calls, and technical assistance RFPs from AfDB.',
+  },
+  {
+    id: 71,
+    name: 'SADC Centre for Renewable Energy & Energy Efficiency (SACREEE)',
+    url: 'https://www.sacreee.org',
+    feedUrl: 'https://news.google.com/rss/search?q=%22SACREEE%22+OR+%22SADC%22+renewable+energy+tender+OR+workshop+OR+conference+OR+%22call+for+proposals%22&hl=en-ZW&gl=ZW&ceid=ZW:en',
+    category: 'tenders_events',
+    categoryLabel: 'Funding Calls & Industry Events',
+    sourceType: 'rss',
+    priority: 'high',
+    description: 'Regional SADC clean energy tenders, project preparation facilities, and technical workshops.',
+  },
+  {
+    id: 72,
+    name: 'Global Climate & Energy Conferences (Zimbabwe / SADC)',
+    url: 'https://www.esi-africa.com',
+    feedUrl: 'https://news.google.com/rss/search?q=%22Zimbabwe%22+OR+%22Harare%22+OR+%22Victoria+Falls%22+energy+conference+OR+forum+OR+summit+OR+expo+2026&hl=en-ZW&gl=ZW&ceid=ZW:en',
+    category: 'tenders_events',
+    categoryLabel: 'Funding Calls & Industry Events',
+    sourceType: 'rss',
+    priority: 'high',
+    description: 'Upcoming in-person and virtual conferences, Victoria Falls green energy summits, and IPP investor dialogues.',
+  },
+  {
+    id: 73,
+    name: 'ZETDC & ZESA Procurement Tenders',
+    url: 'https://www.zetdc.co.zw',
+    feedUrl: 'https://news.google.com/rss/search?q=%22ZETDC%22+OR+%22ZESA%22+tender+OR+RFP+OR+%22Expression+of+Interest%22+solar+substation+wheeling&hl=en-ZW&gl=ZW&ceid=ZW:en',
+    category: 'tenders_events',
+    categoryLabel: 'Funding Calls & Industry Events',
+    sourceType: 'rss',
+    priority: 'high',
+    description: 'Utility grid interconnections, wheeling tenders, and transmission substation equipment procurement.',
+  }
 ];
 
 export const CATEGORY_LABELS: Record<string, string> = {
