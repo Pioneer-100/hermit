@@ -2,66 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { crawlSource, CrawlResult } from '@/lib/crawler-service';
 import { MONITORED_SOURCES } from '@/lib/sources';
 import { CrawlRequestSchema } from '@/lib/schemas';
-import { authenticateApiRequest } from '@/lib/api-auth';
+import { verifyApiAuthorization } from '@/lib/api-auth';
 import { checkRateLimit } from '@/lib/rate-limiter';
 import { getNextRotatingSources } from '@/lib/source-rotator';
 import { logger } from '@/lib/logger';
-import crypto from 'crypto';
-
-function safeCompare(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
-  return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));
-}
-
-async function verifyAuthorization(req: NextRequest): Promise<{ authorized: boolean; reason?: string }> {
-  const cronSecret = process.env.CRON_SECRET;
-  const authHeader = req.headers.get('authorization');
-
-  // 1. Check for Bearer token matching CRON_SECRET (automated cron jobs, Vercel crons)
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    const token = authHeader.substring(7);
-    if (cronSecret && safeCompare(token, cronSecret)) {
-      return { authorized: true, reason: 'cron_secret_bearer' };
-    }
-  }
-
-  // 2. Check query params for CRON_SECRET token
-  const { searchParams } = new URL(req.url);
-  const secretParam = searchParams.get('secret') || searchParams.get('token');
-  if (secretParam && cronSecret && safeCompare(secretParam, cronSecret)) {
-    return { authorized: true, reason: 'cron_secret_query' };
-  }
-
-  // 3. Check for authenticated logged-in dashboard user (interactive UI crawls)
-  const userAuth = await authenticateApiRequest(req);
-  if (userAuth.isAuthenticated) {
-    return { authorized: true, reason: 'user_authenticated' };
-  }
-
-  // 4. Same-origin browser request validation (UI button trigger fallback)
-  const host = req.headers.get('host') || '';
-  const referer = req.headers.get('referer') || '';
-  const origin = req.headers.get('origin') || '';
-  const secFetchSite = req.headers.get('sec-fetch-site');
-
-  if (
-    (host && referer.includes(host)) ||
-    (host && origin.includes(host)) ||
-    secFetchSite === 'same-origin'
-  ) {
-    return { authorized: true, reason: 'same_origin_ui' };
-  }
-
-  // 5. In local development or if CRON_SECRET is unconfigured/default
-  if (!cronSecret || cronSecret === 'hermit_super_secret_cron_token_2026') {
-    return { authorized: true, reason: 'dev_default_fallback' };
-  }
-
-  return { authorized: false, reason: 'Invalid or missing credentials' };
-}
 
 async function handleCrawl(req: NextRequest, isGet: boolean) {
-  const authCheck = await verifyAuthorization(req);
+  // Strict authorization: requires valid CRON_SECRET or authenticated user session
+  const authCheck = await verifyApiAuthorization(req, { allowCron: true });
   if (!authCheck.authorized) {
     logger.warn('Crawl request denied: Unauthorized access attempt', {
       ip: req.headers.get('x-forwarded-for') || '127.0.0.1',
@@ -69,11 +17,14 @@ async function handleCrawl(req: NextRequest, isGet: boolean) {
       url: req.url,
       reason: authCheck.reason
     });
-    return NextResponse.json({ error: 'Unauthorized: Invalid CRON_SECRET or auth token.' }, { status: 401 });
+    return NextResponse.json(
+      { error: 'Unauthorized: Valid authentication token or CRON_SECRET required.' },
+      { status: 401 }
+    );
   }
 
   // Rate-limit crawl executions (max 10 requests per minute)
-  const clientIdentifier = req.headers.get('x-forwarded-for') || '127.0.0.1';
+  const clientIdentifier = authCheck.user?.id || req.headers.get('x-forwarded-for') || '127.0.0.1';
   const rateLimit = await checkRateLimit(`crawl_${clientIdentifier}`, 10, 0.1);
   if (!rateLimit.allowed) {
     return NextResponse.json(

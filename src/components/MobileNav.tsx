@@ -18,16 +18,19 @@ import {
   LogOut, 
   Zap,
   ChevronRight,
-  ShieldCheck
+  ShieldCheck,
+  Droplets,
+  Calendar,
 } from 'lucide-react';
 import { useAuth } from '@/components/AuthContext';
 import { useDrawer } from '@/components/DrawerContext';
 
 const PRIMARY_NAV = [
-  { href: '/', icon: LayoutDashboard, label: 'Dash' },
+  { href: '/', icon: LayoutDashboard, label: 'Briefing' },
   { href: '/feed', icon: Radio, label: 'Feed' },
+  { href: '/nexus', icon: Droplets, label: 'Nexus' },
+  { href: '/events', icon: Calendar, label: 'Events' },
   { href: '/alerts', icon: Bell, label: 'Alerts', badge: '4' },
-  { href: '/reports', icon: FileText, label: 'Reports' },
 ];
 
 export default function MobileNav() {
@@ -41,7 +44,7 @@ export default function MobileNav() {
     return null;
   }
 
-  const isMoreActive = ['/trends', '/sources', '/settings'].includes(pathname) || isMenuOpen;
+  const isMoreActive = ['/reports', '/trends', '/sources', '/settings'].includes(pathname) || isMenuOpen;
 
   const handleOpenChat = () => {
     setIsMenuOpen(false);
@@ -151,6 +154,25 @@ export default function MobileNav() {
 
           {/* Quick Hub Navigation Links */}
           <div className="space-y-1.5">
+            <Link
+              href="/reports"
+              prefetch={true}
+              onClick={() => setIsMenuOpen(false)}
+              className={`flex items-center justify-between p-3 rounded-xl text-xs font-semibold border transition-all ${
+                pathname === '/reports'
+                  ? 'bg-emerald-600/30 text-emerald-200 border-emerald-500/40'
+                  : 'bg-[#03180f]/80 text-slate-200 border-emerald-900/50 hover:bg-[#072418]'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <FileText className="w-4 h-4 text-emerald-400" />
+                <div>
+                  <div className="font-bold">Executive Reports & Briefs</div>
+                  <div className="text-[10px] text-emerald-300/70">Daily briefs & weekly PDF downloads</div>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-emerald-400/70" />
+            </Link>
             <Link
               href="/trends"
               prefetch={true}

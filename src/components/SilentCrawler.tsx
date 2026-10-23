@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { getAuthHeaders } from '@/lib/api-client';
 
 export default function SilentCrawler() {
   const isCrawling = useRef(false);
@@ -18,7 +19,7 @@ export default function SilentCrawler() {
         // Crawl without specifying sourceId to trigger the default/all logic in the API
         await fetch('/api/crawl?category=all', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' }
+          headers: await getAuthHeaders()
         });
         console.log('[SilentCrawler] Background crawl cycle complete.');
       } catch (err) {

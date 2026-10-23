@@ -5,6 +5,7 @@ import Header from '@/components/Header';
 import CrawlModal from '@/components/CrawlModal';
 import { MONITORED_SOURCES, CATEGORY_LABELS } from '@/lib/sources';
 import { Play, CheckCircle2, Search, ExternalLink } from 'lucide-react';
+import { getAuthHeaders } from '@/lib/api-client';
 
 export default function SourcesPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -27,7 +28,7 @@ export default function SourcesPage() {
     try {
       const res = await fetch('/api/crawl', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await getAuthHeaders(),
         body: JSON.stringify({ sourceId: id })
       });
       const data = await res.json();

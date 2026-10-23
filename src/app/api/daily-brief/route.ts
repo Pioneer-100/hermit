@@ -5,7 +5,7 @@ import { DailyBrief } from '@/types';
 import { synthesizeDailyBriefFromArticles } from '@/lib/brief-generator';
 import { getOrSetCache, invalidateCache } from '@/lib/cache';
 import { checkDistributedRateLimit } from '@/lib/rate-limiter';
-import { authenticateApiRequest } from '@/lib/api-auth';
+import { verifyApiAuthorization } from '@/lib/api-auth';
 
 export async function GET(req: NextRequest) {
   try {
@@ -35,15 +35,15 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    // 1. Authenticate request if configured
-    const auth = await authenticateApiRequest(req);
-    if (!auth.isAuthenticated) {
-      return NextResponse.json({ error: auth.error || 'Unauthorized' }, { status: 401 });
+    // 1. Authenticate request (allows either valid CRON_SECRET or authenticated user session)
+    const auth = await verifyApiAuthorization(req, { allowCron: true });
+    if (!auth.authorized) {
+      return NextResponse.json({ error: auth.reason || 'Unauthorized' }, { status: 401 });
     }
 
     // 2. Rate limit regeneration
-    const ip = req.headers.get('x-forwarded-for') || auth.user?.id || '127.0.0.1';
-    const rate = await checkDistributedRateLimit(`regen_${ip}`, 10, 60);
+    const identifier = auth.user?.id || (auth.isCron ? 'cron' : req.headers.get('x-forwarded-for') || '127.0.0.1');
+    const rate = await checkDistributedRateLimit(`regen_${identifier}`, 10, 60);
     if (!rate.allowed) {
       return NextResponse.json(
         { error: 'Daily brief regeneration rate limit exceeded. Please wait.' },
@@ -60,10 +60,10 @@ export async function POST(req: NextRequest) {
         const topHeadlines = articles.slice(0, 12).map(a => `- [${a.source_name}] (${a.article_type}): ${a.headline} (Relevance: ${a.relevance_level})`).join('\n');
         
         const candidateModels = [
-          'gemini-3.5-flash-lite',
-          'gemini-3.5-flash',
-          'gemini-3.8-flash',
-          'gemini-3-flash-preview'
+          'gemini-1.5-flash',
+          'gemini-2.0-flash',
+          'gemini-2.5-flash-lite',
+          'gemini-3.5-flash-lite'
         ];
 
         let parsedAiResult: any = null;

@@ -21,6 +21,7 @@ import {
   FolderKanban
 } from 'lucide-react';
 import Link from 'next/link';
+import { getAuthHeaders } from '@/lib/api-client';
 
 interface DashboardClientProps {
   initialArticles: Article[];
@@ -99,7 +100,7 @@ export default function DashboardClient({
     try {
       await fetch(`/api/articles/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await getAuthHeaders(),
         body: JSON.stringify({ is_reviewed: reviewed })
       });
       setArticles(prev => prev.map(a => a.id === id ? { ...a, is_reviewed: reviewed } : a));
@@ -115,7 +116,7 @@ export default function DashboardClient({
     try {
       await fetch('/api/alerts', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await getAuthHeaders(),
         body: JSON.stringify({ articleId: id })
       });
       setArticles(prev => prev.map(a => a.id === id ? { ...a, is_alert_sent: true } : a));
