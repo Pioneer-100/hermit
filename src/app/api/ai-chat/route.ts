@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { fetchArticles, fetchMarketPrecedents } from '@/lib/supabase';
 import { Article, MarketPrecedent } from '@/types';
 import { authenticateApiRequest } from '@/lib/api-auth';
-import { checkRateLimit } from '@/lib/rate-limiter';
+import { checkDistributedRateLimit } from '@/lib/rate-limiter';
 import { AIChatQuerySchema } from '@/lib/schemas';
 
 export async function POST(req: NextRequest) {
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
     // 2. Rate limit LLM requests (30 queries per min per user/IP)
     const clientIdentifier = auth.user?.id || req.headers.get('x-forwarded-for') || '127.0.0.1';
-    const rate = checkRateLimit(`chat_${clientIdentifier}`, 30, 0.5);
+    const rate = await checkDistributedRateLimit(`chat_${clientIdentifier}`, 30, 60);
     if (!rate.allowed) {
       return NextResponse.json(
         { error: 'AI rate limit exceeded. Please wait a moment before sending another query.' },

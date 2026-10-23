@@ -4,13 +4,13 @@ import { INITIAL_DAILY_BRIEF } from '@/lib/mock-data';
 import { DailyBrief } from '@/types';
 import { synthesizeDailyBriefFromArticles } from '@/lib/brief-generator';
 import { getOrSetCache, invalidateCache } from '@/lib/cache';
-import { checkRateLimit } from '@/lib/rate-limiter';
+import { checkDistributedRateLimit } from '@/lib/rate-limiter';
 import { authenticateApiRequest } from '@/lib/api-auth';
 
 export async function GET(req: NextRequest) {
   try {
     const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
-    const rate = checkRateLimit(ip, 60, 1);
+    const rate = await checkDistributedRateLimit(ip, 60, 60);
     if (!rate.allowed) {
       return NextResponse.json(
         { error: 'Too many requests. Rate limit exceeded.' },
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
 
     // 2. Rate limit regeneration
     const ip = req.headers.get('x-forwarded-for') || auth.user?.id || '127.0.0.1';
-    const rate = checkRateLimit(`regen_${ip}`, 10, 0.1); // Max 10 regen, 1 token per 10s
+    const rate = await checkDistributedRateLimit(`regen_${ip}`, 10, 60);
     if (!rate.allowed) {
       return NextResponse.json(
         { error: 'Daily brief regeneration rate limit exceeded. Please wait.' },

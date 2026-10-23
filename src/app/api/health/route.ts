@@ -22,6 +22,7 @@ export async function GET() {
     dbStatus = 'unreachable';
   }
 
+  const hasUpstash = Boolean(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
   const status = dbStatus === 'unreachable' ? 503 : 200;
 
   return NextResponse.json(
@@ -38,6 +39,10 @@ export async function GET() {
         ai_service: {
           status: process.env.GEMINI_API_KEY ? 'configured' : 'missing_key',
           model: 'gemini-3.5-flash-lite'
+        },
+        distributed_cache: {
+          provider: hasUpstash ? 'upstash_redis' : 'in_memory_fallback',
+          status: hasUpstash ? 'connected' : 'local_ready'
         }
       },
       total_response_time_ms: Date.now() - startTime

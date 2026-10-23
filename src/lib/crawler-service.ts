@@ -1,7 +1,8 @@
 import { SourceDefinition, MONITORED_SOURCES } from './sources';
 import { analyzeArticleWithGemini } from './gemini';
-import { insertArticle, insertAlertLog } from './supabase';
+import { insertArticle, insertAlertLog, fetchArticles } from './supabase';
 import { sendEmailAlert } from './email-service';
+import { checkDuplicateArticle } from './deduplication';
 import { Article } from '@/types';
 import { XMLParser } from 'fast-xml-parser';
 
@@ -74,10 +75,25 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
     rawItems.push(generateContextualHeadline(source));
   }
 
+  // Fetch recent articles once to perform semantic deduplication before LLM analysis
+  let recentArticles: Article[] = [];
+  try {
+    recentArticles = await fetchArticles({ limit: 100 });
+  } catch (err) {
+    console.warn('Could not fetch existing articles for deduplication:', err);
+  }
+
   const processedArticles: Article[] = [];
   let highCount = 0;
 
   for (const item of rawItems) {
+    // Deduplication check: Prevent redundant Gemini LLM analysis and duplicate DB inserts
+    const duplicateCheck = checkDuplicateArticle(item.headline, item.link, recentArticles);
+    if (duplicateCheck.isDuplicate) {
+      console.log(`[Deduplicator] Skipping duplicate article (${Math.round(duplicateCheck.similarityScore * 100)}% match): "${item.headline}"`);
+      continue;
+    }
+
     // Process through Gemini AI (or intelligent heuristics fallback)
     const analysis = await analyzeArticleWithGemini(item.headline, item.summary, source.name);
     
