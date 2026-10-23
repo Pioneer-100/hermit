@@ -4,7 +4,8 @@ import { insertArticle, insertAlertLog, fetchArticles } from './supabase';
 import { sendEmailAlert } from './email-service';
 import { checkDuplicateArticle } from './deduplication';
 import { validateEnergyRelevance } from './energy-disambiguation';
-import { extractDeepArticleText } from './deep-extractor';
+import { extractDeepArticleText, extractDeepArticlesBatch } from './deep-extractor';
+import { scrapeZeraPortal, scrapePrazPortal, BROWSER_HEADERS } from './direct-portal-scraper';
 import { validateArticleFreshness } from './date-freshness';
 import { evaluateSemanticFitness } from './semantic-gate';
 import { logger } from './logger';
@@ -36,16 +37,39 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
 
   const rawItems: Array<{ headline: string; link: string; summary: string; pubDate?: string; author?: string }> = [];
 
+  // Special direct portal scraper check for high-priority authorities with flaky or missing RSS
+  if (source.name.toLowerCase().includes('zera')) {
+    try {
+      const zeraDirect = await scrapeZeraPortal();
+      if (zeraDirect.length > 0) {
+        rawItems.push(...zeraDirect);
+        logger.info('Obtained items directly from ZERA portal notices', { count: zeraDirect.length });
+      }
+    } catch (zErr) {
+      logger.warn('Direct ZERA portal crawl error, falling back to feed', { zErr });
+    }
+  } else if (source.name.toLowerCase().includes('praz')) {
+    try {
+      const prazDirect = await scrapePrazPortal();
+      if (prazDirect.length > 0) {
+        rawItems.push(...prazDirect);
+        logger.info('Obtained tenders directly from PRAZ portal', { count: prazDirect.length });
+      }
+    } catch (pErr) {
+      logger.warn('Direct PRAZ portal crawl error', { pErr });
+    }
+  }
+
   // Attempt live crawl if RSS feed is defined
   const targetUrl = source.feedUrl || `https://news.google.com/rss/search?q=${encodeURIComponent(source.name + ' Zimbabwe energy')}&hl=en-ZW&gl=ZW&ceid=ZW:en`;
 
   try {
     const res = await fetch(targetUrl, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) HermitEnergyMonitor/2.0',
+        ...BROWSER_HEADERS,
         'Accept': 'application/rss+xml, application/xml, text/xml, application/atom+xml, */*'
       },
-      signal: AbortSignal.timeout(8000)
+      signal: AbortSignal.timeout(6000)
     });
 
     if (res.ok) {
@@ -62,8 +86,11 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
     try {
       const fallbackUrl = `https://news.google.com/rss/search?q=${encodeURIComponent('Zimbabwe solar energy power ZERA')}&hl=en-ZW&gl=ZW&ceid=ZW:en`;
       const fallbackRes = await fetch(fallbackUrl, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) HermitEnergyMonitor/2.0' },
-        signal: AbortSignal.timeout(6000)
+        headers: {
+          ...BROWSER_HEADERS,
+          'Accept': 'application/rss+xml, application/xml, text/xml, application/atom+xml, */*'
+        },
+        signal: AbortSignal.timeout(5000)
       });
       if (fallbackRes.ok) {
         const xml = await fallbackRes.text();

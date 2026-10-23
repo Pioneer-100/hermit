@@ -6,6 +6,7 @@
  */
 
 import { extractPdfFromUrl } from './pdf-extractor';
+import { BROWSER_HEADERS } from './direct-portal-scraper';
 
 export interface ExtractedArticleContent {
   fullText: string;
@@ -30,6 +31,7 @@ function cleanHtmlToText(html: string): string {
     .replace(/<nav\b[^<]*(?:(?!<\/nav>)<[^<]*)*<\/nav>/gi, ' ')
     .replace(/<footer\b[^<]*(?:(?!<\/footer>)<[^<]*)*<\/footer>/gi, ' ')
     .replace(/<header\b[^<]*(?:(?!<\/header>)<[^<]*)*<\/header>/gi, ' ')
+    .replace(/<aside\b[^<]*(?:(?!<\/aside>)<[^<]*)*<\/aside>/gi, ' ')
     .replace(/<!--[\s\S]*?-->/g, ' ')
     // Convert paragraph and breaks to newlines
     .replace(/<\/(p|div|h[1-6]|li)>/gi, '\n\n')
@@ -51,7 +53,7 @@ function cleanHtmlToText(html: string): string {
 
 /**
  * Fetches an article's web page and extracts the core textual body.
- * Implements a strict 6-second timeout and polite browser headers.
+ * Implements a strict 4.5-second timeout and realistic desktop browser headers.
  */
 export async function extractDeepArticleText(
   url: string,
@@ -83,12 +85,8 @@ export async function extractDeepArticleText(
 
   try {
     const res = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 HermitEnergyMonitor/2.0',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.9'
-      },
-      signal: AbortSignal.timeout(6000),
+      headers: BROWSER_HEADERS,
+      signal: AbortSignal.timeout(4500),
       redirect: 'follow'
     });
 
@@ -103,7 +101,7 @@ export async function extractDeepArticleText(
     const html = await res.text();
     const text = cleanHtmlToText(html);
 
-    // If extracted text is reasonably long (> 100 words), extract paragraphs
+    // If extracted text is reasonably long (> 80 words), extract paragraphs
     const words = text.split(/\s+/).filter(w => w.length > 0);
     if (words.length >= 80) {
       // Limit to first ~1,200 words to keep Gemini tokens well within optimal cost bounds
@@ -114,7 +112,7 @@ export async function extractDeepArticleText(
         extractedSuccess: true
       };
     }
-  } catch (err) {
+  } catch {
     // Gracefully fallback on timeout or network block
   }
 
@@ -123,4 +121,25 @@ export async function extractDeepArticleText(
     wordCount: fallbackText.split(/\s+/).length,
     extractedSuccess: false
   };
+}
+
+/**
+ * Concurrently extracts deep article text across multiple items with a safety timeout
+ */
+export async function extractDeepArticlesBatch(
+  items: Array<{ link: string; summary: string }>
+): Promise<ExtractedArticleContent[]> {
+  const promises = items.map(item => extractDeepArticleText(item.link, item.summary));
+  const settled = await Promise.allSettled(promises);
+
+  return settled.map((result, idx) => {
+    if (result.status === 'fulfilled') {
+      return result.value;
+    }
+    return {
+      fullText: items[idx].summary,
+      wordCount: items[idx].summary.split(/\s+/).length,
+      extractedSuccess: false
+    };
+  });
 }

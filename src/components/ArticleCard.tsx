@@ -25,6 +25,7 @@ const TYPE_CONFIG: Record<string, { label: string; badgeClass: string }> = {
   project_update: { label: 'Infrastructure', badgeClass: 'bg-blue-500/20 text-blue-300 border-blue-500/40' },
   policy_change: { label: 'Govt Policy', badgeClass: 'bg-amber-500/20 text-amber-300 border-amber-500/40' },
   partnership: { label: 'PPA & Market', badgeClass: 'bg-teal-500/20 text-teal-300 border-teal-500/40' },
+  official_dispatch: { label: 'Official Utility Dispatch', badgeClass: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40' },
   general: { label: 'Industry Intel', badgeClass: 'bg-emerald-900/40 text-emerald-200 border-emerald-700/40' },
 };
 

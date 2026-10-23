@@ -10,7 +10,8 @@ export type ArticleType =
   | 'general'
   | 'event'
   | 'nexus'
-  | 'waste_to_energy';
+  | 'waste_to_energy'
+  | 'official_dispatch';
 
 export type SourceCategory = 
   | 'newspapers'
