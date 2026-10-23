@@ -42,18 +42,29 @@ const ENERGY_CONTEXTUAL_TERMS = [
 
 // High-frequency political metaphor phrases that cause false positives
 const POLITICAL_METAPHOR_EXCLUSIONS = [
-  /\bpower\s+struggle\b/i,
-  /\bpower\s+tussle\b/i,
-  /\bpolitical\s+power\b/i,
-  /\bgrab\s+power\b/i,
-  /\bclinging\s+to\s+power\b/i,
-  /\bin\s+power\b/i,
-  /\bpower\s+sharing\b/i,
-  /\bbalance\s+of\s+power\b/i,
-  /\bpower\s+play\b/i,
-  /\bcorridors\s+of\s+power\b/i,
-  /\belection\s+power\b/i,
-  /\bpresidential\s+power\b/i
+  /powers+struggle/i,
+  /powers+tussle/i,
+  /politicals+power/i,
+  /grabs+power/i,
+  /clingings+tos+power/i,
+  /ins+power/i,
+  /powers+sharing/i,
+  /balances+ofs+power/i,
+  /powers+play/i,
+  /corridorss+ofs+power/i,
+  /elections+power/i,
+  /presidentials+power/i,
+  /pours?s+colds+waters+on/i,
+  /holds+water/i,
+  /troubleds+waters/i,
+  /breads+ands+water/i,
+  /waters+unders+thes+bridge/i,
+  /ins+hots+water/i,
+  /poureds+boilings+water/i,
+  /domestics+violence/i,
+  /attempteds+murder/i,
+  /saucepan/i,
+  /stabbed/i
 ];
 
 export interface EnergyValidationResult {

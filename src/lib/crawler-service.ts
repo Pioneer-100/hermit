@@ -6,6 +6,7 @@ import { checkDuplicateArticle } from './deduplication';
 import { validateEnergyRelevance } from './energy-disambiguation';
 import { extractDeepArticleText } from './deep-extractor';
 import { validateArticleFreshness } from './date-freshness';
+import { evaluateSemanticFitness } from './semantic-gate';
 import { logger } from './logger';
 import { Article } from '@/types';
 import { XMLParser } from 'fast-xml-parser';
@@ -156,7 +157,25 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
 
     // 4. Process enriched content through Gemini AI (or intelligent heuristics fallback)
     const analysis = await analyzeArticleWithGemini(headlineToUse, enrichedContent, source.name);
-    
+
+    // 5. Semantic Relevance Gate: Deduce true commercial & sustainability meaning
+    // If Gemini analysis or semantic heuristics deduce zero relevance (e.g. violent crime, political metaphor, irrelevant domestic story), drop it immediately.
+    const semanticFitness = evaluateSemanticFitness(
+      headlineToUse,
+      item.summary,
+      analysis.relevance_to_hermit,
+      analysis.relevance_score
+    );
+
+    if (!semanticFitness.isFitToDisplay) {
+      logger.info('Discarding article failed semantic relevance gate', {
+        headline: headlineToUse,
+        category: semanticFitness.rejectionCategory,
+        reason: semanticFitness.reason
+      });
+      continue;
+    }
+
     const articlePayload: Omit<Article, 'id'> = {
       publication_date: freshness.parsedDate,
       headline: headlineToUse,

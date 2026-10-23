@@ -12,21 +12,40 @@ export const metadata = {
 export default async function NexusPage() {
   const articles = await fetchArticles();
 
-  // Filter articles for Nexus & Waste-to-Energy (by category, article_type, or keywords)
+  // Import semantic gate validation
+  const { evaluateSemanticFitness } = await import('@/lib/semantic-gate');
+
+  // Filter articles for genuine Food-Water-Energy Nexus & Waste-to-Energy
   const nexusArticles = articles.filter(a => {
+    // 1. Must pass semantic fitness (no crime, no metaphors)
+    const fitness = evaluateSemanticFitness(a.headline, a.summary || '', a.relevance_to_hermit || '', a.relevance_score);
+    if (!fitness.isFitToDisplay) return false;
+
+    // 2. Direct categorization
+    if (a.article_type === 'nexus' || a.article_type === 'waste_to_energy') return true;
+
+    // 3. Technical nexus & circular economy keywords (NOT just generic 'water')
     const text = `${a.headline} ${a.summary || ''} ${a.raw_content || ''} ${a.sector || ''}`.toLowerCase();
-    return (
-      a.article_type === 'nexus' ||
-      a.article_type === 'waste_to_energy' ||
-      text.includes('nexus') ||
+    const hasNexusSubject = 
+      text.includes('dam level') ||
+      text.includes('live storage') ||
+      text.includes('kariba') ||
+      text.includes('zinwa') ||
+      text.includes('hydropower') ||
+      text.includes('hydro-power') ||
+      text.includes('solar-powered irrigation') ||
+      text.includes('solar irrigation') ||
+      text.includes('water pumping') ||
       text.includes('biogas') ||
-      text.includes('irrigation') ||
-      text.includes('dam') ||
-      text.includes('water') ||
-      text.includes('waste') ||
+      text.includes('anaerobic digestion') ||
+      text.includes('landfill gas') ||
+      text.includes('waste-to-energy') ||
       text.includes('circular economy') ||
-      text.includes('landfill')
-    );
+      text.includes('wastewater treatment') ||
+      text.includes('food-water-energy') ||
+      text.includes('refuse-derived fuel');
+
+    return hasNexusSubject;
   });
 
   return (
