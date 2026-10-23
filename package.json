@@ -6,7 +6,8 @@
     "dev": "set PORT=3009 && next dev ",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node --test scripts/test-*.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.2",

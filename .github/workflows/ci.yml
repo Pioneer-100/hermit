@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Lint, Typecheck & Build Verification
+    name: Lint, Typecheck, Unit Test & Build Verification
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -31,6 +31,9 @@ jobs:
 
     - name: TypeScript Static Typecheck
       run: npx tsc --noEmit
+
+    - name: Automated Unit Tests
+      run: npm test
 
     - name: Code Quality & ESLint Audit
       run: npm run lint
