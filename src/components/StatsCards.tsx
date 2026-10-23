@@ -54,7 +54,7 @@ export default function StatsCards({ stats }: StatsCardsProps) {
         return (
           <div
             key={idx}
-            className={`bg-[#083825]/45 backdrop-blur-xl rounded-2xl p-3 sm:p-4.5 shadow-lg border border-emerald-400/25 hover:border-emerald-300/40 hover:bg-[#0d4f34]/60 transition-all ${c.accentBorder} flex flex-col justify-between`}
+            className={`bg-[#071f16]/90 backdrop-blur-xl rounded-2xl p-3 sm:p-4.5 shadow-xl border border-emerald-500/20 hover:border-emerald-400/40 hover:bg-[#09291d]/95 transition-all ${c.accentBorder} flex flex-col justify-between`}
           >
             <div className="flex items-center justify-between gap-1.5 mb-1.5">
               <span className="text-[10px] sm:text-xs font-bold text-emerald-300/80 uppercase tracking-wider truncate">

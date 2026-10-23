@@ -136,7 +136,7 @@ export default function AIChatDrawer() {
       />
 
       {/* Floating Chat Drawer - Full width on mobile, sleek slide-out panel on desktop */}
-      <div className="fixed inset-y-0 right-0 w-full sm:w-96 max-w-full sm:max-w-md bg-[#020e08]/95 backdrop-blur-2xl shadow-[-16px_0_40px_rgba(0,0,0,0.85)] z-50 flex flex-col border-l border-emerald-500/30 overflow-hidden">
+      <div className="fixed inset-y-0 right-0 w-full sm:w-96 max-w-full sm:max-w-md bg-[#03130d]/98 backdrop-blur-2xl shadow-[-16px_0_40px_rgba(0,0,0,0.85)] z-50 flex flex-col border-l border-emerald-500/30 overflow-hidden">
         {/* Chat Background Layer */}
         <div 
           className="absolute inset-0 pointer-events-none z-0 bg-cover bg-center bg-no-repeat opacity-20 contrast-110"
@@ -171,7 +171,7 @@ export default function AIChatDrawer() {
         <div className="relative z-10 flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-3">
           {messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center p-4 space-y-3">
-              <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-emerald-400/40 shadow-xl shadow-emerald-950/80 bg-[#031d12]">
+              <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-emerald-400/40 shadow-xl shadow-emerald-950/80 bg-[#03130d]">
                 <img src="/chat_assistant_bg.jpg" alt="AI Eco Assistant" className="w-full h-full object-cover" />
               </div>
               <div>
@@ -190,7 +190,7 @@ export default function AIChatDrawer() {
                   <button
                     key={i}
                     onClick={() => sendMessage(prompt)}
-                    className="w-full text-left p-2.5 rounded-xl bg-[#041d13]/80 hover:bg-[#073020] border border-emerald-500/25 text-xs text-emerald-100/90 leading-snug transition-all active:scale-98"
+                    className="w-full text-left p-2.5 rounded-xl bg-[#040d09]/90 hover:bg-[#0a2b1e] border border-emerald-500/25 text-xs text-emerald-100/90 leading-snug transition-all active:scale-98"
                   >
                     <span className="text-emerald-400 font-bold mr-1">&rarr;</span>
                     {prompt}
@@ -205,7 +205,7 @@ export default function AIChatDrawer() {
                   className={`max-w-[88%] sm:max-w-[85%] rounded-2xl p-3 text-xs leading-relaxed shadow-lg ${
                     msg.role === 'user' 
                       ? 'bg-emerald-600 text-white font-medium rounded-tr-none shadow-emerald-950/40' 
-                      : 'bg-[#031e13]/95 text-emerald-100 border border-emerald-500/30 backdrop-blur-md rounded-tl-none shadow-black/40'
+                      : 'bg-[#040f09]/98 text-emerald-100 border border-emerald-500/25 backdrop-blur-md rounded-tl-none shadow-black/40'
                   }`}
                 >
                   {renderContent(msg.content)}
@@ -217,14 +217,14 @@ export default function AIChatDrawer() {
         </div>
 
         {/* Input Composer with Safe-Area Inset */}
-        <div className="relative z-10 p-3 sm:p-4 border-t border-emerald-500/30 bg-[#020e08]/95 backdrop-blur-md pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+        <div className="relative z-10 p-3 sm:p-4 border-t border-emerald-500/30 bg-[#03130d]/98 backdrop-blur-md pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <textarea
             rows={2}
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={handleKey}
             placeholder="Ask about tariffs, solar tenders, ZERA policies..."
-            className="w-full rounded-xl bg-[#042014]/90 border border-emerald-500/40 text-emerald-100 placeholder-emerald-400/50 p-2.5 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400 resize-none transition-all"
+            className="w-full rounded-xl bg-[#040d09]/95 border border-emerald-500/35 text-emerald-100 placeholder-emerald-400/50 p-2.5 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400 resize-none transition-all"
             disabled={loading}
           />
           <button

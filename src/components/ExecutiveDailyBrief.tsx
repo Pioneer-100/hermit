@@ -106,10 +106,10 @@ export default function ExecutiveDailyBrief({
   return (
     <div className="space-y-5 sm:space-y-6">
       {/* Main Executive Intelligence Document Container */}
-      <div className="bg-[#083825]/45 backdrop-blur-xl rounded-2xl border border-emerald-400/25 shadow-2xl shadow-emerald-950/40 overflow-hidden text-white">
+      <div className="bg-[#071f16]/90 backdrop-blur-xl rounded-2xl border border-emerald-500/20 shadow-2xl shadow-emerald-950/40 overflow-hidden text-white">
         
         {/* Document Header Band */}
-        <div className="bg-gradient-to-r from-[#093c28]/70 via-[#0e5238]/70 to-[#093c28]/70 text-white p-4 sm:p-6 border-b border-emerald-400/25">
+        <div className="bg-gradient-to-r from-[#051c13]/95 via-[#071e14]/95 to-[#051c13]/95 text-white p-4 sm:p-6 border-b border-emerald-500/20">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 pb-3.5 sm:pb-4 border-b border-emerald-800/50">
             {/* Hermit Monogram & Document Title */}
             <div className="flex items-center gap-2.5 sm:gap-3">
@@ -236,7 +236,7 @@ export default function ExecutiveDailyBrief({
         </div>
 
         {/* Visual Charts & Telemetry Strip */}
-        <div className="p-4 sm:p-6 bg-[#062c1d]/35 border-b border-emerald-900/40 space-y-4 sm:space-y-6">
+        <div className="p-4 sm:p-6 bg-[#040f09]/60 border-b border-emerald-900/40 space-y-4 sm:space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-emerald-400" />
@@ -251,7 +251,7 @@ export default function ExecutiveDailyBrief({
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
             
             {/* Chart 1: Media Topic Allocation Donut Chart (5 cols) */}
-            <div className="lg:col-span-5 bg-[#083a26]/45 backdrop-blur-xl p-3.5 sm:p-4.5 rounded-2xl border border-emerald-400/25 shadow-md flex flex-col justify-between space-y-3">
+            <div className="lg:col-span-5 bg-[#071f16]/90 backdrop-blur-xl p-3.5 sm:p-4.5 rounded-2xl border border-emerald-500/20 shadow-md flex flex-col justify-between space-y-3">
               <div className="flex items-center justify-between">
                 <div>
                   <span className="text-xs font-bold text-emerald-200 uppercase tracking-wide">
@@ -352,7 +352,7 @@ export default function ExecutiveDailyBrief({
             </div>
 
             {/* Chart 2: Risk Gauge & Early Warning Indicators (3 cols) */}
-            <div className="lg:col-span-3 bg-[#083a26]/45 backdrop-blur-xl p-3.5 sm:p-4.5 rounded-2xl border border-emerald-400/25 shadow-md flex flex-col justify-between space-y-3">
+            <div className="lg:col-span-3 bg-[#071f16]/90 backdrop-blur-xl p-3.5 sm:p-4.5 rounded-2xl border border-emerald-500/20 shadow-md flex flex-col justify-between space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-emerald-200 uppercase tracking-wide">
                   Regulatory Risk Index
@@ -364,7 +364,7 @@ export default function ExecutiveDailyBrief({
 
               {/* Score Dial Representation */}
               <div className="flex items-center gap-3">
-                <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#052618]/70 flex items-center justify-center shrink-0 border-2 border-emerald-400/40 shadow-inner">
+                <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#040d09]/80 flex items-center justify-center shrink-0 border-2 border-emerald-500/40 shadow-inner">
                   <span className="text-lg sm:text-xl font-black text-white font-mono">
                     {brief.risk_index}
                   </span>
@@ -385,7 +385,7 @@ export default function ExecutiveDailyBrief({
             </div>
 
             {/* Chart 3: Active Institutional Stakeholders (4 cols) */}
-            <div className="lg:col-span-4 bg-[#083a26]/45 backdrop-blur-xl p-3.5 sm:p-4.5 rounded-2xl border border-emerald-400/25 shadow-md space-y-2">
+            <div className="lg:col-span-4 bg-[#071f16]/90 backdrop-blur-xl p-3.5 sm:p-4.5 rounded-2xl border border-emerald-500/20 shadow-md space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-emerald-200 uppercase tracking-wide">
                   Active Stakeholders Today
@@ -395,7 +395,7 @@ export default function ExecutiveDailyBrief({
 
               <div className="space-y-1.5">
                 {brief.key_stakeholders_active.map((s, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-1.5 px-2.5 rounded-xl bg-[#052618]/50 border border-emerald-500/20 text-xs">
+                  <div key={idx} className="flex items-center justify-between p-1.5 px-2.5 rounded-xl bg-[#040d09]/70 border border-emerald-500/20 text-xs">
                     <div className="flex items-center gap-2 truncate">
                       <Building2 className="w-3 h-3 text-emerald-400 shrink-0" />
                       <span className="font-bold text-emerald-100 truncate">{s.name}</span>
@@ -441,7 +441,7 @@ export default function ExecutiveDailyBrief({
             {brief.strategic_pillars.map((pillar, idx) => (
               <div
                 key={idx}
-                className="bg-[#083a26]/45 backdrop-blur-xl rounded-2xl p-4 sm:p-5 border border-emerald-400/25 hover:border-emerald-300/40 hover:bg-[#0d4f34]/60 shadow-md hover:shadow-xl transition-all flex flex-col justify-between gap-3 border-l-4 border-l-emerald-400 text-white"
+                className="bg-[#071f16]/90 backdrop-blur-xl rounded-2xl p-4 sm:p-5 border border-emerald-500/20 hover:border-emerald-400/35 hover:bg-[#0a2b1e]/95 shadow-md hover:shadow-xl transition-all flex flex-col justify-between gap-3 border-l-4 border-l-emerald-400 text-white"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-2">
@@ -458,12 +458,12 @@ export default function ExecutiveDailyBrief({
                   </h4>
 
                   <div className="mt-2.5 sm:mt-3 space-y-2 text-xs">
-                    <div className="bg-[#052618]/55 p-2.5 rounded-xl border border-emerald-500/20">
+                    <div className="bg-[#040d09]/70 p-2.5 rounded-xl border border-emerald-500/20">
                       <span className="font-bold text-emerald-300">Commercial Impact: </span>
                       <span className="text-emerald-100/90">{pillar.impact}</span>
                     </div>
 
-                    <div className="bg-[#073623]/60 p-2.5 rounded-xl border border-emerald-400/25">
+                    <div className="bg-[#051510]/80 p-2.5 rounded-xl border border-emerald-500/20">
                       <span className="font-bold text-emerald-300">Strategic Takeaway: </span>
                       <span className="text-emerald-100 font-medium">{pillar.takeaway}</span>
                     </div>
@@ -549,7 +549,7 @@ export default function ExecutiveDailyBrief({
             {brief.management_actions.map((act, i) => {
               const isClaimed = Boolean(claimedActions[i]);
               return (
-                <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 rounded-2xl bg-[#083a26]/45 backdrop-blur-xl border border-emerald-400/25 shadow-md text-xs">
+                <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 rounded-2xl bg-[#071f16]/90 backdrop-blur-xl border border-emerald-500/20 shadow-md text-xs">
                   <div className="flex items-start gap-2.5">
                     <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider shrink-0 mt-0.5 ${
                       act.priority === 'immediate'
@@ -594,7 +594,7 @@ export default function ExecutiveDailyBrief({
         </div>
 
         {/* Direct Transition Banner to the Full Live Feed */}
-        <div className="bg-[#073623]/60 text-emerald-200 p-4 px-4 sm:px-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-emerald-400/25">
+        <div className="bg-[#051510]/80 text-emerald-200 p-4 px-4 sm:px-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-emerald-500/20">
           <div className="flex items-center gap-2 text-xs">
             <Radio className="w-4 h-4 text-emerald-400 animate-pulse shrink-0" />
             <span>

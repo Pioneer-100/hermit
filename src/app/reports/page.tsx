@@ -94,7 +94,7 @@ export default function ReportsPage() {
 
       <main className="p-3.5 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-5 sm:space-y-6">
         {/* Top Control Bar */}
-        <div className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3.5 sm:gap-4 text-white">
+        <div className="bg-[#04130d]/90 backdrop-blur-md border border-emerald-500/20 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3.5 sm:gap-4 text-white">
           <div>
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -156,7 +156,7 @@ export default function ReportsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
           
           {/* Left Column (4 cols): Archive List */}
-          <div className={`lg:col-span-4 bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-4 shadow-xl space-y-2.5 text-white ${
+          <div className={`lg:col-span-4 bg-[#04130d]/90 backdrop-blur-md border border-emerald-500/20 rounded-2xl p-4 shadow-xl space-y-2.5 text-white ${
             mobileTab === 'report' ? 'hidden lg:block' : 'block'
           }`}>
             <div className="flex items-center justify-between px-2 mb-2">
@@ -178,7 +178,7 @@ export default function ReportsPage() {
                     }}
                     className={`p-3.5 rounded-xl border cursor-pointer transition-all active:scale-99 ${
                       isSelected
-                        ? 'bg-[#083825]/90 border-emerald-400/60 shadow-md text-white'
+                        ? 'bg-[#071f16]/95 border-emerald-500/50 shadow-md text-white'
                         : 'bg-[#041a12]/75 border-emerald-900/50 hover:border-emerald-500/40 text-emerald-100'
                     }`}
                   >
@@ -223,7 +223,7 @@ export default function ReportsPage() {
           </div>
 
           {/* Right Column (8 cols): Executive Document View */}
-          <div className={`lg:col-span-8 bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-xl space-y-5 sm:space-y-6 text-white ${
+          <div className={`lg:col-span-8 bg-[#04130d]/90 backdrop-blur-md border border-emerald-500/20 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-xl space-y-5 sm:space-y-6 text-white ${
             mobileTab === 'archive' ? 'hidden lg:block' : 'block'
           }`}>
             {selectedReport ? (

@@ -85,7 +85,7 @@ export default function TrendsPage() {
       <main className="p-3.5 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-6">
         
         {/* Figure 4 Main Chart Container: Media Velocity & Mentions */}
-        <div className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4 sm:space-y-6 text-white">
+        <div className="bg-[#04130d]/90 backdrop-blur-md border border-emerald-500/20 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4 sm:space-y-6 text-white">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-900/50 pb-3.5">
             <div>
               <div className="flex items-center gap-2">
@@ -193,7 +193,7 @@ export default function TrendsPage() {
         {/* 3-Column Executive Signal Gauges */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {/* 1. Article Type Distribution */}
-          <div className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3.5">
+          <div className="bg-[#04130d]/90 backdrop-blur-md border border-emerald-500/20 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3.5">
             <div className="flex items-center justify-between border-b border-emerald-900/40 pb-2.5">
               <div className="flex items-center gap-2">
                 <Layers className="w-4 h-4 text-emerald-400" />
@@ -226,7 +226,7 @@ export default function TrendsPage() {
           </div>
 
           {/* 2. Risk & Impact Exposure Radar */}
-          <div className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3.5">
+          <div className="bg-[#04130d]/90 backdrop-blur-md border border-emerald-500/20 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3.5">
             <div className="flex items-center justify-between border-b border-emerald-900/40 pb-2.5">
               <div className="flex items-center gap-2">
                 <ShieldAlert className="w-4 h-4 text-rose-400" />
@@ -257,7 +257,7 @@ export default function TrendsPage() {
           </div>
 
           {/* 3. Source Category Footprint */}
-          <div className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3.5">
+          <div className="bg-[#04130d]/90 backdrop-blur-md border border-emerald-500/20 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3.5">
             <div className="flex items-center justify-between border-b border-emerald-900/40 pb-2.5">
               <div className="flex items-center gap-2">
                 <Radio className="w-4 h-4 text-cyan-400" />
@@ -286,7 +286,7 @@ export default function TrendsPage() {
         </div>
 
         {/* Stakeholder Heatmap & Activity Co-occurrence */}
-        <div className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4">
+        <div className="bg-[#04130d]/90 backdrop-blur-md border border-emerald-500/20 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4">
           <div className="flex items-center justify-between border-b border-emerald-900/50 pb-3">
             <div className="flex items-center gap-2.5">
               <Building2 className="w-4 h-4 text-emerald-400" />
@@ -336,7 +336,7 @@ export default function TrendsPage() {
         </div>
 
         {/* Dynamic Tracked Topics Table */}
-        <div className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4 text-white">
+        <div className="bg-[#04130d]/90 backdrop-blur-md border border-emerald-500/20 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4 text-white">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-900/50 pb-3">
             <div className="flex items-center gap-2.5">
               <TrendingUp className="w-4 h-4 text-emerald-400" />

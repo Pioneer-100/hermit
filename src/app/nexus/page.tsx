@@ -54,7 +54,7 @@ export default async function NexusPage() {
 
       <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto w-full">
         {/* Banner */}
-        <div className="relative rounded-2xl p-6 sm:p-8 overflow-hidden bg-gradient-to-br from-[#062c1d]/90 via-[#0a422c]/90 to-[#031c12]/95 border border-emerald-500/30 shadow-2xl backdrop-blur-xl">
+        <div className="relative rounded-2xl p-6 sm:p-8 overflow-hidden bg-gradient-to-br from-[#040f09]/90 via-[#0a422c]/90 to-[#031c12]/95 border border-emerald-500/30 shadow-2xl backdrop-blur-xl">
           <div className="relative z-10 max-w-3xl space-y-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold uppercase tracking-wider">
               <Droplets className="w-3.5 h-3.5 text-emerald-400" />

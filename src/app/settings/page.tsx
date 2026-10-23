@@ -14,7 +14,7 @@ export default function SettingsPage() {
       <main className="p-3.5 sm:p-6 lg:p-8 max-w-5xl w-full mx-auto space-y-5 sm:space-y-6">
         
         {/* Architecture Summary Box */}
-        <div className="bg-gradient-to-r from-[#072c1e]/90 via-[#0d422f]/90 to-[#072c1e]/90 text-white p-4 sm:p-6 rounded-2xl space-y-2 shadow-2xl shadow-emerald-950/40 border border-emerald-500/30 backdrop-blur-md">
+        <div className="bg-gradient-to-r from-[#051c13]/98 via-[#071e14]/98 to-[#051c13]/98 text-white p-4 sm:p-6 rounded-2xl space-y-2 shadow-2xl shadow-emerald-950/40 border border-emerald-500/30 backdrop-blur-md">
           <div className="flex items-center gap-2 text-emerald-400 text-xs font-black uppercase tracking-wider">
             <Zap className="w-4 h-4 fill-emerald-400 text-emerald-400" />
             <span>Hermit Investments Media Surveillance Infrastructure</span>
@@ -29,7 +29,7 @@ export default function SettingsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
           
           {/* Supabase Status */}
-          <div className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3 text-white">
+          <div className="bg-[#04130d]/90 backdrop-blur-md border border-emerald-500/20 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3 text-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center justify-center shrink-0">
@@ -51,7 +51,7 @@ export default function SettingsPage() {
           </div>
 
           {/* Gemini AI Status */}
-          <div className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3 text-white">
+          <div className="bg-[#04130d]/90 backdrop-blur-md border border-emerald-500/20 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3 text-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center justify-center shrink-0">
@@ -73,7 +73,7 @@ export default function SettingsPage() {
           </div>
 
           {/* Resend Email Status */}
-          <div className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3 text-white">
+          <div className="bg-[#04130d]/90 backdrop-blur-md border border-emerald-500/20 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3 text-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-300 border border-blue-500/40 flex items-center justify-center shrink-0">
@@ -95,7 +95,7 @@ export default function SettingsPage() {
           </div>
 
           {/* Vercel Cron Status */}
-          <div className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3 text-white">
+          <div className="bg-[#04130d]/90 backdrop-blur-md border border-emerald-500/20 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3 text-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/40 flex items-center justify-center shrink-0">
@@ -119,7 +119,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Environment File Instruction */}
-        <div className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-4 sm:p-6 text-xs text-white space-y-3 shadow-xl">
+        <div className="bg-[#04130d]/90 backdrop-blur-md border border-emerald-500/20 rounded-2xl p-4 sm:p-6 text-xs text-white space-y-3 shadow-xl">
           <div className="flex items-center gap-2 font-bold text-white text-sm font-display">
             <Info className="w-4 h-4 text-emerald-400" />
             <span>Connecting Production API Keys (.env.local)</span>

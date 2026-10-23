@@ -32,7 +32,7 @@ export default function Header({
   });
 
   return (
-    <header className="bg-[#083825]/55 backdrop-blur-2xl border-b border-emerald-400/25 px-3.5 sm:px-8 py-2.5 sm:py-3.5 flex items-center justify-between sticky top-0 z-20 shadow-md shadow-emerald-950/20">
+    <header className="bg-[#051a11]/95 backdrop-blur-xl border-b border-emerald-500/20 px-3.5 sm:px-8 py-2.5 sm:py-3.5 flex items-center justify-between sticky top-0 z-20 shadow-lg shadow-black/20">
       {/* Title & Context */}
       <div className="flex items-center gap-3 min-w-0 mr-2">
         <div className="min-w-0">

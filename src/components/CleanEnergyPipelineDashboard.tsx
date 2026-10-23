@@ -134,7 +134,7 @@ export default function CleanEnergyPipelineDashboard({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3.5 sm:gap-4">
         
         {/* Card A: Hermit Clean Capacity Aggregate */}
-        <div className="bg-[#083825]/45 backdrop-blur-xl rounded-2xl p-4 sm:p-5 border border-emerald-400/25 shadow-xl flex flex-col justify-between text-white">
+        <div className="bg-[#071f16]/90 backdrop-blur-xl rounded-2xl p-4 sm:p-5 border border-emerald-500/25 shadow-xl flex flex-col justify-between text-white">
           <div className="flex items-center justify-between gap-2 mb-2">
             <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-emerald-300 flex items-center gap-1.5">
               <Leaf className="w-3.5 h-3.5 text-emerald-400" />
@@ -225,7 +225,7 @@ export default function CleanEnergyPipelineDashboard({
       </div>
 
       {/* 2. PROJECT PIPELINE TRACKERS (3 FLAGSHIP ASSETS) */}
-      <div className="bg-[#083825]/45 backdrop-blur-xl rounded-2xl border border-emerald-400/25 p-4 sm:p-6 shadow-xl space-y-4 text-white">
+      <div className="bg-[#071f16]/90 backdrop-blur-xl rounded-2xl border border-emerald-500/20 p-4 sm:p-6 shadow-xl space-y-4 text-white">
         
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-emerald-900/50 pb-3">
           <div className="flex items-center gap-2.5">
@@ -349,7 +349,7 @@ export default function CleanEnergyPipelineDashboard({
 
         {/* 3. EXPANDED DOSSIER DRAWER (WHEN A PROJECT IS SELECTED) */}
         {selectedProj && selectedDetails && (
-          <div className="mt-4 p-4 sm:p-5 rounded-xl bg-[#083a26]/75 border border-emerald-400/40 backdrop-blur-2xl animate-in fade-in slide-in-from-top-2 duration-200 shadow-2xl">
+          <div className="mt-4 p-4 sm:p-5 rounded-xl bg-[#071f16]/95 border border-emerald-500/30 backdrop-blur-2xl animate-in fade-in slide-in-from-top-2 duration-200 shadow-2xl">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-800/40 pb-3">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center shrink-0">
@@ -378,22 +378,22 @@ export default function CleanEnergyPipelineDashboard({
 
             {/* Dossier 4-Column Technical Metrics */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-4 text-xs">
-              <div className="p-3 rounded-xl bg-[#052618]/55 border border-emerald-400/25">
+              <div className="p-3 rounded-xl bg-[#040d09]/70 border border-emerald-500/20">
                 <span className="text-emerald-400/70 text-[10px] uppercase font-bold block mb-1">Commercial Offtaker</span>
                 <span className="text-white font-medium">{selectedDetails.offtaker}</span>
               </div>
 
-              <div className="p-3 rounded-xl bg-[#052618]/55 border border-emerald-400/25">
+              <div className="p-3 rounded-xl bg-[#040d09]/70 border border-emerald-500/20">
                 <span className="text-emerald-400/70 text-[10px] uppercase font-bold block mb-1">Blended Capital Facility</span>
                 <span className="text-white font-medium">{selectedDetails.financingSource}</span>
               </div>
 
-              <div className="p-3 rounded-xl bg-[#052618]/55 border border-emerald-400/25">
+              <div className="p-3 rounded-xl bg-[#040d09]/70 border border-emerald-500/20">
                 <span className="text-emerald-400/70 text-[10px] uppercase font-bold block mb-1">Grid Interconnection</span>
                 <span className="text-white font-medium">{selectedDetails.gridConnection}</span>
               </div>
 
-              <div className="p-3 rounded-xl bg-[#052618]/55 border border-emerald-400/25">
+              <div className="p-3 rounded-xl bg-[#040d09]/70 border border-emerald-500/20">
                 <span className="text-emerald-400/70 text-[10px] uppercase font-bold block mb-1">Key Regulatory Gateway</span>
                 <span className="text-white font-medium">{selectedDetails.regulatoryMilestone}</span>
               </div>
@@ -444,7 +444,7 @@ export default function CleanEnergyPipelineDashboard({
                   <div
                     key={art.id}
                     onClick={() => onSelectArticleById(art.id)}
-                    className="p-2.5 rounded-lg bg-[#052618]/55 hover:bg-[#093d28]/70 border border-emerald-400/25 hover:border-emerald-300/40 cursor-pointer flex items-center justify-between gap-3 text-white transition-all group"
+                    className="p-2.5 rounded-lg bg-[#040d09]/70 hover:bg-[#0a2b1e]/80 border border-emerald-400/25 hover:border-emerald-300/40 cursor-pointer flex items-center justify-between gap-3 text-white transition-all group"
                   >
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 text-[10px] text-emerald-400/80 mb-0.5">

@@ -164,7 +164,7 @@ export default function DashboardClient({
       <main className="p-3.5 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-5 sm:space-y-6">
         
         {/* Executive Mode Selector & Status Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#083825]/45 backdrop-blur-xl p-3 sm:p-4 rounded-2xl border border-emerald-400/25 shadow-lg">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#071f16]/90 backdrop-blur-xl p-3 sm:p-4 rounded-2xl border border-emerald-400/25 shadow-lg">
           {/* View Mode Switcher Pills */}
           <div className="flex items-center gap-1.5 sm:gap-2 bg-[#052618]/50 p-1 rounded-xl border border-emerald-500/20 w-full sm:w-auto">
             <button
@@ -241,7 +241,7 @@ export default function DashboardClient({
         {viewMode === 'feed' && (
           <div className="space-y-4">
             {/* Filter controls */}
-            <div className="bg-[#083825]/45 backdrop-blur-xl border border-emerald-400/25 rounded-2xl p-3.5 sm:p-4 shadow-xl flex flex-col gap-3 text-white">
+            <div className="bg-[#071f16]/90 backdrop-blur-xl border border-emerald-500/20 rounded-2xl p-3.5 sm:p-4 shadow-xl flex flex-col gap-3 text-white">
               <div className="relative w-full">
                 <Search className="w-4 h-4 text-emerald-400/80 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
@@ -297,7 +297,7 @@ export default function DashboardClient({
             {/* Articles List */}
             <div className="space-y-3">
               {filteredArticles.length === 0 ? (
-                <div className="bg-[#06261b]/70 backdrop-blur-md rounded-2xl border border-emerald-500/20 p-8 text-center text-emerald-200/70 text-xs">
+                <div className="bg-[#04130d]/90 backdrop-blur-md rounded-2xl border border-emerald-500/20 p-8 text-center text-emerald-200/70 text-xs">
                   No articles match your current filter parameters.
                 </div>
               ) : (

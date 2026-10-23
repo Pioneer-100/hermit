@@ -52,10 +52,10 @@ export default function ArticleDetailModal({
 
   return (
     <div className="fixed inset-0 left-0 md:left-64 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-2.5 sm:p-6 overflow-y-auto animate-in fade-in duration-150">
-      <div className="bg-[#06261b]/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-emerald-500/30 w-full max-w-4xl overflow-hidden my-auto max-h-[94vh] flex flex-col text-white">
+      <div className="bg-[#04130d]/98 backdrop-blur-xl rounded-2xl shadow-2xl border border-emerald-500/25 w-full max-w-4xl overflow-hidden my-auto max-h-[94vh] flex flex-col text-white">
         
         {/* Executive Header Banner */}
-        <div className="bg-gradient-to-r from-[#072c1e]/95 via-[#0d422f]/95 to-[#072c1e]/95 text-white p-4 sm:p-6 border-b border-emerald-500/30 shrink-0">
+        <div className="bg-gradient-to-r from-[#051c13]/98 via-[#071e14]/98 to-[#051c13]/98 text-white p-4 sm:p-6 border-b border-emerald-500/20 shrink-0">
           {/* Top Status Strip */}
           <div className="flex items-center justify-between gap-2 mb-2 text-xs">
             <div className="flex items-center gap-2">
@@ -166,7 +166,7 @@ export default function ArticleDetailModal({
             </div>
 
             {/* Hermit Relevance Assessment */}
-            <div className="bg-[#062c1d]/90 p-3.5 sm:p-4 rounded-xl border border-emerald-500/30 space-y-1.5 shadow-md">
+            <div className="bg-[#040f09]/95 p-3.5 sm:p-4 rounded-xl border border-emerald-500/20 space-y-1.5 shadow-md">
               <div className="flex items-center gap-1.5 font-bold text-xs text-emerald-300 uppercase tracking-wider">
                 <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Relevance to Hermit Investments</span>
@@ -271,7 +271,7 @@ export default function ArticleDetailModal({
         </div>
 
         {/* Footer Action Bar */}
-        <div className="bg-[#051c14] border-t border-emerald-900/50 p-3.5 sm:p-4 px-4 sm:px-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shrink-0">
+        <div className="bg-[#040f09] border-t border-emerald-900/40 p-3.5 sm:p-4 px-4 sm:px-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shrink-0">
           <div className="text-xs text-emerald-300/70 flex items-center gap-2">
             <span className="truncate">Dispatched via: <strong className="text-emerald-100">Email Alerts & Weekly Digest</strong></span>
             {alertSuccess && (

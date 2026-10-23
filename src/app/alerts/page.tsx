@@ -55,7 +55,7 @@ export default function AlertsPage() {
 
       <main className="p-3.5 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-5 sm:space-y-6">
         {/* Banner with Green Aesthetic */}
-        <div className="bg-gradient-to-r from-[#072c1e]/90 via-[#0d422f]/90 to-[#072c1e]/90 text-white p-4 sm:p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5 shadow-2xl shadow-emerald-950/40 border border-emerald-500/30 backdrop-blur-md">
+        <div className="bg-gradient-to-r from-[#051c13]/98 via-[#071e14]/98 to-[#051c13]/98 text-white p-4 sm:p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5 shadow-2xl shadow-emerald-950/40 border border-emerald-500/30 backdrop-blur-md">
           <div className="space-y-1.5 max-w-2xl">
             <div className="flex items-center gap-2 text-emerald-400 text-xs font-black uppercase tracking-wider">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
@@ -97,7 +97,7 @@ export default function AlertsPage() {
               {articles.map((art) => (
                 <div
                   key={art.id}
-                  className="bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 hover:border-emerald-400/50 hover:bg-[#083525]/85 rounded-2xl p-4 sm:p-5 shadow-xl transition-all border-l-4 border-l-rose-500 space-y-2.5 sm:space-y-3 text-white"
+                  className="bg-[#04130d]/90 backdrop-blur-md border border-emerald-500/20 hover:border-emerald-400/50 hover:bg-[#083525]/85 rounded-2xl p-4 sm:p-5 shadow-xl transition-all border-l-4 border-l-rose-500 space-y-2.5 sm:space-y-3 text-white"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2">
                     <div className="flex flex-wrap items-center gap-1.5">
@@ -171,7 +171,7 @@ export default function AlertsPage() {
           </div>
 
           {/* Right Column (5 cols): Email Dispatch Audit Trail */}
-          <div className="lg:col-span-5 bg-[#06261b]/75 backdrop-blur-md border border-emerald-500/25 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3.5 sm:space-y-4 text-white">
+          <div className="lg:col-span-5 bg-[#04130d]/90 backdrop-blur-md border border-emerald-500/20 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3.5 sm:space-y-4 text-white">
             <div className="flex items-center justify-between border-b border-emerald-900/50 pb-3">
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-emerald-400" />

@@ -72,7 +72,7 @@ export default function SourcesPage() {
         )}
 
         {/* Filter Bar */}
-        <div className="bg-[#083825]/45 backdrop-blur-xl border border-emerald-400/25 rounded-2xl p-3.5 sm:p-4 shadow-xl flex flex-col md:flex-row gap-2.5 sm:gap-3 items-stretch md:items-center justify-between text-white">
+        <div className="bg-[#071f16]/90 backdrop-blur-xl border border-emerald-500/20 rounded-2xl p-3.5 sm:p-4 shadow-xl flex flex-col md:flex-row gap-2.5 sm:gap-3 items-stretch md:items-center justify-between text-white">
           <div className="relative flex-1">
             <Search className="w-4 h-4 text-emerald-400/80 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
@@ -106,7 +106,7 @@ export default function SourcesPage() {
             return (
               <div
                 key={source.id}
-                className="bg-[#083825]/45 backdrop-blur-xl border border-emerald-400/25 hover:border-emerald-300/40 hover:bg-[#0d4f34]/60 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col justify-between gap-3 transition-all text-white"
+                className="bg-[#071f16]/90 backdrop-blur-xl border border-emerald-500/20 hover:border-emerald-300/40 hover:bg-[#0d4f34]/60 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col justify-between gap-3 transition-all text-white"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-2">

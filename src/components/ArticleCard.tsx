@@ -56,7 +56,7 @@ export default function ArticleCard({
   return (
     <div
       onClick={() => onClick?.(article)}
-      className={`group bg-[#083825]/45 backdrop-blur-xl rounded-2xl p-3.5 sm:p-5 shadow-lg hover:shadow-xl border border-emerald-400/25 hover:border-emerald-300/40 hover:bg-[#0d4f34]/60 transition-all duration-150 cursor-pointer ${borderLeftClass} flex flex-col justify-between gap-2.5 sm:gap-3`}
+      className={`group bg-[#071f16]/90 backdrop-blur-xl rounded-2xl p-3.5 sm:p-5 shadow-xl hover:shadow-2xl border border-emerald-500/20 hover:border-emerald-400/40 hover:bg-[#0a2b1e]/95 transition-all duration-150 cursor-pointer ${borderLeftClass} flex flex-col justify-between gap-2.5 sm:gap-3`}
     >
       {/* Top Meta Header */}
       <div className="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2">
