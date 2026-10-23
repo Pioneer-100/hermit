@@ -14,13 +14,52 @@ import {
   ShieldAlert, 
   Clock, 
   TrendingUp, 
-  ChevronRight
+  ChevronRight,
+  Calendar
 } from 'lucide-react';
 import Link from 'next/link';
 import { getAuthHeaders } from '@/lib/api-client';
 
 interface FeedClientProps {
   initialArticles: Article[];
+}
+
+
+function formatDayLabel(dateStr: string): string {
+  if (!dateStr || dateStr === 'unknown') return 'Earlier / Undated';
+  const today = new Date().toISOString().slice(0, 10);
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  
+  if (dateStr === today) return "Today's Dispatches";
+  if (dateStr === yesterday) return "Yesterday's Dispatches";
+
+  const d = new Date(dateStr + 'T00:00:00Z');
+  return d.toLocaleDateString('en-GB', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC'
+  });
+}
+
+function groupArticlesByDay(list: Article[]): Array<{ day: string; label: string; items: Article[] }> {
+  const groups: Record<string, Article[]> = {};
+  
+  list.forEach(item => {
+    const rawDate = item.publication_date || item.captured_at;
+    const dayKey = rawDate ? rawDate.slice(0, 10) : 'unknown';
+    if (!groups[dayKey]) groups[dayKey] = [];
+    groups[dayKey].push(item);
+  });
+
+  return Object.keys(groups)
+    .sort((a, b) => (b === 'unknown' ? 1 : a === 'unknown' ? -1 : b.localeCompare(a)))
+    .map(day => ({
+      day,
+      label: formatDayLabel(day),
+      items: groups[day]
+    }));
 }
 
 export default function FeedClient({ initialArticles }: FeedClientProps) {
@@ -96,7 +135,7 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
     <div className="flex-1 flex flex-col min-h-screen bg-transparent">
       {/* Header Bar */}
       <Header
-        title="Live Intelligence Feed"
+        title="Intelligence Feed"
         subtitle="Continuous clean surveillance across 55 tracked portals in Zimbabwe (6 Pillars)"
         onRefresh={loadArticles}
         onTriggerCrawl={() => setIsCrawlModalOpen(true)}
@@ -199,8 +238,8 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
               </div>
             </div>
 
-            {/* Articles Stream */}
-            <div className="space-y-3">
+            {/* Articles Stream with Chronological Day Boundaries */}
+            <div className="space-y-6">
               {filtered.length === 0 ? (
                 <div className="bg-[#06261b]/70 backdrop-blur-md rounded-2xl border border-emerald-500/20 p-8 sm:p-12 text-center text-emerald-200/70 text-xs space-y-3">
                   <SlidersHorizontal className="w-8 h-8 text-emerald-400/60 mx-auto" />
@@ -208,13 +247,32 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
                   <p>Try broadening your search keywords or resetting relevance filter pills.</p>
                 </div>
               ) : (
-                filtered.map((article) => (
-                  <ArticleCard
-                    key={article.id}
-                    article={article}
-                    onClick={setSelectedArticle}
-                    onReviewToggle={handleReviewToggle}
-                  />
+                groupArticlesByDay(filtered).map((group) => (
+                  <div key={group.day} className="space-y-3">
+                    {/* Daily Boundary Pill Divider */}
+                    <div className="flex items-center gap-3 pt-2">
+                      <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-300 text-xs font-bold shadow-md">
+                        <Calendar className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>{group.label}</span>
+                        <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-800/60 text-emerald-200 font-mono">
+                          {group.items.length} {group.items.length === 1 ? 'article' : 'articles'}
+                        </span>
+                      </div>
+                      <div className="flex-1 h-px bg-gradient-to-r from-emerald-500/30 via-emerald-800/20 to-transparent" />
+                    </div>
+
+                    {/* Articles under this boundary */}
+                    <div className="space-y-3">
+                      {group.items.map((article) => (
+                        <ArticleCard
+                          key={article.id}
+                          article={article}
+                          onClick={setSelectedArticle}
+                          onReviewToggle={handleReviewToggle}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 ))
               )}
             </div>

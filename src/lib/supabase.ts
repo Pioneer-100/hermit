@@ -258,11 +258,21 @@ export async function insertAlertLog(alert: Omit<AlertLog, 'id'>): Promise<Alert
 
 export async function getDashboardStats(): Promise<DashboardStats> {
   const articles = await fetchArticles();
+  
+  // Calculate articles captured today (UTC date matching)
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const capturedTodayCount = articles.filter(a => {
+    const d = a.captured_at ? a.captured_at.slice(0, 10) : '';
+    const pubD = a.publication_date ? a.publication_date.slice(0, 10) : '';
+    return d === todayStr || pubD === todayStr;
+  }).length;
+
   const highFlags = articles.filter(a => a.relevance_level === 'high').length;
   const pending = articles.filter(a => !a.is_reviewed).length;
 
   return {
-    capturedToday: articles.length,
+    capturedToday: capturedTodayCount,
+    totalArticles: articles.length,
     highRelevanceFlags: highFlags,
     pendingReview: pending,
     sourcesMonitored: MONITORED_SOURCES.length,

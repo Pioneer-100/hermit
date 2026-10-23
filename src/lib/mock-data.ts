@@ -201,6 +201,7 @@ export const INITIAL_ARTICLES: Article[] = [
 
 export const INITIAL_STATS: DashboardStats = {
   capturedToday: 47,
+  totalArticles: 106,
   highRelevanceFlags: 6,
   pendingReview: 2,
   sourcesMonitored: 63,

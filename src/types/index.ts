@@ -134,6 +134,7 @@ export interface AlertLog {
 
 export interface DashboardStats {
   capturedToday: number;
+  totalArticles: number;
   highRelevanceFlags: number;
   pendingReview: number;
   sourcesMonitored: number;

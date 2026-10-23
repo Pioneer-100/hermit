@@ -10,13 +10,13 @@ interface StatsCardsProps {
 export default function StatsCards({ stats }: StatsCardsProps) {
   const cards = [
     {
-      title: 'Daily Media Captures',
+      title: 'Crawled Today',
       value: stats.capturedToday,
-      subtext: '+28% vs 7-day average',
+      subtext: stats.totalArticles ? `${stats.totalArticles} active in database` : 'Real-time sync',
       icon: Layers,
       accentBorder: 'border-l-4 border-l-emerald-400',
       iconBg: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
-      badge: 'Continuous Feed'
+      badge: 'Today'
     },
     {
       title: 'High-Relevance Flags',
