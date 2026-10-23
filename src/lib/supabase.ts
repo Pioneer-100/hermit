@@ -382,6 +382,107 @@ export async function getTrendAnalytics(): Promise<TrendAnalytics> {
   });
 
   const highCount = articles.filter(a => a.relevance_level === 'high').length;
+  const medCount = articles.filter(a => a.relevance_level === 'medium').length;
+  const lowCount = articles.filter(a => a.relevance_level === 'low').length;
+  const totalArt = Math.max(articles.length, 1);
+
+  // Article Type breakdown
+  const typeMap: Record<string, { label: string; count: number; color: string }> = {
+    tariff_change: { label: 'Tariff Revisions & Reviews', count: 0, color: '#f59e0b' },
+    new_regulation: { label: 'Statutory Gazettes & Rules', count: 0, color: '#ec4899' },
+    funding_announcement: { label: 'DFI & Climate Financing', count: 0, color: '#10b981' },
+    project_update: { label: 'IPP Generation & Commissioning', count: 0, color: '#3b82f6' },
+    policy_change: { label: 'National Energy Directives', count: 0, color: '#8b5cf6' },
+    partnership: { label: 'Cross-Border & Bilateral Deals', count: 0, color: '#06b6d4' },
+    general: { label: 'Industry Operations & Grid Updates', count: 0, color: '#64748b' }
+  };
+
+  articles.forEach(a => {
+    const t = a.article_type || 'general';
+    if (typeMap[t]) {
+      typeMap[t].count++;
+    } else {
+      typeMap.general.count++;
+    }
+  });
+
+  const typeBreakdown = Object.entries(typeMap).map(([type, val]) => ({
+    type,
+    label: val.label,
+    count: val.count,
+    percentage: Math.round((val.count / totalArt) * 100),
+    color: val.color
+  })).sort((a, b) => b.count - a.count);
+
+  // Risk Breakdown
+  const riskBreakdown = [
+    { level: 'High Alert', count: highCount, percentage: Math.round((highCount / totalArt) * 100), color: '#f43f5e' },
+    { level: 'Moderate Action', count: medCount, percentage: Math.round((medCount / totalArt) * 100), color: '#f59e0b' },
+    { level: 'Low / Informational', count: lowCount, percentage: Math.round((lowCount / totalArt) * 100), color: '#10b981' }
+  ];
+
+  // Source Categories Breakdown
+  const catCounts: Record<string, number> = {
+    'Regulators & Govt': 0,
+    'National Media & Press': 0,
+    'DFIs & Multilateral': 0,
+    'Regional & Cross-Border': 0
+  };
+
+  articles.forEach(a => {
+    const name = (a.source_name || '').toLowerCase();
+    if (name.includes('zera') || name.includes('ministry') || name.includes('veritas') || name.includes('parliament')) {
+      catCounts['Regulators & Govt']++;
+    } else if (name.includes('afdb') || name.includes('world bank') || name.includes('ifc') || name.includes('undp')) {
+      catCounts['DFIs & Multilateral']++;
+    } else if (name.includes('sapp') || name.includes('sadc') || name.includes('eskom') || name.includes('esi')) {
+      catCounts['Regional & Cross-Border']++;
+    } else {
+      catCounts['National Media & Press']++;
+    }
+  });
+
+  const sourceCatColors: Record<string, string> = {
+    'Regulators & Govt': '#10b981',
+    'National Media & Press': '#3b82f6',
+    'DFIs & Multilateral': '#8b5cf6',
+    'Regional & Cross-Border': '#f59e0b'
+  };
+
+  const sourceBreakdown = Object.entries(catCounts).map(([category, count]) => ({
+    category,
+    count,
+    percentage: Math.round((count / totalArt) * 100),
+    color: sourceCatColors[category] || '#10b981'
+  }));
+
+  // Key Stakeholder Heatmap
+  const stakeholderTally: Record<string, number> = {};
+  articles.forEach(a => {
+    if (Array.isArray(a.key_stakeholders)) {
+      a.key_stakeholders.forEach(st => {
+        const clean = st.trim();
+        if (clean.length > 2 && clean.length < 35) {
+          stakeholderTally[clean] = (stakeholderTally[clean] || 0) + 1;
+        }
+      });
+    }
+  });
+
+  const stakeholderHeatmap = Object.entries(stakeholderTally)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([name, mentions]) => {
+      let sentiment: 'neutral' | 'critical' | 'constructive' = 'neutral';
+      const lower = name.toLowerCase();
+      if (lower.includes('zetdc') || lower.includes('zesa') || lower.includes('kariba')) {
+        sentiment = 'critical';
+      } else if (lower.includes('afdb') || lower.includes('ifc') || lower.includes('solar')) {
+        sentiment = 'constructive';
+      }
+      return { name, mentions, sentiment };
+    });
+
   const avgRisk = articles.length > 0 ? Math.round((highCount / articles.length) * 100) : 55;
 
   return {
@@ -389,7 +490,11 @@ export async function getTrendAnalytics(): Promise<TrendAnalytics> {
     timeline,
     totalMentions: articles.length,
     primaryRiskTopic: 'ZERA tariff dispute & IPP framework',
-    averageRiskIndex: Math.min(Math.max(avgRisk + 25, 40), 92)
+    averageRiskIndex: Math.min(Math.max(avgRisk + 25, 40), 92),
+    typeBreakdown,
+    riskBreakdown,
+    sourceBreakdown,
+    stakeholderHeatmap
   };
 }
 

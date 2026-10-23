@@ -13,7 +13,7 @@ import {
 
 interface ArticleCardProps {
   article: Article;
-  onClick: (article: Article) => void;
+  onClick?: (article: Article) => void;
   onReviewToggle?: (id: number, reviewed: boolean) => void;
   compact?: boolean;
 }
@@ -54,7 +54,7 @@ export default function ArticleCard({
 
   return (
     <div
-      onClick={() => onClick(article)}
+      onClick={() => onClick?.(article)}
       className={`group bg-[#083825]/45 backdrop-blur-xl rounded-2xl p-3.5 sm:p-5 shadow-lg hover:shadow-xl border border-emerald-400/25 hover:border-emerald-300/40 hover:bg-[#0d4f34]/60 transition-all duration-150 cursor-pointer ${borderLeftClass} flex flex-col justify-between gap-2.5 sm:gap-3`}
     >
       {/* Top Meta Header */}

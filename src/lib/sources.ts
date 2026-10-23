@@ -9,7 +9,9 @@ export interface SourceDefinition {
     | 'dfi'
     | 'renewables'
     | 'intl_media'
-    | 'social';
+    | 'social'
+    | 'nexus_waste'
+    | 'tenders_events';
   categoryLabel: string;
   sourceType: 'web' | 'rss' | 'social';
   feedUrl?: string;
@@ -605,7 +607,7 @@ export const MONITORED_SOURCES: SourceDefinition[] = [
     sourceType: 'rss',
     priority: 'high',
     description: 'Premier reporting on private off-grid renewable installations and solar projects by Zimbabwean mining firms.',
-  }
+  },
   // 8. Food-Water-Energy Nexus & Waste-to-Energy Sources (SoW Section 4.8 & 4.9)
   {
     id: 66,

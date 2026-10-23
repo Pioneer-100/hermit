@@ -7,7 +7,10 @@ export type ArticleType =
   | 'project_update'
   | 'policy_change'
   | 'partnership'
-  | 'general';
+  | 'general'
+  | 'event'
+  | 'nexus'
+  | 'waste_to_energy';
 
 export type SourceCategory = 
   | 'newspapers'
@@ -16,7 +19,9 @@ export type SourceCategory =
   | 'dfi'
   | 'renewables'
   | 'intl_media'
-  | 'social';
+  | 'social'
+  | 'nexus_waste'
+  | 'tenders_events';
 
 export interface Source {
   id: number;
@@ -49,6 +54,8 @@ export interface Article {
   ai_summary: string | null;
   ai_impact_note: string | null;
   suggested_actions?: string[];
+  deadline?: string | null;
+  sector?: string | null;
   is_reviewed: boolean;
   is_alert_sent: boolean;
   captured_at: string;
@@ -152,6 +159,30 @@ export interface TrendAnalytics {
   totalMentions: number;
   primaryRiskTopic: string;
   averageRiskIndex: number;
+  typeBreakdown?: {
+    type: string;
+    label: string;
+    count: number;
+    percentage: number;
+    color: string;
+  }[];
+  riskBreakdown?: {
+    level: string;
+    count: number;
+    percentage: number;
+    color: string;
+  }[];
+  sourceBreakdown?: {
+    category: string;
+    count: number;
+    percentage: number;
+    color: string;
+  }[];
+  stakeholderHeatmap?: {
+    name: string;
+    mentions: number;
+    sentiment: 'neutral' | 'critical' | 'constructive';
+  }[];
 }
 
 export type UserRole = 'executive' | 'director' | 'analyst' | 'engineer';
