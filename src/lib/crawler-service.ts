@@ -3,6 +3,7 @@ import { analyzeArticleWithGemini } from './gemini';
 import { insertArticle, insertAlertLog, fetchArticles } from './supabase';
 import { sendEmailAlert } from './email-service';
 import { checkDuplicateArticle } from './deduplication';
+import { logger } from './logger';
 import { Article } from '@/types';
 import { XMLParser } from 'fast-xml-parser';
 
@@ -90,7 +91,11 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
     // Deduplication check: Prevent redundant Gemini LLM analysis and duplicate DB inserts
     const duplicateCheck = checkDuplicateArticle(item.headline, item.link, recentArticles);
     if (duplicateCheck.isDuplicate) {
-      console.log(`[Deduplicator] Skipping duplicate article (${Math.round(duplicateCheck.similarityScore * 100)}% match): "${item.headline}"`);
+      logger.info('Skipping duplicate article', {
+        headline: item.headline,
+        similarityScore: duplicateCheck.similarityScore,
+        matchedArticleId: duplicateCheck.matchedArticleId
+      });
       continue;
     }
 

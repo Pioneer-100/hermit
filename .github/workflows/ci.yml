@@ -1,37 +1,45 @@
-name: CI/CD Pipeline
+name: Industrial CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   validate:
+    name: Lint, Typecheck & Build Verification
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
-    - name: Checkout Code
+    - name: Checkout Code Repository
       uses: actions/checkout@v4
 
-    - name: Setup Node.js
+    - name: Setup Node.js Runtime
       uses: actions/setup-node@v4
       with:
         node-version: 20
         cache: 'npm'
 
-    - name: Install Dependencies
+    - name: Install Node Dependencies
       run: npm ci
 
-    - name: TypeScript Typecheck
+    - name: TypeScript Static Typecheck
       run: npx tsc --noEmit
 
-    - name: Code Linting
+    - name: Code Quality & ESLint Audit
       run: npm run lint
 
-    - name: Production Build Check
+    - name: Production Application Build
       run: npm run build
       env:
+        NODE_ENV: production
         NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://cvomnupbkrbsedhzzbti.supabase.co' }}
         NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'dummy_anon_key' }}
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || 'dummy_key' }}
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || 'dummy_gemini_key' }}
+        CRON_SECRET: ${{ secrets.CRON_SECRET || 'ci_cron_secret_test_token' }}
