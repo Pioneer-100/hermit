@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { MONITORED_SOURCES, CATEGORY_LABELS } from '@/lib/sources';
+import { getSupabaseClient } from '@/lib/supabase';
 import { X, Play, Loader2, CheckCircle2, Sparkles } from 'lucide-react';
 
 interface CrawlModalProps {
@@ -27,9 +28,21 @@ export default function CrawlModal({ isOpen, onClose, onCrawlComplete }: CrawlMo
     setResultMessage(null);
 
     try {
+      let token = '';
+      const sb = getSupabaseClient();
+      if (sb) {
+        const { data } = await sb.auth.getSession();
+        token = data.session?.access_token || '';
+      }
+
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const res = await fetch('/api/crawl', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ sourceId: selectedSourceId })
       });
 
