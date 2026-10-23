@@ -16,8 +16,11 @@ import {
   Clock, 
   Radio, 
   Users, 
-  Check 
+  Check,
+  Download,
+  Loader2
 } from 'lucide-react';
+import { generateDailyBriefPdf } from '@/lib/pdfGenerator';
 
 interface ExecutiveDailyBriefProps {
   brief: DailyBrief;
@@ -40,7 +43,19 @@ export default function ExecutiveDailyBrief({
 }: ExecutiveDailyBriefProps) {
   const { currentUser } = useAuth();
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
   const [claimedActions, setClaimedActions] = useState<Record<number, string>>({});
+
+  const handleExportPdf = () => {
+    setIsExportingPdf(true);
+    try {
+      generateDailyBriefPdf(brief);
+    } catch (e) {
+      console.error('Failed to export daily brief PDF:', e);
+    } finally {
+      setTimeout(() => setIsExportingPdf(false), 600);
+    }
+  };
 
   const handleClaimAction = (idx: number) => {
     const userLabel = currentUser ? `${currentUser.full_name} (${currentUser.title || currentUser.role})` : 'Hermit Officer';
@@ -158,6 +173,27 @@ export default function ExecutiveDailyBrief({
               >
                 <Sparkles className={`w-3.5 h-3.5 text-emerald-400 ${isRegenerating ? 'animate-spin' : ''}`} />
                 <span>{isRegenerating ? 'Synthesizing...' : 'Regen'}</span>
+              </button>
+
+              {/* PDF Download Button */}
+              <button
+                onClick={handleExportPdf}
+                disabled={isExportingPdf}
+                className="bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-400/40 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-md shadow-emerald-950/40 active:scale-95 disabled:opacity-50"
+                title="Download Executive Daily Briefing PDF"
+                aria-label="Download PDF"
+              >
+                {isExportingPdf ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span className="hidden xs:inline">Exporting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-3.5 h-3.5" />
+                    <span className="hidden xs:inline">PDF</span>
+                  </>
+                )}
               </button>
 
               {/* Print / Export */}

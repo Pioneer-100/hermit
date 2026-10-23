@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import { Report } from '@/types';
-import { FileText, Plus, CheckCircle, Calendar, Sparkles, Zap, Printer, BookOpen, Archive } from 'lucide-react';
+import { FileText, Plus, CheckCircle, Calendar, Sparkles, Zap, Printer, BookOpen, Archive, Download, Loader2 } from 'lucide-react';
+import { generateReportPdf } from '@/lib/pdfGenerator';
 import { INITIAL_REPORTS } from '@/lib/mock-data';
 import { getSupabaseClient } from '@/lib/supabase';
 
@@ -11,6 +12,7 @@ export default function ReportsPage() {
   const [reports, setReports] = useState<Report[]>(INITIAL_REPORTS);
   const [selectedReport, setSelectedReport] = useState<Report | null>(INITIAL_REPORTS[0] || null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [reportTypeToGen, setReportTypeToGen] = useState<'daily' | 'weekly' | 'monthly' | 'special'>('daily');
   const [mobileTab, setMobileTab] = useState<'report' | 'archive'>('report');
 
@@ -67,6 +69,18 @@ export default function ReportsPage() {
       console.error(e);
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const handleDownloadPdf = async () => {
+    if (!selectedReport) return;
+    setIsDownloadingPdf(true);
+    try {
+      generateReportPdf(selectedReport);
+    } catch (e) {
+      console.error('Failed to generate PDF:', e);
+    } finally {
+      setTimeout(() => setIsDownloadingPdf(false), 600);
     }
   };
 
@@ -185,9 +199,22 @@ export default function ReportsPage() {
                       {rep.title}
                     </h4>
 
-                    <div className="mt-2 text-[11px] text-emerald-200/70 flex items-center gap-1.5">
-                      <FileText className="w-3 h-3 text-emerald-400" />
-                      <span>{rep.article_count} monitored items captured</span>
+                    <div className="mt-2 text-[11px] text-emerald-200/70 flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <FileText className="w-3 h-3 text-emerald-400" />
+                        <span>{rep.article_count} items captured</span>
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          generateReportPdf(rep);
+                        }}
+                        className="p-1 rounded-lg bg-emerald-900/40 hover:bg-emerald-700/60 text-emerald-300 hover:text-white border border-emerald-500/30 transition-colors"
+                        title="Download PDF"
+                        aria-label="Download PDF"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </div>
                 );
@@ -223,13 +250,35 @@ export default function ReportsPage() {
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => window.print()}
-                    className="bg-emerald-900/50 border border-emerald-600/50 hover:bg-emerald-800/70 text-emerald-200 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shrink-0 self-start shadow-md transition-colors active:scale-95"
-                  >
-                    <Printer className="w-3.5 h-3.5 text-emerald-300" />
-                    <span>Print / PDF</span>
-                  </button>
+                  <div className="flex items-center gap-2 shrink-0 self-start">
+                    <button
+                      onClick={handleDownloadPdf}
+                      disabled={isDownloadingPdf}
+                      className="bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-400/40 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-emerald-950/40 transition-all active:scale-95 disabled:opacity-50"
+                      title="Download Executive PDF Document"
+                    >
+                      {isDownloadingPdf ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          <span>Generating PDF...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Download className="w-3.5 h-3.5" />
+                          <span>Download PDF</span>
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      onClick={() => window.print()}
+                      className="bg-emerald-900/50 border border-emerald-600/50 hover:bg-emerald-800/70 text-emerald-200 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md transition-colors active:scale-95"
+                      title="Print directly via browser dialog"
+                    >
+                      <Printer className="w-3.5 h-3.5 text-emerald-300" />
+                      <span className="hidden sm:inline">Print</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Executive Overview */}
