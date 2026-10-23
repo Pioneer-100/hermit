@@ -8,6 +8,10 @@ import {
   Radio, 
   Bell, 
   FileText, 
+  Calendar,
+  Recycle,
+  Droplets,
+  Target,
   Globe2, 
   Settings, 
   TrendingUp,
@@ -19,13 +23,14 @@ import {
 import { useAuth } from '@/components/AuthContext';
 
 const NAV_ITEMS = [
-  { href: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/feed', label: 'Live Feed', icon: Radio, subtext: 'Continuous stream' },
+  { href: '/', label: 'Executive Briefing', icon: LayoutDashboard },
+  { href: '/feed', label: 'Live Intelligence Feed', icon: Radio, subtext: 'Continuous stream' },
+  { href: '/nexus', label: 'Nexus & Circular Economy', icon: Droplets, subtext: 'Water-Energy-Waste', badge: 'SoW', badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
+  { href: '/events', label: 'Events & Funding Calls', icon: Calendar, subtext: 'RFPs, EOIs, Expos', badge: 'Active', badgeColor: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
   { href: '/alerts', label: 'Priority Alerts', icon: Bell, badge: '4', badgeColor: 'bg-rose-500/20 text-rose-300 border-rose-500/30' },
   { href: '/reports', label: 'Executive Reports', icon: FileText, subtext: 'Daily & Weekly' },
   { href: '/trends', label: 'Trends & Signals', icon: TrendingUp, subtext: 'Early warnings' },
   { href: '/sources', label: 'Source Directory', icon: Globe2, badge: '70+', badgeColor: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' },
-  //{ href: '/settings', label: 'Integrations & Stack', icon: Settings },
 ];
 
 export default function Sidebar() {

@@ -1,26 +1,27 @@
 const test = require('node:test');
 const assert = require('node:assert');
-const { z } = require('zod');
 
-const AIChatQuerySchema = z.object({
-  query: z.string().min(2).max(2000)
-});
+// Direct schema contract validation without external dependency
+function validateAIChatQuery(query) {
+  if (typeof query !== 'string') return false;
+  const trimmed = query.trim();
+  return trimmed.length >= 2 && trimmed.length <= 2000;
+}
 
-const AlertDispatchSchema = z.object({
-  articleId: z.coerce.number().int().positive()
-});
+function validateAlertDispatch(payload) {
+  const num = Number(payload?.articleId);
+  return !isNaN(num) && Number.isInteger(num) && num > 0;
+}
 
 test('Schema Validation: AIChat query limits', () => {
-  assert.strictEqual(AIChatQuerySchema.safeParse({ query: 'What is Kariba dam level?' }).success, true);
-  assert.strictEqual(AIChatQuerySchema.safeParse({ query: '' }).success, false);
-  assert.strictEqual(AIChatQuerySchema.safeParse({ query: 'x'.repeat(2500) }).success, false);
+  assert.strictEqual(validateAIChatQuery('What is Kariba dam level?'), true);
+  assert.strictEqual(validateAIChatQuery(''), false);
+  assert.strictEqual(validateAIChatQuery('x'.repeat(2500)), false);
 });
 
 test('Schema Validation: Alert dispatch coercion', () => {
-  const result = AlertDispatchSchema.safeParse({ articleId: '42' });
-  assert.strictEqual(result.success, true);
-  if (result.success) {
-    assert.strictEqual(result.data.articleId, 42);
-  }
-  assert.strictEqual(AlertDispatchSchema.safeParse({ articleId: '-1' }).success, false);
+  assert.strictEqual(validateAlertDispatch({ articleId: '42' }), true);
+  assert.strictEqual(validateAlertDispatch({ articleId: 42 }), true);
+  assert.strictEqual(validateAlertDispatch({ articleId: '-1' }), false);
+  assert.strictEqual(validateAlertDispatch({ articleId: 'invalid' }), false);
 });

@@ -606,6 +606,51 @@ export const MONITORED_SOURCES: SourceDefinition[] = [
     priority: 'high',
     description: 'Premier reporting on private off-grid renewable installations and solar projects by Zimbabwean mining firms.',
   }
+  // 8. Food-Water-Energy Nexus & Waste-to-Energy Sources (SoW Section 4.8 & 4.9)
+  {
+    id: 66,
+    name: 'ZINWA (Zimbabwe National Water Authority)',
+    url: 'https://www.zinwa.co.zw',
+    feedUrl: 'https://news.google.com/rss/search?q=site:zinwa.co.zw+OR+%22ZINWA%22+water+dam+levels+hydro+irrigation&hl=en-ZW&gl=ZW&ceid=ZW:en',
+    category: 'nexus_waste',
+    categoryLabel: 'Food-Water-Energy Nexus & Waste',
+    sourceType: 'rss',
+    priority: 'high',
+    description: 'National dam levels, hydrological releases, solar-powered water pumping, and agricultural irrigation infrastructure.',
+  },
+  {
+    id: 67,
+    name: 'EMA (Environmental Management Agency)',
+    url: 'https://www.ema.co.zw',
+    feedUrl: 'https://news.google.com/rss/search?q=site:ema.co.zw+OR+%22Environmental+Management+Agency%22+Zimbabwe+EIA+waste+biogas&hl=en-ZW&gl=ZW&ceid=ZW:en',
+    category: 'nexus_waste',
+    categoryLabel: 'Food-Water-Energy Nexus & Waste',
+    sourceType: 'rss',
+    priority: 'high',
+    description: 'EIA licensing approvals for IPPs, municipal solid waste management, landfill gas, and environmental transition compliance.',
+  },
+  {
+    id: 68,
+    name: 'PRAZ (Procurement Regulatory Authority of Zimbabwe)',
+    url: 'https://www.praz.org.zw',
+    feedUrl: 'https://news.google.com/rss/search?q=site:praz.org.zw+OR+%22PRAZ%22+tender+energy+solar+power+RFP&hl=en-ZW&gl=ZW&ceid=ZW:en',
+    category: 'tenders_events',
+    categoryLabel: 'Funding Calls & Industry Events',
+    sourceType: 'rss',
+    priority: 'high',
+    description: 'Official government procurement notices, RFPs, expressions of interest (EOIs), and utility equipment tenders.',
+  },
+  {
+    id: 69,
+    name: 'Southern African Energy Events & Forums',
+    url: 'https://www.sapp.co.zw',
+    feedUrl: 'https://news.google.com/rss/search?q=%22Zimbabwe%22+conference+OR+expo+OR+forum+OR+webinar+%22energy%22+OR+%22solar%22+OR+%22renewable%22&hl=en-ZW&gl=ZW&ceid=ZW:en',
+    category: 'tenders_events',
+    categoryLabel: 'Funding Calls & Industry Events',
+    sourceType: 'rss',
+    priority: 'high',
+    description: 'Energy conferences, IPP stakeholder workshops, climate finance webinars, and SADC power-sector forums.',
+  }
 ];
 
 export const CATEGORY_LABELS: Record<string, string> = {

@@ -48,7 +48,7 @@ export async function analyzeArticleWithGemini(
       'gemini-3.5-flash'
     ];
 
-    const prompt = `You are the Senior Energy Intelligence Analyst at Hermit Investments, a Zimbabwean energy investment firm specializing in renewable energy IPPs, commercial solar development, grid integration, and clean energy financing.
+    const prompt = `You are the Principal Intelligence Director at Hermit Sustainability Advisory (HSA), a Zimbabwean advisory firm specializing in renewable energy IPPs, climate finance, food-water-energy nexus, waste-to-energy, environmental compliance, and stakeholder mobilisation.
 
 Analyze this new media capture:
 SOURCE: ${sourceName}
