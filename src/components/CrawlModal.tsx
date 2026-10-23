@@ -12,6 +12,7 @@ interface CrawlModalProps {
 }
 
 export default function CrawlModal({ isOpen, onClose, onCrawlComplete }: CrawlModalProps) {
+  const [crawlMode, setCrawlMode] = useState<'auto_rotating' | 'single_source'>('auto_rotating');
   const [selectedSourceId, setSelectedSourceId] = useState<number>(18); // Default: ZERA
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(false);
@@ -40,10 +41,14 @@ export default function CrawlModal({ isOpen, onClose, onCrawlComplete }: CrawlMo
         headers['Authorization'] = `Bearer ${token}`;
       }
 
+      const bodyPayload = crawlMode === 'auto_rotating'
+        ? {} // Empty body triggers automated intelligent rotation across sources
+        : { sourceId: selectedSourceId };
+
       const res = await fetch('/api/crawl', {
         method: 'POST',
         headers,
-        body: JSON.stringify({ sourceId: selectedSourceId })
+        body: JSON.stringify(bodyPayload)
       });
 
       const data = await res.json();
@@ -88,46 +93,87 @@ export default function CrawlModal({ isOpen, onClose, onCrawlComplete }: CrawlMo
 
         {/* Form Body */}
         <div className="p-4 sm:p-6 space-y-3.5 sm:space-y-4 bg-[#041a11]/90 text-white">
+          
+          {/* Mode Selector */}
           <div>
             <label className="block text-xs font-bold text-emerald-300 uppercase tracking-wider mb-1.5">
-              Category Filter
+              Surveillance Mode
             </label>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full text-xs border border-emerald-500/30 rounded-xl p-2.5 bg-[#03180f] text-emerald-100 focus:outline-none focus:ring-2 focus:ring-emerald-400 font-medium"
-            >
-              <option value="all">All 7 Monitoring Categories</option>
-              {Object.entries(CATEGORY_LABELS).map(([catKey, label]) => (
-                <option key={catKey} value={catKey}>{label}</option>
-              ))}
-            </select>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setCrawlMode('auto_rotating')}
+                className={`p-2.5 rounded-xl text-xs font-bold border transition-all text-left flex flex-col gap-0.5 ${
+                  crawlMode === 'auto_rotating'
+                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/50 shadow-inner'
+                    : 'bg-[#03180f] text-slate-300 border-emerald-900/50 hover:border-emerald-600/40'
+                }`}
+              >
+                <span>Automated Rotation</span>
+                <span className="text-[10px] text-emerald-400/70 font-normal">Cycles across all 70+ portals</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCrawlMode('single_source')}
+                className={`p-2.5 rounded-xl text-xs font-bold border transition-all text-left flex flex-col gap-0.5 ${
+                  crawlMode === 'single_source'
+                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/50 shadow-inner'
+                    : 'bg-[#03180f] text-slate-300 border-emerald-900/50 hover:border-emerald-600/40'
+                }`}
+              >
+                <span>Specific Portal</span>
+                <span className="text-[10px] text-emerald-400/70 font-normal">Target single platform</span>
+              </button>
+            </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-bold text-emerald-300 uppercase tracking-wider mb-1.5">
-              Target Source Portal ({filteredSources.length} available)
-            </label>
-            <select
-              value={selectedSourceId}
-              onChange={(e) => setSelectedSourceId(Number(e.target.value))}
-              className="w-full text-xs border border-emerald-500/30 rounded-xl p-2.5 bg-[#03180f] text-emerald-100 focus:outline-none focus:ring-2 focus:ring-emerald-400 font-semibold"
-            >
-              {filteredSources.map(s => (
-                <option key={s.id} value={s.id}>
-                  {s.name} ({s.sourceType.toUpperCase()} &bull; {s.priority.toUpperCase()} priority)
-                </option>
-              ))}
-            </select>
-          </div>
+          {crawlMode === 'single_source' && (
+            <>
+              <div>
+                <label className="block text-xs font-bold text-emerald-300 uppercase tracking-wider mb-1.5">
+                  Category Filter
+                </label>
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="w-full text-xs border border-emerald-500/30 rounded-xl p-2.5 bg-[#03180f] text-emerald-100 focus:outline-none focus:ring-2 focus:ring-emerald-400 font-medium"
+                >
+                  <option value="all">All 7 Monitoring Categories</option>
+                  {Object.entries(CATEGORY_LABELS).map(([catKey, label]) => (
+                    <option key={catKey} value={catKey}>{label}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-emerald-300 uppercase tracking-wider mb-1.5">
+                  Target Source Portal ({filteredSources.length} available)
+                </label>
+                <select
+                  value={selectedSourceId}
+                  onChange={(e) => setSelectedSourceId(Number(e.target.value))}
+                  className="w-full text-xs border border-emerald-500/30 rounded-xl p-2.5 bg-[#03180f] text-emerald-100 focus:outline-none focus:ring-2 focus:ring-emerald-400 font-semibold"
+                >
+                  {filteredSources.map(s => (
+                    <option key={s.id} value={s.id}>
+                      {s.name} ({s.sourceType.toUpperCase()} &bull; {s.priority.toUpperCase()} priority)
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </>
+          )}
 
           <div className="bg-[#03170e]/90 p-3 sm:p-3.5 rounded-xl border border-emerald-500/30 text-xs text-emerald-100 leading-relaxed space-y-1">
             <div className="flex items-center gap-1.5 font-bold text-emerald-300">
               <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Pipeline Stages:</span>
+              <span>Pipeline Intelligence Active:</span>
             </div>
             <p className="text-[11px] text-emerald-200/80">
-              1. Fetch live RSS/web markup &rarr; 2. Extract metadata &rarr; 3. Gemini calculates relevance &rarr; 4. Drafts Hermit impact brief &rarr; 5. Dispatches email if score &ge; 75%.
+              {crawlMode === 'auto_rotating'
+                ? 'Balanced batch scheduler will automatically pull from rotated regulators, national press, regional grids, and DFIs, rejecting any stale items (>30 days) and political metaphors.'
+                : 'Pulls from selected portal with deep-article extraction, freshness verification, and Gemini impact analysis.'}
             </p>
           </div>
 

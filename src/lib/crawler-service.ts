@@ -5,6 +5,7 @@ import { sendEmailAlert } from './email-service';
 import { checkDuplicateArticle } from './deduplication';
 import { validateEnergyRelevance } from './energy-disambiguation';
 import { extractDeepArticleText } from './deep-extractor';
+import { validateArticleFreshness } from './date-freshness';
 import { logger } from './logger';
 import { Article } from '@/types';
 import { XMLParser } from 'fast-xml-parser';
@@ -100,7 +101,18 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
       continue;
     }
 
-    // 2. Deduplication check: Prevent redundant Gemini LLM analysis and duplicate DB inserts
+    // 2. Publication Date & Freshness Check: Reject outdated articles (e.g. from 2023 or older than 30 days)
+    const freshness = validateArticleFreshness(item.pubDate, 30);
+    if (!freshness.isFresh) {
+      logger.info('Skipping outdated article', {
+        headline: item.headline,
+        pubDate: item.pubDate,
+        reason: freshness.reason
+      });
+      continue;
+    }
+
+    // 3. Deduplication check: Prevent redundant Gemini LLM analysis and duplicate DB inserts
     const duplicateCheck = checkDuplicateArticle(item.headline, item.link, recentArticles);
     if (duplicateCheck.isDuplicate) {
       logger.info('Skipping duplicate article', {
@@ -111,15 +123,31 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
       continue;
     }
 
-    // 3. Deep Article Extraction: Fetch full body HTML text for richer context
+    // 4. Deep Article Extraction: Fetch full body HTML text or PDF gazette text for richer context
     let enrichedContent = item.summary;
+    let headlineToUse = item.headline;
+    let detectedArticleType = undefined;
+
     try {
       const deepExtracted = await extractDeepArticleText(item.link, item.summary);
       if (deepExtracted.extractedSuccess && deepExtracted.fullText.length > item.summary.length) {
         enrichedContent = deepExtracted.fullText;
-        logger.info('Deep full-text extraction successful', {
-          headline: item.headline,
-          wordCount: deepExtracted.wordCount
+
+        // If a Statutory Instrument or Tariff schedule is identified in a PDF/Gazette notice
+        if (deepExtracted.isPdfDocument) {
+          if (deepExtracted.statutoryInstrumentNumber) {
+            headlineToUse = `[Gazette / ${deepExtracted.statutoryInstrumentNumber}] ${headlineToUse}`;
+          }
+          if (deepExtracted.tariffScheduleDetected) {
+            detectedArticleType = 'tariff_change' as const;
+          }
+        }
+
+        logger.info('Deep extraction successful', {
+          headline: headlineToUse,
+          wordCount: deepExtracted.wordCount,
+          isPdf: deepExtracted.isPdfDocument,
+          statutoryInstrument: deepExtracted.statutoryInstrumentNumber
         });
       }
     } catch {
@@ -127,11 +155,11 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
     }
 
     // 4. Process enriched content through Gemini AI (or intelligent heuristics fallback)
-    const analysis = await analyzeArticleWithGemini(item.headline, enrichedContent, source.name);
+    const analysis = await analyzeArticleWithGemini(headlineToUse, enrichedContent, source.name);
     
     const articlePayload: Omit<Article, 'id'> = {
-      publication_date: item.pubDate || new Date().toISOString(),
-      headline: item.headline,
+      publication_date: freshness.parsedDate,
+      headline: headlineToUse,
       source_id: source.id,
       source_name: source.name,
       author: item.author || 'Energy Correspondent',
@@ -142,7 +170,7 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
       raw_content: enrichedContent,
       relevance_score: analysis.relevance_score,
       relevance_level: analysis.relevance_level,
-      article_type: analysis.article_type,
+      article_type: detectedArticleType || analysis.article_type,
       ai_summary: analysis.ai_summary,
       ai_impact_note: analysis.ai_impact_note,
       suggested_actions: analysis.suggested_actions,

@@ -5,11 +5,16 @@
  * Provides Gemini with rich context (1,000+ words) instead of RSS snippets.
  */
 
+import { extractPdfFromUrl } from './pdf-extractor';
+
 export interface ExtractedArticleContent {
   fullText: string;
   wordCount: number;
   extractedSuccess: boolean;
   byline?: string;
+  isPdfDocument?: boolean;
+  statutoryInstrumentNumber?: string;
+  tariffScheduleDetected?: boolean;
 }
 
 /**
@@ -59,6 +64,21 @@ export async function extractDeepArticleText(
       wordCount: fallbackText.split(/\s+/).length,
       extractedSuccess: false
     };
+  }
+
+  // If the link directly points to a PDF gazette or document
+  if (url.toLowerCase().endsWith('.pdf') || url.includes('/pdf/') || url.includes('type=pdf')) {
+    const pdfDoc = await extractPdfFromUrl(url);
+    if (pdfDoc.extractedSuccess && pdfDoc.text.length > 50) {
+      return {
+        fullText: pdfDoc.text,
+        wordCount: pdfDoc.wordCount,
+        extractedSuccess: true,
+        isPdfDocument: true,
+        statutoryInstrumentNumber: pdfDoc.statutoryInstrumentNumber,
+        tariffScheduleDetected: pdfDoc.tariffScheduleDetected
+      };
+    }
   }
 
   try {

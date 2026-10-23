@@ -4,6 +4,7 @@ import { MONITORED_SOURCES } from '@/lib/sources';
 import { CrawlRequestSchema } from '@/lib/schemas';
 import { authenticateApiRequest } from '@/lib/api-auth';
 import { checkRateLimit } from '@/lib/rate-limiter';
+import { getNextRotatingSources } from '@/lib/source-rotator';
 import { logger } from '@/lib/logger';
 import crypto from 'crypto';
 
@@ -118,14 +119,19 @@ async function handleCrawl(req: NextRequest, isGet: boolean) {
         results.push(res);
       }
     } else {
-      const priorityIds = [18, 1, 24, 23, 12]; // ZERA, The Herald, AfDB, SAPP, Ministry of Energy
-      const sourcesToRun = MONITORED_SOURCES.filter(s => priorityIds.includes(s.id));
+      // Dynamic Source Rotation: Rotates across all 7 categories and 70+ sources
+      // Eliminates manual dashboard selection and prevents clustering on a single source
+      const sourcesToRun = await getNextRotatingSources(4);
+      logger.info('Executing automated rotating crawl batch', {
+        sources: sourcesToRun.map(s => s.name)
+      });
+
       for (const src of sourcesToRun) {
         try {
           const res = await crawlSource(src.id);
           results.push(res);
         } catch (srcErr) {
-          console.warn(`Error crawling priority source ${src.name}:`, srcErr);
+          logger.warn(`Error crawling rotating source ${src.name}:`, { error: String(srcErr) });
         }
       }
     }
