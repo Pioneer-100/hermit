@@ -56,6 +56,8 @@ export interface Article {
   suggested_actions?: string[];
   deadline?: string | null;
   sector?: string | null;
+  project_or_event_name?: string | null;
+  capacity_or_funding?: string | null;
   is_reviewed: boolean;
   is_alert_sent: boolean;
   captured_at: string;

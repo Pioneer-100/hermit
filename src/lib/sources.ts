@@ -652,7 +652,7 @@ export const MONITORED_SOURCES: SourceDefinition[] = [
     sourceType: 'rss',
     priority: 'high',
     description: 'Energy conferences, IPP stakeholder workshops, climate finance webinars, and SADC power-sector forums.',
-  }
+  },
   // 9. Dedicated Funding Calls, RFPs, Tenders & Events (SoW Section 4.3, 4.4, 4.7 & 5)
   {
     id: 70,
