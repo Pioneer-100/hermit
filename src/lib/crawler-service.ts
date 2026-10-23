@@ -3,6 +3,8 @@ import { analyzeArticleWithGemini } from './gemini';
 import { insertArticle, insertAlertLog, fetchArticles } from './supabase';
 import { sendEmailAlert } from './email-service';
 import { checkDuplicateArticle } from './deduplication';
+import { validateEnergyRelevance } from './energy-disambiguation';
+import { extractDeepArticleText } from './deep-extractor';
 import { logger } from './logger';
 import { Article } from '@/types';
 import { XMLParser } from 'fast-xml-parser';
@@ -88,7 +90,17 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
   let highCount = 0;
 
   for (const item of rawItems) {
-    // Deduplication check: Prevent redundant Gemini LLM analysis and duplicate DB inserts
+    // 1. Strict energy entity & metaphor disambiguation filter
+    const disambiguation = validateEnergyRelevance(item.headline, item.summary);
+    if (!disambiguation.isRelevant) {
+      logger.info('Skipping non-energy or political metaphor item', {
+        headline: item.headline,
+        reason: disambiguation.rejectionReason
+      });
+      continue;
+    }
+
+    // 2. Deduplication check: Prevent redundant Gemini LLM analysis and duplicate DB inserts
     const duplicateCheck = checkDuplicateArticle(item.headline, item.link, recentArticles);
     if (duplicateCheck.isDuplicate) {
       logger.info('Skipping duplicate article', {
@@ -99,8 +111,23 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
       continue;
     }
 
-    // Process through Gemini AI (or intelligent heuristics fallback)
-    const analysis = await analyzeArticleWithGemini(item.headline, item.summary, source.name);
+    // 3. Deep Article Extraction: Fetch full body HTML text for richer context
+    let enrichedContent = item.summary;
+    try {
+      const deepExtracted = await extractDeepArticleText(item.link, item.summary);
+      if (deepExtracted.extractedSuccess && deepExtracted.fullText.length > item.summary.length) {
+        enrichedContent = deepExtracted.fullText;
+        logger.info('Deep full-text extraction successful', {
+          headline: item.headline,
+          wordCount: deepExtracted.wordCount
+        });
+      }
+    } catch {
+      // Fallback gracefully to RSS summary
+    }
+
+    // 4. Process enriched content through Gemini AI (or intelligent heuristics fallback)
+    const analysis = await analyzeArticleWithGemini(item.headline, enrichedContent, source.name);
     
     const articlePayload: Omit<Article, 'id'> = {
       publication_date: item.pubDate || new Date().toISOString(),
@@ -112,7 +139,7 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
       key_stakeholders: analysis.key_stakeholders,
       relevance_to_hermit: analysis.relevance_to_hermit,
       source_link: item.link,
-      raw_content: item.summary,
+      raw_content: enrichedContent,
       relevance_score: analysis.relevance_score,
       relevance_level: analysis.relevance_level,
       article_type: analysis.article_type,
@@ -210,7 +237,8 @@ export function parseXmlFeed(xml: string, defaultAuthor: string = 'Energy Desk')
       const rawAuthor = extractString(item['dc:creator'] || item.author?.name || item.author || defaultAuthor);
       const author = cleanText(rawAuthor) || defaultAuthor;
 
-      if (headline.length > 5 && (isEnergyRelated(headline) || isEnergyRelated(summary) || headline.length > 20)) {
+      const validation = validateEnergyRelevance(headline, summary);
+      if (headline.length > 5 && validation.isRelevant) {
         items.push({
           headline,
           link: link || `https://hermitinvestments.com/feed/${Date.now()}`,
