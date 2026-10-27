@@ -341,7 +341,8 @@ class PdfBuilder {
       const rowY = this.currentY;
 
       // Label column
-      this.doc.setFillColor(idx % 2 === 0 ? ...BRAND.emeraldTint : ...BRAND.slateBg);
+      const bgCol = idx % 2 === 0 ? BRAND.emeraldTint : BRAND.slateBg;
+      this.doc.setFillColor(...bgCol);
       this.doc.rect(this.margin, rowY, labelW, rowH, 'F');
       this.doc.setDrawColor(...BRAND.emeraldBorder);
       this.doc.rect(this.margin, rowY, labelW, rowH, 'S');
