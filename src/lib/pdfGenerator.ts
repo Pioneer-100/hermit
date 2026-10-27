@@ -369,7 +369,62 @@ class PdfBuilder {
     this.currentY += 12;
   }
 
-  finalizeFooters() {
+
+  drawArticleSummaryItem(item: { headline: string; source: string; category?: string; relevance_level?: string; summary: string; source_link?: string }) {
+    this.checkPageBreak(85);
+
+    // Headline in bold
+    this.doc.setFont('helvetica', 'bold');
+    this.doc.setFontSize(10);
+    this.doc.setTextColor(...BRAND.emeraldDark);
+
+    const titleLines = this.doc.splitTextToSize(item.headline, this.contentWidth - 70);
+    const titleH = titleLines.length * 13;
+    this.checkPageBreak(titleH + 60);
+
+    const itemY = this.currentY;
+    this.doc.text(titleLines, this.margin, itemY + 8);
+
+    // Source badge / Metadata right-aligned or inline
+    const metaStr = `[${item.source}${item.category ? ` • ${item.category.replace('_', ' ').toUpperCase()}` : ''}${item.relevance_level ? ` • ${item.relevance_level.toUpperCase()}` : ''}]`;
+    this.doc.setFont('helvetica', 'bold');
+    this.doc.setFontSize(7.5);
+    this.doc.setTextColor(...BRAND.emeraldPrimary);
+    const metaW = this.doc.getTextWidth(metaStr);
+    this.doc.text(metaStr, this.pageWidth - this.margin - metaW, itemY + 8);
+
+    this.currentY = itemY + titleH + 4;
+
+    // Subtle divider
+    this.doc.setDrawColor(...BRAND.emeraldBorder);
+    this.doc.setLineWidth(0.4);
+    this.doc.line(this.margin, this.currentY, this.pageWidth - this.margin, this.currentY);
+    this.currentY += 6;
+
+    // Five-line summary block with light background card
+    const summaryLines = this.doc.splitTextToSize(item.summary, this.contentWidth - 16);
+    const cardH = summaryLines.length * 11.5 + 10;
+    this.checkPageBreak(cardH + 10);
+
+    const cardY = this.currentY;
+    this.doc.setFillColor(...BRAND.slateBg);
+    this.doc.setDrawColor(...BRAND.emeraldBorder);
+    this.doc.setLineWidth(0.4);
+    this.doc.roundedRect(this.margin, cardY, this.contentWidth, cardH, 2, 2, 'FD');
+
+    // Left indicator bar
+    this.doc.setFillColor(...BRAND.emeraldPrimary);
+    this.doc.roundedRect(this.margin, cardY, 3, cardH, 1, 1, 'F');
+
+    this.doc.setFont('helvetica', 'normal');
+    this.doc.setFontSize(8);
+    this.doc.setTextColor(...BRAND.slateBody);
+    this.doc.text(summaryLines, this.margin + 8, cardY + 10);
+
+    this.currentY = cardY + cardH + 12;
+  }
+
+    finalizeFooters() {
     const totalPages = this.doc.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
       this.doc.setPage(i);
@@ -535,9 +590,17 @@ export function createReportPdfBuilder(report: Report): PdfBuilder {
     builder.currentY += 8;
   }
 
+  // Article Detailed Summaries (Bold Headline + 5-Line Summary for all articles in the report)
+  if (report.content?.article_summaries && report.content.article_summaries.length > 0) {
+    builder.drawSectionHeader('3. Monitored Article Intelligence Summaries');
+    report.content.article_summaries.forEach((item) => {
+      builder.drawArticleSummaryItem(item);
+    });
+  }
+
   // Category Breakdown Table
   if (report.content?.category_breakdown && Object.keys(report.content.category_breakdown).length > 0) {
-    builder.drawSectionHeader('3. Source & Channel Distribution');
+    builder.drawSectionHeader('4. Source & Channel Distribution');
     const categories = Object.entries(report.content.category_breakdown);
     const colW = builder.contentWidth / Math.min(categories.length, 5);
     const boxH = 34;
@@ -569,7 +632,7 @@ export function createReportPdfBuilder(report: Report): PdfBuilder {
 
   // Strategic Executive Action
   if (report.content?.executive_takeaway) {
-    builder.drawSectionHeader('4. Recommended Management Actions');
+    builder.drawSectionHeader('5. Recommended Management Actions');
     builder.drawCalloutBox(
       'Strategic Directive for Hermit Leadership',
       report.content.executive_takeaway,

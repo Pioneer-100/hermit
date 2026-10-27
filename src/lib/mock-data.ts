@@ -225,6 +225,29 @@ export const INITIAL_REPORTS: Report[] = [
         'ZETDC accelerates 400kV regional transmission upgrade with SAPP interconnector.',
         'Minister of Energy outlines 1,100MW renewable additions roadmap for 2027.'
       ],
+      article_summaries: [
+        {
+          headline: 'ZERA proposes revised solar feed-in tariff structure',
+          source: 'ZERA',
+          category: 'tariff_change',
+          relevance_level: 'high',
+          summary: 'Development: The Zimbabwe Energy Regulatory Authority (ZERA) published draft tariff bands for grid-tied solar above 1MW with a 30-day public notice.\nContext & Authority: Formal regulatory notice issued in consultation with IPPAZ and national utility grid integration committees.\nMarket Impact: Revises base solar tariffs downward following global module deflation while offering premium incentives for co-located battery storage (BESS).\nHermit Strategic Relevance: Directly impacts IRR margins on Hermit\'s 25MW solar pipeline in Mashonaland East; margins compress unless blended with private C&I off-takers.\nRecommended Action: Fast-track bilateral PPA negotiations under existing tariff bands before formal gazetting and submit feedback through IPPAZ before public deadline.'
+        },
+        {
+          headline: 'AfDB approves $40M renewable energy facility for Southern Africa',
+          source: 'AfDB',
+          category: 'funding_announcement',
+          relevance_level: 'high',
+          summary: 'Development: The African Development Bank approved a $40M concessional financing facility under SEFA targeting decentralized solar and mini-grids.\nContext & Authority: Multilateral DFI capital deployment covering Zimbabwe, Zambia, and Malawi via commercial banking on-lending partners.\nMarket Impact: Unlocks sub-6% USD long-tenor debt financing with dedicated grant subsidies for technical interconnection feasibility studies.\nHermit Strategic Relevance: Provides accessible debt capital with lower debt-service coverage constraints for Hermit special purpose vehicles.\nRecommended Action: Engage AfDB Harare country office to verify project eligibility criteria and request bilateral meetings with local partner banks.'
+        },
+        {
+          headline: 'Zimbabwe eyes expanded grid interconnection with SAPP',
+          source: 'The Herald',
+          category: 'project_update',
+          relevance_level: 'medium',
+          summary: 'Development: ZETDC and Southern African Power Pool initiated feasibility work on a 400kV transmission corridor linking Zimbabwe and Mozambique.\nContext & Authority: SAPP regional power trade secretariat in collaboration with national utilities to eliminate regional grid bottlenecks.\nMarket Impact: Facilitates cross-border wheeling capacity and enables private IPPs in Zimbabwe to export surplus power into the Day-Ahead Market.\nHermit Strategic Relevance: De-risks curtailment risks for large-scale solar projects by providing an off-taker route into the regional power pool.\nRecommended Action: Assess wheeling agreement requirements with ZETDC system operators to future-proof regional export optionality.'
+        }
+      ],
       category_breakdown: {
         newspapers: 1,
         government: 1,

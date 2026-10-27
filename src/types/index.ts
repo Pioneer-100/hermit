@@ -183,6 +183,14 @@ export interface Report {
     articles?: Article[];
     executive_takeaway?: string;
     structured_weekly?: WeeklyReportStructuredContent;
+    article_summaries?: Array<{
+      headline: string;
+      source: string;
+      category?: string;
+      relevance_level?: string;
+      summary: string;
+      source_link?: string;
+    }>;
   };
   period_start: string | null;
   period_end: string | null;

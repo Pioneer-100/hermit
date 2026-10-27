@@ -562,6 +562,55 @@ export default function ReportsPage() {
                   </div>
                 )}
 
+                {/* Detailed Article Summaries (Bold Headline + 5-Line Summary) */}
+                {selectedReport.content?.article_summaries && selectedReport.content.article_summaries.length > 0 && (
+                  <div className="space-y-3">
+                    <h3 className="text-xs uppercase tracking-wider font-extrabold text-emerald-300 flex items-center justify-between">
+                      <span className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                        Detailed Article Intelligence Summaries ({selectedReport.content.article_summaries.length})
+                      </span>
+                      <span className="text-[10px] text-emerald-400/70 font-mono normal-case">5-line synthesis per item</span>
+                    </h3>
+                    <div className="space-y-3">
+                      {selectedReport.content.article_summaries.map((item, idx) => (
+                        <div key={idx} className="p-4 rounded-xl border border-emerald-500/25 bg-[#041a12]/80 space-y-2.5">
+                          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 border-b border-emerald-500/15 pb-2">
+                            {/* Article Headline in bold */}
+                            <h4 className="text-sm font-bold text-white tracking-wide leading-snug">
+                              {item.headline}
+                            </h4>
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-950 text-emerald-300 border border-emerald-500/30">
+                                {item.source}
+                              </span>
+                              {item.category && (
+                                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-900/40 text-emerald-200 border border-emerald-500/20 uppercase">
+                                  {item.category.replace('_', ' ')}
+                                </span>
+                              )}
+                              {item.relevance_level && (
+                                <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${
+                                  item.relevance_level === 'high' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' :
+                                  item.relevance_level === 'medium' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' :
+                                  'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                                }`}>
+                                  {item.relevance_level}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* 5-line summary */}
+                          <div className="text-xs text-emerald-100/90 leading-relaxed font-normal whitespace-pre-line bg-[#03140e]/60 p-3 rounded-lg border-l-2 border-emerald-400">
+                            {item.summary}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Strategic Management Recommendation */}
                 {selectedReport.content?.executive_takeaway && (
                   <div className="bg-gradient-to-br from-[#041d13]/90 to-[#02140c]/90 border border-emerald-500/30 p-4 sm:p-5 rounded-2xl space-y-2">

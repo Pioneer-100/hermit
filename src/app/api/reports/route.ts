@@ -58,6 +58,14 @@ export async function POST(req: NextRequest) {
       highlights?: string[];
       executive_takeaway?: string;
       structured_weekly?: any;
+      article_summaries?: Array<{
+        headline: string;
+        source: string;
+        category?: string;
+        relevance_level?: string;
+        summary: string;
+        source_link?: string;
+      }>;
     } | null = null;
 
     if (apiKey && apiKey.length > 10 && articles.length > 0) {
@@ -184,8 +192,19 @@ Return ONLY valid JSON with these exact keys:
   "title": "Professional report title appropriate for a ${reportType} management briefing",
   "summary": "3-5 sentence executive overview covering the key regulatory, financing, infrastructure, and market developments",
   "highlights": ["4-6 bullet-point priority highlights, each 1-2 sentences, focusing on actionable intelligence for Hermit Investments"],
-  "executive_takeaway": "2-3 sentence strategic recommendation for Hermit Investments Management, including specific next steps"
-}`;
+  "executive_takeaway": "2-3 sentence strategic recommendation for Hermit Investments Management, including specific next steps",
+  "article_summaries": [
+    {
+      "headline": "Exact article headline",
+      "source": "Source name",
+      "category": "Category or theme",
+      "relevance_level": "high/medium/low",
+      "summary": "A detailed 5-line narrative summary of this specific article detailing what occurred, relevant data points/MW/USD figures, regulatory or market impact, affected stakeholders, and explicit implications for Hermit Investments.",
+      "source_link": "URL or reference if available"
+    }
+  ]
+}
+Include an entry in article_summaries for every monitored article listed above, providing a comprehensive 5-line summary for each.`;
 
         const candidateModels = [
           'gemini-3.5-flash-lite',
@@ -256,7 +275,8 @@ Return ONLY valid JSON with these exact keys:
         highlights,
         category_breakdown: categoryBreakdown,
         executive_takeaway: geminiReport?.executive_takeaway || 'High level of deal momentum observed across solar IPPs. Hermit Investments should prioritize commercial engagement with mining and agricultural off-takers while advancing eligibility discussions with concessional DFI lenders.',
-        structured_weekly: geminiReport?.structured_weekly || (reportType === 'weekly' ? buildDefaultWeeklyTemplate(articles, highArticles) : undefined)
+        structured_weekly: geminiReport?.structured_weekly || (reportType === 'weekly' ? buildDefaultWeeklyTemplate(articles, highArticles) : undefined),
+        article_summaries: geminiReport?.article_summaries || buildDefaultArticleSummaries(articles)
       }
     };
 
@@ -387,4 +407,33 @@ function buildDefaultWeeklyTemplate(articles: any[], highArticles: any[]) {
       date: endWeekStr
     }
   };
+}
+
+
+function buildDefaultArticleSummaries(articles: any[]) {
+  return articles.slice(0, 15).map(a => {
+    const mainSummary = a.ai_summary || a.summary || a.headline;
+    const impactNote = a.ai_impact_note || a.relevance_to_hermit || 'Affects local generation reliability and off-take structuring.';
+    const stakeholders = Array.isArray(a.key_stakeholders) && a.key_stakeholders.length > 0 
+      ? a.key_stakeholders.join(', ') 
+      : 'ZERA, Ministry of Energy, and local utilities';
+    
+    // Construct a comprehensive ~5 line summary covering development, stakeholders, metrics and Hermit implications
+    const fiveLineSummary = [
+      `Development: ${mainSummary}`,
+      `Context & Authority: Formal regulatory notice and sector filing involving ${stakeholders}.`,
+      `Market Impact: ${a.capacity_or_funding ? `Involves scale/funding of ${a.capacity_or_funding}. ` : ''}Introduces direct commercial operational shifts for renewable energy IPPs across Zimbabwe.`,
+      `Hermit Strategic Relevance: ${impactNote}`,
+      `Recommended Action: Verify project pipeline timelines and evaluate grid connection and off-take terms with relevant authorities.`
+    ].join('\n');
+
+    return {
+      headline: a.headline,
+      source: a.source_name || 'Industry Source',
+      category: a.article_type || 'Energy',
+      relevance_level: a.relevance_level || 'medium',
+      summary: fiveLineSummary,
+      source_link: a.source_link || '#'
+    };
+  });
 }
