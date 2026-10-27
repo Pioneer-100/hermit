@@ -20,11 +20,12 @@ export async function GET(req: NextRequest) {
 
     // Cache the dynamic brief for 300 seconds (5 minutes)
     const brief = await getOrSetCache<DailyBrief>('hermit_daily_brief_get', 300, async () => {
-      const articles = await fetchArticles();
-      if (!articles || articles.length === 0) {
+      const allArticles = await fetchArticles();
+      if (!allArticles || allArticles.length === 0) {
         return INITIAL_DAILY_BRIEF;
       }
-      return synthesizeDailyBriefFromArticles(articles);
+      const recentArticles = filterArticlesRecentWindow(allArticles);
+      return synthesizeDailyBriefFromArticles(recentArticles);
     });
 
     return NextResponse.json({ brief });
@@ -51,7 +52,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const articles = await fetchArticles();
+    const allArticles = await fetchArticles();
+    const articles = filterArticlesRecentWindow(allArticles);
     const baseBrief = synthesizeDailyBriefFromArticles(articles);
     const apiKey = process.env.GEMINI_API_KEY;
 
@@ -134,4 +136,22 @@ Return ONLY valid JSON matching this exact structure:
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
+}
+
+
+/**
+ * Ensures articles included in the Daily Brief were scraped/captured today
+ * or yesterday (within the last 48 hours).
+ */
+function filterArticlesRecentWindow(articles: any[]) {
+  const cutoff = Date.now() - 48 * 3600 * 1000;
+  const filtered = articles.filter(a => {
+    const time = a.captured_at 
+      ? new Date(a.captured_at).getTime() 
+      : (a.publication_date ? new Date(a.publication_date).getTime() : 0);
+    return time >= cutoff;
+  });
+  // If no articles fall in last 48 hours (e.g. fresh environment or slow weekend),
+  // fall back gracefully to the most recent articles
+  return filtered.length > 0 ? filtered : articles.slice(0, 15);
 }

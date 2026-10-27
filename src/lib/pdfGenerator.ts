@@ -371,29 +371,31 @@ class PdfBuilder {
 
 
   drawArticleSummaryItem(item: { headline: string; source: string; category?: string; relevance_level?: string; summary: string; source_link?: string }) {
-    this.checkPageBreak(85);
+    this.checkPageBreak(90);
 
-    // Headline in bold
+    // 1. Source & Metadata Badge on its own line above the title (prevents any overlapping)
+    const metaParts = [item.source];
+    if (item.category) metaParts.push(item.category.replace(/_/g, ' ').toUpperCase());
+    if (item.relevance_level) metaParts.push(item.relevance_level.toUpperCase());
+    const metaStr = `[${metaParts.join(' • ')}]`;
+
+    this.doc.setFont('helvetica', 'bold');
+    this.doc.setFontSize(7.5);
+    this.doc.setTextColor(...BRAND.emeraldPrimary);
+    this.doc.text(metaStr, this.margin, this.currentY + 8);
+    this.currentY += 13;
+
+    // 2. Headline in bold
     this.doc.setFont('helvetica', 'bold');
     this.doc.setFontSize(10);
     this.doc.setTextColor(...BRAND.emeraldDark);
 
-    const titleLines = this.doc.splitTextToSize(item.headline, this.contentWidth - 70);
+    const titleLines = this.doc.splitTextToSize(item.headline, this.contentWidth);
     const titleH = titleLines.length * 13;
     this.checkPageBreak(titleH + 60);
 
-    const itemY = this.currentY;
-    this.doc.text(titleLines, this.margin, itemY + 8);
-
-    // Source badge / Metadata right-aligned or inline
-    const metaStr = `[${item.source}${item.category ? ` • ${item.category.replace('_', ' ').toUpperCase()}` : ''}${item.relevance_level ? ` • ${item.relevance_level.toUpperCase()}` : ''}]`;
-    this.doc.setFont('helvetica', 'bold');
-    this.doc.setFontSize(7.5);
-    this.doc.setTextColor(...BRAND.emeraldPrimary);
-    const metaW = this.doc.getTextWidth(metaStr);
-    this.doc.text(metaStr, this.pageWidth - this.margin - metaW, itemY + 8);
-
-    this.currentY = itemY + titleH + 4;
+    this.doc.text(titleLines, this.margin, this.currentY + 6);
+    this.currentY += titleH + 4;
 
     // Subtle divider
     this.doc.setDrawColor(...BRAND.emeraldBorder);

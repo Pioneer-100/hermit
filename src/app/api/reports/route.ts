@@ -40,7 +40,11 @@ export async function POST(req: NextRequest) {
     }
     const reportType = parsed.data.report_type;
     
-    const articles = await fetchArticles();
+    const allFetchedArticles = await fetchArticles();
+    // For daily reports, only include articles scraped/captured today or yesterday (last 48 hours)
+    const articles = reportType === 'daily' 
+      ? filterDailyArticlesWindow(allFetchedArticles) 
+      : allFetchedArticles;
     const highArticles = articles.filter(a => a.relevance_level === 'high');
 
     const titles: Record<string, string> = {
@@ -436,4 +440,16 @@ function buildDefaultArticleSummaries(articles: any[]) {
       source_link: a.source_link || '#'
     };
   });
+}
+
+
+function filterDailyArticlesWindow(articles: any[]) {
+  const cutoff = Date.now() - 48 * 3600 * 1000;
+  const filtered = articles.filter(a => {
+    const time = a.captured_at 
+      ? new Date(a.captured_at).getTime() 
+      : (a.publication_date ? new Date(a.publication_date).getTime() : 0);
+    return time >= cutoff;
+  });
+  return filtered.length > 0 ? filtered : articles.slice(0, 15);
 }
