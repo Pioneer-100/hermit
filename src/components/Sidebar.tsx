@@ -41,9 +41,9 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="w-64 bg-[#03130d]/98 backdrop-blur-xl text-slate-200 flex flex-col shrink-0 min-h-screen border-r border-emerald-500/20 shadow-2xl z-30 select-none">
+    <aside className="w-64 bg-[#020e08]/70 backdrop-blur-xl text-slate-200 flex flex-col shrink-0 min-h-screen border-r border-emerald-500/20 shadow-2xl z-30 select-none">
       {/* Brand Header */}
-      <div className="p-5 border-b border-emerald-500/20 bg-gradient-to-b from-[#051c13] to-[#03130d] backdrop-blur-md">
+      <div className="p-5 border-b border-emerald-500/20 bg-gradient-to-b from-[#041a10]/80 to-[#020e08]/60 backdrop-blur-md">
         <div className="flex items-center gap-3">
           <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-800 p-0.5 shadow-lg shadow-emerald-900/40 flex items-center justify-center">
             <div className="w-full h-full bg-[#041d12] rounded-[10px] flex items-center justify-center">

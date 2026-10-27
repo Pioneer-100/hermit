@@ -104,6 +104,74 @@ export interface DailyBrief {
   high_relevance_count: number;
 }
 
+export interface WeeklyReportStructuredContent {
+  header?: {
+    reporting_week?: string;
+    report_reference?: string;
+    prepared_by?: string;
+    reviewed_by?: string;
+    submission_day?: string;
+    audience?: string;
+  };
+  executive_update?: string;
+  priority_findings?: Array<{
+    headline: string;
+    theme: string;
+    relevance: string;
+    priority: 'H' | 'M' | 'L';
+    finding_id?: string;
+  }>;
+  finding_records?: Array<{
+    finding_id: string;
+    headline: string;
+    theme: 'Energy' | 'Food' | 'Water' | 'Waste to energy' | 'Other' | string;
+    priority: 'High' | 'Medium' | 'Low';
+    source: string;
+    author?: string;
+    publication_date?: string;
+    event_date?: string;
+    link?: string;
+    access_date?: string;
+    factual_summary: string;
+    stakeholders?: string;
+    relevance_to_hermit: string;
+    recommended_response?: {
+      action: string;
+      action_id: string;
+      owner: string;
+      due_date: string;
+    };
+    verification_and_gaps?: string;
+  }>;
+  monitoring_coverage?: Array<{
+    source_or_topic: string;
+    result_or_gap: string;
+    follow_up: string;
+  }>;
+  action_tracker?: Array<{
+    action_deliverable: string;
+    owner: string;
+    due_date: string;
+    status: 'Not started' | 'In progress' | 'Awaiting response' | 'Blocked' | 'Completed' | string;
+    progress: string;
+  }>;
+  decisions_escalations?: Array<{
+    decision_reason: string;
+    decision_owner: string;
+    needed_by: string;
+  }>;
+  next_week_priorities?: Array<{
+    priority_deliverable: string;
+    owner: string;
+    target_date: string;
+  }>;
+  sign_off?: {
+    reviewed_by?: string;
+    approved_by?: string;
+    date?: string;
+  };
+}
+
 export interface Report {
   id: number;
   report_type: 'daily' | 'weekly' | 'monthly' | 'special';
@@ -114,6 +182,7 @@ export interface Report {
     category_breakdown?: Record<string, number>;
     articles?: Article[];
     executive_takeaway?: string;
+    structured_weekly?: WeeklyReportStructuredContent;
   };
   period_start: string | null;
   period_end: string | null;

@@ -281,8 +281,262 @@ export default function ReportsPage() {
                   </div>
                 </div>
 
-                {/* Executive Overview */}
-                <div className="space-y-2">
+                {selectedReport.content?.structured_weekly ? (
+                  /* Hermit Sustainability Advisory Weekly Template View */
+                  <div className="space-y-6">
+                    {/* Header Details Table */}
+                    <div className="overflow-x-auto rounded-xl border border-emerald-500/20 bg-[#041a12]/70">
+                      <table className="w-full text-left text-xs">
+                        <thead className="bg-emerald-950/80 text-emerald-300 font-bold border-b border-emerald-500/20">
+                          <tr>
+                            <th className="p-2.5 w-1/3">Reporting Field</th>
+                            <th className="p-2.5">Weekly Details</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-emerald-500/10 text-emerald-100">
+                          <tr>
+                            <td className="p-2.5 font-semibold text-emerald-300">Reporting week</td>
+                            <td className="p-2.5">{selectedReport.content.structured_weekly.header?.reporting_week || 'N/A'}</td>
+                          </tr>
+                          <tr>
+                            <td className="p-2.5 font-semibold text-emerald-300">Report reference & issue date</td>
+                            <td className="p-2.5">{selectedReport.content.structured_weekly.header?.report_reference || 'HSA WC'} | {new Date(selectedReport.generated_at).toLocaleDateString('en-GB')}</td>
+                          </tr>
+                          <tr>
+                            <td className="p-2.5 font-semibold text-emerald-300">Prepared by & reviewed by</td>
+                            <td className="p-2.5">{selectedReport.content.structured_weekly.header?.prepared_by || 'Intelligence Unit'} | {selectedReport.content.structured_weekly.header?.reviewed_by || 'Sustainability Advisory'}</td>
+                          </tr>
+                          <tr>
+                            <td className="p-2.5 font-semibold text-emerald-300">Submission day & audience</td>
+                            <td className="p-2.5">{selectedReport.content.structured_weekly.header?.submission_day || 'Weekly Briefing'} | {selectedReport.content.structured_weekly.header?.audience || 'Investment Committee'}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* 1. Weekly Executive Update */}
+                    <div className="space-y-2">
+                      <h3 className="text-xs uppercase tracking-wider font-extrabold text-emerald-300 flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                        1. Weekly Executive Update
+                      </h3>
+                      <p className="text-xs sm:text-sm text-emerald-100 leading-relaxed bg-[#041a12]/80 p-3.5 sm:p-4 rounded-xl border border-emerald-900/50">
+                        {selectedReport.content.structured_weekly.executive_update || selectedReport.summary}
+                      </p>
+                    </div>
+
+                    {/* 2. Priority Findings Table */}
+                    {selectedReport.content.structured_weekly.priority_findings && (
+                      <div className="space-y-2">
+                        <h3 className="text-xs uppercase tracking-wider font-extrabold text-emerald-300 flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                          2. Priority Findings
+                        </h3>
+                        <div className="overflow-x-auto rounded-xl border border-emerald-500/20 bg-[#041a12]/70">
+                          <table className="w-full text-left text-xs">
+                            <thead className="bg-emerald-950/80 text-emerald-300 font-bold border-b border-emerald-500/20">
+                              <tr>
+                                <th className="p-2.5">Headline and Theme</th>
+                                <th className="p-2.5">Relevance to Hermit</th>
+                                <th className="p-2.5 w-16 text-center">Priority</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-emerald-500/10 text-emerald-100">
+                              {selectedReport.content.structured_weekly.priority_findings.map((pf, idx) => (
+                                <tr key={idx} className="hover:bg-emerald-900/20">
+                                  <td className="p-2.5 font-medium">
+                                    <div>{pf.headline}</div>
+                                    <span className="text-[10px] text-emerald-400 font-mono">[{pf.theme}]</span>
+                                  </td>
+                                  <td className="p-2.5 text-emerald-200/90">{pf.relevance}</td>
+                                  <td className="p-2.5 text-center">
+                                    <span className={`px-2 py-0.5 rounded text-[10px] font-black ${
+                                      pf.priority === 'H' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' :
+                                      pf.priority === 'M' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' :
+                                      'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                                    }`}>
+                                      {pf.priority}
+                                    </span>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 3. Finding Records */}
+                    {selectedReport.content.structured_weekly.finding_records && (
+                      <div className="space-y-3">
+                        <h3 className="text-xs uppercase tracking-wider font-extrabold text-emerald-300 flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                          3. Finding Records
+                        </h3>
+                        <div className="space-y-3">
+                          {selectedReport.content.structured_weekly.finding_records.map((fr, idx) => (
+                            <div key={idx} className="rounded-xl border border-emerald-500/20 bg-[#041a12]/80 overflow-hidden text-xs">
+                              <div className="bg-emerald-950/60 p-2.5 border-b border-emerald-500/20 flex items-center justify-between">
+                                <span className="font-bold text-emerald-300">{fr.finding_id}: {fr.headline}</span>
+                                <span className="text-[10px] bg-emerald-500/20 text-emerald-200 px-2 py-0.5 rounded font-mono">{fr.theme} &bull; {fr.priority}</span>
+                              </div>
+                              <div className="p-3 space-y-2 text-emerald-100">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-emerald-300/80">
+                                  <div><span className="font-semibold text-emerald-400">Source:</span> {fr.source} | {fr.author || 'Not stated'}</div>
+                                  <div><span className="font-semibold text-emerald-400">Dates:</span> Published {fr.publication_date || 'N/A'} | Event {fr.event_date || 'N/A'}</div>
+                                </div>
+                                <div className="text-[11px]"><span className="font-semibold text-emerald-400">Factual summary:</span> {fr.factual_summary}</div>
+                                {fr.stakeholders && <div className="text-[11px]"><span className="font-semibold text-emerald-400">Stakeholders:</span> {fr.stakeholders}</div>}
+                                <div className="text-[11px]"><span className="font-semibold text-emerald-400">Relevance:</span> {fr.relevance_to_hermit}</div>
+                                {fr.recommended_response && (
+                                  <div className="p-2 bg-emerald-950/40 rounded border border-emerald-500/20 text-[11px]">
+                                    <span className="font-semibold text-emerald-300">Recommended response: </span>
+                                    {typeof fr.recommended_response === 'object' 
+                                      ? `${fr.recommended_response.action} (ID: ${fr.recommended_response.action_id}, Owner: ${fr.recommended_response.owner}, Due: ${fr.recommended_response.due_date})`
+                                      : fr.recommended_response}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 4. Monitoring Coverage */}
+                    {selectedReport.content.structured_weekly.monitoring_coverage && (
+                      <div className="space-y-2">
+                        <h3 className="text-xs uppercase tracking-wider font-extrabold text-emerald-300 flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                          4. Monitoring Coverage
+                        </h3>
+                        <div className="overflow-x-auto rounded-xl border border-emerald-500/20 bg-[#041a12]/70">
+                          <table className="w-full text-left text-xs">
+                            <thead className="bg-emerald-950/80 text-emerald-300 font-bold border-b border-emerald-500/20">
+                              <tr>
+                                <th className="p-2.5">Sources or topics checked</th>
+                                <th className="p-2.5">Result or coverage gap</th>
+                                <th className="p-2.5">Follow up</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-emerald-500/10 text-emerald-100">
+                              {selectedReport.content.structured_weekly.monitoring_coverage.map((c, idx) => (
+                                <tr key={idx} className="hover:bg-emerald-900/20">
+                                  <td className="p-2.5 font-medium">{c.source_or_topic}</td>
+                                  <td className="p-2.5 text-emerald-200/90">{c.result_or_gap}</td>
+                                  <td className="p-2.5 text-emerald-400">{c.follow_up}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 5. Action and Follow Up Tracker */}
+                    {selectedReport.content.structured_weekly.action_tracker && (
+                      <div className="space-y-2">
+                        <h3 className="text-xs uppercase tracking-wider font-extrabold text-emerald-300 flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                          5. Action & Follow Up Tracker
+                        </h3>
+                        <div className="overflow-x-auto rounded-xl border border-emerald-500/20 bg-[#041a12]/70">
+                          <table className="w-full text-left text-xs">
+                            <thead className="bg-emerald-950/80 text-emerald-300 font-bold border-b border-emerald-500/20">
+                              <tr>
+                                <th className="p-2.5">Action and expected output</th>
+                                <th className="p-2.5">Owner</th>
+                                <th className="p-2.5">Due</th>
+                                <th className="p-2.5">Status & progress</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-emerald-500/10 text-emerald-100">
+                              {selectedReport.content.structured_weekly.action_tracker.map((act, idx) => (
+                                <tr key={idx} className="hover:bg-emerald-900/20">
+                                  <td className="p-2.5 font-medium">{act.action_deliverable}</td>
+                                  <td className="p-2.5 text-emerald-300">{act.owner}</td>
+                                  <td className="p-2.5 text-emerald-400 whitespace-nowrap">{act.due_date}</td>
+                                  <td className="p-2.5"><span className="text-emerald-300 font-semibold">[{act.status}]</span> {act.progress}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 6. Decisions and Escalations */}
+                    {selectedReport.content.structured_weekly.decisions_escalations && (
+                      <div className="space-y-2">
+                        <h3 className="text-xs uppercase tracking-wider font-extrabold text-emerald-300 flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                          6. Decisions & Escalations
+                        </h3>
+                        <div className="overflow-x-auto rounded-xl border border-emerald-500/20 bg-[#041a12]/70">
+                          <table className="w-full text-left text-xs">
+                            <thead className="bg-emerald-950/80 text-emerald-300 font-bold border-b border-emerald-500/20">
+                              <tr>
+                                <th className="p-2.5">Decision and reason</th>
+                                <th className="p-2.5">Decision owner</th>
+                                <th className="p-2.5">Needed by</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-emerald-500/10 text-emerald-100">
+                              {selectedReport.content.structured_weekly.decisions_escalations.map((d, idx) => (
+                                <tr key={idx} className="hover:bg-emerald-900/20">
+                                  <td className="p-2.5 font-medium">{d.decision_reason}</td>
+                                  <td className="p-2.5 text-emerald-300">{d.decision_owner}</td>
+                                  <td className="p-2.5 text-emerald-400 whitespace-nowrap">{d.needed_by}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 7. Priorities for Next Week */}
+                    {selectedReport.content.structured_weekly.next_week_priorities && (
+                      <div className="space-y-2">
+                        <h3 className="text-xs uppercase tracking-wider font-extrabold text-emerald-300 flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                          7. Priorities for Next Week
+                        </h3>
+                        <div className="overflow-x-auto rounded-xl border border-emerald-500/20 bg-[#041a12]/70">
+                          <table className="w-full text-left text-xs">
+                            <thead className="bg-emerald-950/80 text-emerald-300 font-bold border-b border-emerald-500/20">
+                              <tr>
+                                <th className="p-2.5">Priority deliverable or topic</th>
+                                <th className="p-2.5">Owner</th>
+                                <th className="p-2.5">Target date</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-emerald-500/10 text-emerald-100">
+                              {selectedReport.content.structured_weekly.next_week_priorities.map((p, idx) => (
+                                <tr key={idx} className="hover:bg-emerald-900/20">
+                                  <td className="p-2.5 font-medium">{idx + 1}. {p.priority_deliverable}</td>
+                                  <td className="p-2.5 text-emerald-300">{p.owner}</td>
+                                  <td className="p-2.5 text-emerald-400 whitespace-nowrap">{p.target_date}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Sign-off footer */}
+                    <div className="p-3 bg-emerald-950/40 rounded-xl border border-emerald-500/20 text-xs text-emerald-300/80 flex flex-wrap items-center justify-between gap-2 font-mono">
+                      <span>Reviewed by: {selectedReport.content.structured_weekly.sign_off?.reviewed_by || 'Lead Sustainability Advisor'}</span>
+                      <span>Date: {selectedReport.content.structured_weekly.sign_off?.date || new Date().toLocaleDateString('en-GB')}</span>
+                      <span>Approved by: {selectedReport.content.structured_weekly.sign_off?.approved_by || 'Managing Director'}</span>
+                    </div>
+                  </div>
+                ) : (
+                  /* Standard / Daily View */
+                  <>
+                    {/* Executive Overview */}
+                    <div className="space-y-2">
                   <h3 className="text-xs uppercase tracking-wider font-extrabold text-emerald-300/80">
                     Executive Overview
                   </h3>
@@ -319,6 +573,8 @@ export default function ReportsPage() {
                       {selectedReport.content.executive_takeaway}
                     </p>
                   </div>
+                )}
+                  </>
                 )}
               </>
             ) : (

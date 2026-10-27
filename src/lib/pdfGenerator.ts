@@ -238,6 +238,136 @@ class PdfBuilder {
     this.currentY += blockHeight + 3;
   }
 
+
+  drawTable(headers: string[], rows: string[][], colWidths: number[]) {
+    const lineHeight = 12;
+    const padding = 5;
+
+    // Header row
+    this.checkPageBreak(30);
+    let startY = this.currentY;
+
+    this.doc.setFillColor(...BRAND.emeraldDark);
+    this.doc.rect(this.margin, startY, this.contentWidth, 18, 'F');
+
+    this.doc.setFont('helvetica', 'bold');
+    this.doc.setFontSize(8);
+    this.doc.setTextColor(...BRAND.white);
+
+    let curX = this.margin;
+    headers.forEach((h, i) => {
+      this.doc.text(h, curX + padding, startY + 12);
+      curX += colWidths[i];
+    });
+
+    startY += 18;
+    this.currentY = startY;
+
+    // Data rows
+    rows.forEach((row, rIdx) => {
+      // Calculate row height based on cell with most lines
+      let maxLines = 1;
+      row.forEach((cell, cIdx) => {
+        const textLines = this.doc.splitTextToSize(String(cell || ''), colWidths[cIdx] - padding * 2);
+        if (textLines.length > maxLines) maxLines = textLines.length;
+      });
+
+      const rowH = Math.max(16, maxLines * lineHeight + 8);
+      this.checkPageBreak(rowH);
+      startY = this.currentY;
+
+      // Zebra background
+      if (rIdx % 2 === 1) {
+        this.doc.setFillColor(...BRAND.slateBg);
+        this.doc.rect(this.margin, startY, this.contentWidth, rowH, 'F');
+      }
+
+      this.doc.setDrawColor(...BRAND.emeraldBorder);
+      this.doc.setLineWidth(0.3);
+      this.doc.rect(this.margin, startY, this.contentWidth, rowH, 'S');
+
+      curX = this.margin;
+      row.forEach((cell, cIdx) => {
+        this.doc.setFont('helvetica', cIdx === 0 ? 'bold' : 'normal');
+        this.doc.setFontSize(7.5);
+        this.doc.setTextColor(...BRAND.slateDark);
+
+        const textLines = this.doc.splitTextToSize(String(cell || ''), colWidths[cIdx] - padding * 2);
+        this.doc.text(textLines, curX + padding, startY + 10);
+
+        // Vertical divider
+        if (cIdx < row.length - 1) {
+          this.doc.setDrawColor(...BRAND.emeraldBorder);
+          this.doc.line(curX + colWidths[cIdx], startY, curX + colWidths[cIdx], startY + rowH);
+        }
+
+        curX += colWidths[cIdx];
+      });
+
+      this.currentY = startY + rowH;
+    });
+
+    this.currentY += 10;
+  }
+
+  drawFindingRecord(f: any) {
+    this.checkPageBreak(130);
+
+    const startY = this.currentY;
+    const padding = 6;
+    const labelW = 120;
+    const valW = this.contentWidth - labelW;
+
+    const fields = [
+      ['Finding ID and headline', `${f.finding_id || ''} | ${f.headline || ''}`],
+      ['Theme and priority', `${f.theme || ''}  |  ${f.priority || ''}`],
+      ['Source and author', `${f.source || ''}  |  ${f.author || 'Not stated'}`],
+      ['Publication / event dates', `Published: ${f.publication_date || 'N/A'}  |  Event: ${f.event_date || 'N/A'}`],
+      ['Link and access date', `${f.link || 'N/A'}  |  Accessed: ${f.access_date || 'N/A'}`],
+      ['Factual summary', f.factual_summary || ''],
+      ['Stakeholders', f.stakeholders || ''],
+      ['Relevance to Hermit', f.relevance_to_hermit || ''],
+      ['Recommended response', typeof f.recommended_response === 'object' ? `${f.recommended_response.action} | ID: ${f.recommended_response.action_id} | Owner: ${f.recommended_response.owner} | Due: ${f.recommended_response.due_date}` : (f.recommended_response || '')],
+      ['Verification and gaps', f.verification_and_gaps || '']
+    ];
+
+    fields.forEach(([label, value], idx) => {
+      this.doc.setFont('helvetica', 'normal');
+      this.doc.setFontSize(7.5);
+      const valLines = this.doc.splitTextToSize(String(value || ''), valW - padding * 2);
+      const rowH = Math.max(14, valLines.length * 10 + 6);
+
+      this.checkPageBreak(rowH);
+      const rowY = this.currentY;
+
+      // Label column
+      this.doc.setFillColor(idx % 2 === 0 ? ...BRAND.emeraldTint : ...BRAND.slateBg);
+      this.doc.rect(this.margin, rowY, labelW, rowH, 'F');
+      this.doc.setDrawColor(...BRAND.emeraldBorder);
+      this.doc.rect(this.margin, rowY, labelW, rowH, 'S');
+
+      this.doc.setFont('helvetica', 'bold');
+      this.doc.setFontSize(7.5);
+      this.doc.setTextColor(...BRAND.emeraldDark);
+      this.doc.text(label, this.margin + padding, rowY + 9);
+
+      // Value column
+      this.doc.setFillColor(...BRAND.white);
+      this.doc.rect(this.margin + labelW, rowY, valW, rowH, 'F');
+      this.doc.setDrawColor(...BRAND.emeraldBorder);
+      this.doc.rect(this.margin + labelW, rowY, valW, rowH, 'S');
+
+      this.doc.setFont('helvetica', 'normal');
+      this.doc.setFontSize(7.5);
+      this.doc.setTextColor(...BRAND.slateDark);
+      this.doc.text(valLines, this.margin + labelW + padding, rowY + 9);
+
+      this.currentY = rowY + rowH;
+    });
+
+    this.currentY += 12;
+  }
+
   finalizeFooters() {
     const totalPages = this.doc.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
@@ -307,6 +437,87 @@ export function createReportPdfBuilder(report: Report): PdfBuilder {
 
   // Cover header
   builder.drawDocumentCoverHeader(badge, report.title, metaItems);
+
+  // If report is weekly or has structured_weekly, format using Hermit Sustainability Advisory Template
+  const weekly = report.content?.structured_weekly;
+  if (report.report_type === 'weekly' && weekly) {
+    // 0. Header metadata table
+    const metaTable = [
+      ['Reporting week', weekly.header?.reporting_week || 'Current Week'],
+      ['Report reference & issue date', `${weekly.header?.report_reference || 'HSA WC'}  |  ${new Date(report.generated_at).toLocaleDateString('en-GB')}`],
+      ['Prepared by & reviewed by', `${weekly.header?.prepared_by || 'Intelligence Unit'}  |  ${weekly.header?.reviewed_by || 'Sustainability Advisory'}`],
+      ['Submission day & audience', `${weekly.header?.submission_day || 'Weekly Briefing'}  |  ${weekly.header?.audience || 'Investment Committee'}`]
+    ];
+    builder.drawTable(['Reporting Field', 'Weekly Details'], metaTable, [160, builder.contentWidth - 160]);
+
+    // 1. Weekly Executive Update
+    builder.drawSectionHeader('1. Weekly Executive Update');
+    builder.drawParagraph(weekly.executive_update || report.summary || '', 9.5);
+
+    // 2. Priority Findings
+    if (weekly.priority_findings && weekly.priority_findings.length > 0) {
+      builder.drawSectionHeader('2. Priority Findings');
+      const pRows = weekly.priority_findings.map(pf => [
+        `${pf.headline}\n[${pf.theme}]`,
+        pf.relevance,
+        pf.priority
+      ]);
+      const pColW = [builder.contentWidth * 0.45, builder.contentWidth * 0.45, builder.contentWidth * 0.1];
+      builder.drawTable(['Headline and theme', 'Relevance to Hermit', 'Priority'], pRows, pColW);
+    }
+
+    // 3. Finding Records
+    if (weekly.finding_records && weekly.finding_records.length > 0) {
+      builder.drawSectionHeader('3. Finding Record');
+      weekly.finding_records.forEach((record) => {
+        builder.drawFindingRecord(record);
+      });
+    }
+
+    // 4. Monitoring Coverage
+    if (weekly.monitoring_coverage && weekly.monitoring_coverage.length > 0) {
+      builder.drawSectionHeader('4. Monitoring Coverage');
+      const covRows = weekly.monitoring_coverage.map(c => [c.source_or_topic, c.result_or_gap, c.follow_up]);
+      const covColW = [builder.contentWidth * 0.4, builder.contentWidth * 0.35, builder.contentWidth * 0.25];
+      builder.drawTable(['Sources or topics checked', 'Result or coverage gap', 'Follow up'], covRows, covColW);
+    }
+
+    // 5. Action and Follow Up Tracker
+    if (weekly.action_tracker && weekly.action_tracker.length > 0) {
+      builder.drawSectionHeader('5. Action and Follow Up Tracker');
+      const actRows = weekly.action_tracker.map(a => [a.action_deliverable, a.owner, a.due_date, `[${a.status}] ${a.progress}`]);
+      const actColW = [builder.contentWidth * 0.4, builder.contentWidth * 0.2, builder.contentWidth * 0.15, builder.contentWidth * 0.25];
+      builder.drawTable(['Action and expected output', 'Owner', 'Due', 'Status and progress'], actRows, actColW);
+    }
+
+    // 6. Decisions and Escalations
+    if (weekly.decisions_escalations && weekly.decisions_escalations.length > 0) {
+      builder.drawSectionHeader('6. Decisions and Escalations');
+      const decRows = weekly.decisions_escalations.map(d => [d.decision_reason, d.decision_owner, d.needed_by]);
+      const decColW = [builder.contentWidth * 0.55, builder.contentWidth * 0.25, builder.contentWidth * 0.2];
+      builder.drawTable(['Decision and reason', 'Decision owner', 'Needed by'], decRows, decColW);
+    }
+
+    // 7. Priorities for Next Week
+    if (weekly.next_week_priorities && weekly.next_week_priorities.length > 0) {
+      builder.drawSectionHeader('7. Priorities for Next Week');
+      const prioRows = weekly.next_week_priorities.map((p, idx) => [`${idx + 1}. ${p.priority_deliverable}`, p.owner, p.target_date]);
+      const prioColW = [builder.contentWidth * 0.55, builder.contentWidth * 0.25, builder.contentWidth * 0.2];
+      builder.drawTable(['Priority deliverable or topic', 'Owner', 'Target date'], prioRows, prioColW);
+    }
+
+    // Sign-off
+    builder.checkPageBreak(30);
+    builder.doc.setFont('helvetica', 'bold');
+    builder.doc.setFontSize(8);
+    builder.doc.setTextColor(...BRAND.slateDark);
+    const signOffText = `Reviewed by: ${weekly.sign_off?.reviewed_by || 'Lead Sustainability Advisor'}   |   Date: ${weekly.sign_off?.date || new Date().toLocaleDateString('en-GB')}   |   Approved by: ${weekly.sign_off?.approved_by || 'Executive Director'}`;
+    builder.doc.text(signOffText, builder.margin, builder.currentY + 12);
+    builder.currentY += 25;
+
+    return builder;
+  }
+
 
   // Executive Overview
   if (report.summary) {
