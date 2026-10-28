@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
     if (apiKey && apiKey.length > 10 && articles.length > 0) {
       try {
         const articleSummaries = articles.slice(0, 15).map(a =>
-          `- [${a.source_name}] (${a.article_type}, Relevance: ${a.relevance_level}): ${a.headline}${a.summary ? ` — ${a.summary.slice(0, 150)}` : ''}`
+          `- [ID: ${a.id}] [${a.source_name}] (${a.article_type}, Relevance: ${a.relevance_level}): ${a.headline} | Database Link: ${a.source_link || '#'}${a.summary ? ` — ${a.summary.slice(0, 150)}` : ''}`
         ).join('\n');
 
         const periodLabel = reportType === 'daily' ? "today's" : reportType === 'weekly' ? "this week's" : reportType === 'monthly' ? "this month's" : "the current";
@@ -199,12 +199,13 @@ Return ONLY valid JSON with these exact keys:
   "executive_takeaway": "2-3 sentence strategic recommendation for Hermit Investments Management, including specific next steps",
   "article_summaries": [
     {
+      "article_id": 123,
       "headline": "Exact article headline",
       "source": "Source name",
       "category": "Category or theme",
       "relevance_level": "high/medium/low",
       "summary": "A detailed 5-line narrative summary of this specific article detailing what occurred, relevant data points/MW/USD figures, regulatory or market impact, affected stakeholders, and explicit implications for Hermit Investments.",
-      "source_link": "URL or reference if available"
+      "source_link": "Copy the EXACT Database Link provided above for this article ID without modifying or truncating it"
     }
   ]
 }
@@ -282,13 +283,27 @@ Include an entry in article_summaries for every monitored article listed above, 
         structured_weekly: geminiReport?.structured_weekly || (reportType === 'weekly' ? buildDefaultWeeklyTemplate(articles, highArticles) : undefined),
         article_summaries: geminiReport?.article_summaries 
           ? geminiReport.article_summaries.map((s: any) => {
+              // Priority 1: Match by article_id from prompt
+              // Priority 2: Match by exact or partial headline
               const matched = articles.find((a: any) => 
-                (a.headline && s.headline && a.headline.toLowerCase() === s.headline.toLowerCase()) || 
-                (a.headline && s.headline && s.headline.toLowerCase().includes(a.headline.toLowerCase().slice(0, 20)))
+                (s.article_id && a.id === s.article_id) ||
+                (a.headline && s.headline && a.headline.toLowerCase().trim() === s.headline.toLowerCase().trim()) ||
+                (a.headline && s.headline && (
+                  a.headline.toLowerCase().includes(s.headline.toLowerCase().slice(0, 25)) ||
+                  s.headline.toLowerCase().includes(a.headline.toLowerCase().slice(0, 25))
+                ))
               );
+
+              // ALWAYS take the exact direct article link from the database articles table if matched
+              const resolvedLink = (matched && matched.source_link && matched.source_link !== '#')
+                ? matched.source_link
+                : (s.source_link && s.source_link.startsWith('http') ? s.source_link : '#');
+
               return {
                 ...s,
-                source_link: s.source_link && s.source_link.startsWith('http') ? s.source_link : (matched?.source_link || '#'),
+                headline: matched?.headline || s.headline,
+                source: matched?.source_name || s.source,
+                source_link: resolvedLink,
                 captured_at: matched?.captured_at || matched?.publication_date || new Date().toISOString()
               };
             })
