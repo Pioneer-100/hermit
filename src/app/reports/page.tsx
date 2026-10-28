@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import { Report } from '@/types';
-import { FileText, Plus, CheckCircle, Calendar, Sparkles, Zap, Printer, BookOpen, Archive, Download, Loader2 } from 'lucide-react';
+import { FileText, Plus, CheckCircle, Calendar, Sparkles, Zap, Printer, BookOpen, Archive, Download, Loader2, ExternalLink, Clock } from 'lucide-react';
 import { generateReportPdf } from '@/lib/pdfGenerator';
 import { INITIAL_REPORTS } from '@/lib/mock-data';
 import { getSupabaseClient } from '@/lib/supabase';
@@ -396,6 +396,19 @@ export default function ReportsPage() {
                                       : fr.recommended_response}
                                   </div>
                                 )}
+                                {fr.link && fr.link !== '#' && (
+                                  <div className="pt-1">
+                                    <a
+                                      href={fr.link}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-300 hover:text-emerald-100 hover:underline"
+                                    >
+                                      <span>Read full finding source on {fr.source}</span>
+                                      <ExternalLink className="w-3 h-3 text-emerald-400" />
+                                    </a>
+                                  </div>
+                                )}
                               </div>
                             </div>
                           ))}
@@ -601,10 +614,33 @@ export default function ReportsPage() {
                             </div>
                           </div>
 
+                          {/* Crawled date/time */}
+                          {item.captured_at && (
+                            <div className="flex items-center gap-1.5 text-[10px] text-emerald-400/70 font-mono">
+                              <Clock className="w-3 h-3 text-emerald-400" />
+                              <span>Crawled: {new Date(item.captured_at).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                            </div>
+                          )}
+
                           {/* 5-line summary */}
                           <div className="text-xs text-emerald-100/90 leading-relaxed font-normal whitespace-pre-line bg-[#03140e]/60 p-3 rounded-lg border-l-2 border-emerald-400">
                             {item.summary}
                           </div>
+
+                          {/* Link to full story on source */}
+                          {item.source_link && item.source_link !== '#' && (
+                            <div className="pt-1.5">
+                              <a
+                                href={item.source_link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-300 hover:text-emerald-100 hover:underline transition-colors"
+                              >
+                                <span>Read full story on {item.source}</span>
+                                <ExternalLink className="w-3 h-3 text-emerald-400" />
+                              </a>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>

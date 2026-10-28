@@ -370,10 +370,10 @@ class PdfBuilder {
   }
 
 
-  drawArticleSummaryItem(item: { headline: string; source: string; category?: string; relevance_level?: string; summary: string; source_link?: string }) {
-    this.checkPageBreak(90);
+  drawArticleSummaryItem(item: { headline: string; source: string; category?: string; relevance_level?: string; summary: string; source_link?: string; captured_at?: string }) {
+    this.checkPageBreak(100);
 
-    // 1. Source & Metadata Badge on its own line above the title (prevents any overlapping)
+    // 1. Source & Metadata Badge on the left, Crawl Date/Time on the right
     const metaParts = [item.source];
     if (item.category) metaParts.push(item.category.replace(/_/g, ' ').toUpperCase());
     if (item.relevance_level) metaParts.push(item.relevance_level.toUpperCase());
@@ -383,6 +383,30 @@ class PdfBuilder {
     this.doc.setFontSize(7.5);
     this.doc.setTextColor(...BRAND.emeraldPrimary);
     this.doc.text(metaStr, this.margin, this.currentY + 8);
+
+    // Crawl date & time on the empty space beside the brackets
+    const crawlDateStr = item.captured_at
+      ? new Date(item.captured_at).toLocaleString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      : new Date().toLocaleString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+    const crawlLabel = `Crawled: ${crawlDateStr}`;
+    this.doc.setFont('helvetica', 'normal');
+    this.doc.setFontSize(7.5);
+    this.doc.setTextColor(...BRAND.slateMuted);
+    const crawlW = this.doc.getTextWidth(crawlLabel);
+    this.doc.text(crawlLabel, this.pageWidth - this.margin - crawlW, this.currentY + 8);
+
     this.currentY += 13;
 
     // 2. Headline in bold
@@ -392,7 +416,7 @@ class PdfBuilder {
 
     const titleLines = this.doc.splitTextToSize(item.headline, this.contentWidth);
     const titleH = titleLines.length * 13;
-    this.checkPageBreak(titleH + 60);
+    this.checkPageBreak(titleH + 70);
 
     this.doc.text(titleLines, this.margin, this.currentY + 6);
     this.currentY += titleH + 4;
@@ -403,10 +427,10 @@ class PdfBuilder {
     this.doc.line(this.margin, this.currentY, this.pageWidth - this.margin, this.currentY);
     this.currentY += 6;
 
-    // Five-line summary block with light background card
+    // 3. Five-line summary block with light background card
     const summaryLines = this.doc.splitTextToSize(item.summary, this.contentWidth - 16);
     const cardH = summaryLines.length * 11.5 + 10;
-    this.checkPageBreak(cardH + 10);
+    this.checkPageBreak(cardH + 30);
 
     const cardY = this.currentY;
     this.doc.setFillColor(...BRAND.slateBg);
@@ -423,7 +447,30 @@ class PdfBuilder {
     this.doc.setTextColor(...BRAND.slateBody);
     this.doc.text(summaryLines, this.margin + 8, cardY + 10);
 
-    this.currentY = cardY + cardH + 12;
+    this.currentY = cardY + cardH + 8;
+
+    // 4. Skip a line and put link to full article on source
+    if (item.source_link && item.source_link !== '#') {
+      const linkPrefix = `Full Article (${item.source}): `;
+      const rawUrl = item.source_link;
+
+      this.doc.setFont('helvetica', 'bold');
+      this.doc.setFontSize(8);
+      this.doc.setTextColor(...BRAND.emeraldDark);
+      this.doc.text(linkPrefix, this.margin + 2, this.currentY + 4);
+
+      const prefixW = this.doc.getTextWidth(linkPrefix);
+      this.doc.setFont('helvetica', 'normal');
+      this.doc.setTextColor(...BRAND.emeraldPrimary);
+
+      // Display clean URL or shortened anchor if long, with interactive hyperlink
+      const displayUrl = rawUrl.length > 75 ? `${rawUrl.slice(0, 72)}...` : rawUrl;
+      this.doc.textWithLink(displayUrl, this.margin + 2 + prefixW, this.currentY + 4, { url: rawUrl });
+
+      this.currentY += 14;
+    } else {
+      this.currentY += 6;
+    }
   }
 
     finalizeFooters() {

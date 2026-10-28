@@ -190,6 +190,7 @@ export interface Report {
       relevance_level?: string;
       summary: string;
       source_link?: string;
+      captured_at?: string;
     }>;
   };
   period_start: string | null;

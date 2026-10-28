@@ -280,7 +280,19 @@ Include an entry in article_summaries for every monitored article listed above, 
         category_breakdown: categoryBreakdown,
         executive_takeaway: geminiReport?.executive_takeaway || 'High level of deal momentum observed across solar IPPs. Hermit Investments should prioritize commercial engagement with mining and agricultural off-takers while advancing eligibility discussions with concessional DFI lenders.',
         structured_weekly: geminiReport?.structured_weekly || (reportType === 'weekly' ? buildDefaultWeeklyTemplate(articles, highArticles) : undefined),
-        article_summaries: geminiReport?.article_summaries || buildDefaultArticleSummaries(articles)
+        article_summaries: geminiReport?.article_summaries 
+          ? geminiReport.article_summaries.map((s: any) => {
+              const matched = articles.find((a: any) => 
+                (a.headline && s.headline && a.headline.toLowerCase() === s.headline.toLowerCase()) || 
+                (a.headline && s.headline && s.headline.toLowerCase().includes(a.headline.toLowerCase().slice(0, 20)))
+              );
+              return {
+                ...s,
+                source_link: s.source_link && s.source_link.startsWith('http') ? s.source_link : (matched?.source_link || '#'),
+                captured_at: matched?.captured_at || matched?.publication_date || new Date().toISOString()
+              };
+            })
+          : buildDefaultArticleSummaries(articles)
       }
     };
 
@@ -437,7 +449,8 @@ function buildDefaultArticleSummaries(articles: any[]) {
       category: a.article_type || 'Energy',
       relevance_level: a.relevance_level || 'medium',
       summary: fiveLineSummary,
-      source_link: a.source_link || '#'
+      source_link: a.source_link || '#',
+      captured_at: a.captured_at || a.publication_date || new Date().toISOString()
     };
   });
 }
