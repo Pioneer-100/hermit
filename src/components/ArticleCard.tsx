@@ -51,7 +51,7 @@ export default function ArticleCard({
     ? 'border-l-4 border-l-rose-500 hover:border-l-rose-400'
     : isMed
     ? 'border-l-4 border-l-amber-500 hover:border-l-amber-400'
-    : 'border-l-4 border-l-emerald-500 hover:border-l-emerald-400';
+    : 'border-l-4 border-l-blue-500 hover:border-l-blue-400';
 
   return (
     <div

@@ -285,7 +285,6 @@ export default function LoginPage() {
                         className="w-full bg-[#03150e]/90 border border-blue-500/25 rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none focus:border-blue-400 transition-colors"
                       >
                         <option value="executive">Executive</option>
-                        <option value="director">Director</option>
                         <option value="analyst">Analyst</option>
                         <option value="engineer">Engineer</option>
                       </select>
@@ -351,51 +350,7 @@ export default function LoginPage() {
               </button>
             </form>
 
-            {/* Quick Demo Personas - 1-Click Access */}
-            {/*
-            <div className="mt-5 pt-4 border-t border-blue-900/50 relative z-10">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400/80">
-                  Instant 1-Click Demo Personas
-                </span>
-                <span className="text-[9px] px-1.5 py-0.5 rounded bg-blue-600/15 text-cyan-300 font-mono">
-                  Zero Config
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 gap-1.5">
-                {availableUsers.map((user) => (
-                  <button
-                    key={user.id}
-                    type="button"
-                    onClick={() => handleDemoLogin(user.id)}
-                    className="w-full flex items-center justify-between p-2 rounded-xl bg-[#06162a]/70 hover:bg-blue-900/40 border border-blue-500/20 hover:border-blue-400/40 text-left transition-all group active:scale-99"
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-600 to-blue-800 text-white font-black text-xs flex items-center justify-center shrink-0 border border-blue-400/40">
-                        {user.full_name.charAt(0)}
-                      </div>
-                      <div className="min-w-0">
-                        <span className="text-xs font-bold text-white group-hover:text-cyan-300 truncate block">
-                          {user.full_name}
-                        </span>
-                        <span className="text-[10px] text-blue-400/70 truncate block">
-                          {user.title}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <span className="text-[9px] px-1.5 py-0.5 rounded uppercase font-extrabold bg-[#051f14] text-cyan-300 border border-blue-500/30">
-                        {user.role}
-                      </span>
-                      <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-cyan-300 transition-transform group-hover:translate-x-0.5" />
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-            */}
+           
 
             {/* Security Note */}
             <div className="mt-4 text-center text-[10px] text-blue-400/50 flex items-center justify-center gap-1.5">

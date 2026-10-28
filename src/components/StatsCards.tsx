@@ -14,7 +14,7 @@ export default function StatsCards({ stats }: StatsCardsProps) {
       value: stats.capturedToday,
       subtext: stats.totalArticles ? `${stats.totalArticles} active in database` : 'Real-time sync',
       icon: Layers,
-      accentBorder: 'border-l-4 border-l-emerald-400',
+      accentBorder: 'border-l-4 border-l-blue-400',
       iconBg: 'bg-blue-600/20 text-cyan-300 border-blue-500/30',
       badge: 'Today'
     },
@@ -41,7 +41,7 @@ export default function StatsCards({ stats }: StatsCardsProps) {
       value: stats.sourcesMonitored || 55,
       subtext: 'Across 6 Clean Pillars',
       icon: Globe2,
-      accentBorder: 'border-l-4 border-l-emerald-400',
+      accentBorder: 'border-l-4 border-l-blue-400',
       iconBg: 'bg-blue-600/20 text-cyan-300 border-blue-500/30',
       badge: '100% Operational'
     }
