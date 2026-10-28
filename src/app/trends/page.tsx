@@ -85,27 +85,27 @@ export default function TrendsPage() {
       <main className="p-3.5 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-6">
         
         {/* Figure 4 Main Chart Container: Media Velocity & Mentions */}
-        <div className="bg-[#04130d]/90 backdrop-blur-md border border-emerald-500/20 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4 sm:space-y-6 text-white">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-900/50 pb-3.5">
+        <div className="bg-[#08172c]/90 backdrop-blur-md border border-blue-500/20 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4 sm:space-y-6 text-white">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-blue-900/50 pb-3.5">
             <div>
               <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="w-2.5 h-2.5 rounded-full bg-blue-400 animate-pulse" />
                 <h2 className="font-display text-sm sm:text-base font-bold text-white">
                   Media Mention Frequency & Velocity Curve
                 </h2>
               </div>
-              <p className="text-xs text-emerald-200/70 mt-0.5">
+              <p className="text-xs text-cyan-200/70 mt-0.5">
                 Dynamic cross-portal volume spike detection aggregated across monitored captures in Supabase
               </p>
             </div>
             
             <div className="flex items-center justify-between sm:justify-end gap-2.5">
-              <span className="text-xs font-mono font-bold text-emerald-300 bg-emerald-950/80 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-emerald-500/40 tabular">
+              <span className="text-xs font-mono font-bold text-cyan-300 bg-blue-950/80 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-blue-500/40 tabular">
                 {analytics?.totalMentions ?? 0} Evaluated Items
               </span>
               <button
                 onClick={loadTrends}
-                className="p-1.5 rounded-xl text-emerald-300 hover:text-white hover:bg-emerald-900/50 border border-emerald-800/40 transition-colors active:scale-95"
+                className="p-1.5 rounded-xl text-cyan-300 hover:text-white hover:bg-blue-900/50 border border-blue-800/40 transition-colors active:scale-95"
                 title="Refresh Metrics"
                 aria-label="Refresh"
               >
@@ -115,13 +115,13 @@ export default function TrendsPage() {
           </div>
 
           {/* Dynamic SVG Trend Line Graph */}
-          <div className="relative w-full min-h-[18rem] sm:h-72 bg-[#041910]/85 rounded-2xl border border-emerald-500/20 p-3.5 sm:p-5 flex flex-col justify-between overflow-hidden">
-            <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 text-xs text-emerald-300/70 font-mono">
+          <div className="relative w-full min-h-[18rem] sm:h-72 bg-[#041910]/85 rounded-2xl border border-blue-500/20 p-3.5 sm:p-5 flex flex-col justify-between overflow-hidden">
+            <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 text-xs text-cyan-300/70 font-mono">
               <span className="flex items-center gap-1.5">
-                <Activity className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <Activity className="w-3.5 h-3.5 text-blue-400 shrink-0" />
                 <span className="truncate">Active Frequency Index (70+ Portals)</span>
               </span>
-              <span className="font-bold text-emerald-300">
+              <span className="font-bold text-cyan-300">
                 Risk Index: {analytics?.averageRiskIndex ?? 70}/100
               </span>
             </div>
@@ -163,7 +163,7 @@ export default function TrendsPage() {
                 </svg>
               </div>
             ) : (
-              <div className="h-36 sm:h-44 flex items-center justify-center text-xs text-emerald-300/60 font-mono">
+              <div className="h-36 sm:h-44 flex items-center justify-center text-xs text-cyan-300/60 font-mono">
                 Compiling timeline velocity telemetry...
               </div>
             )}
@@ -182,7 +182,7 @@ export default function TrendsPage() {
             )}
 
             {/* Dynamic Date Ticks */}
-            <div className="flex justify-between text-[10px] sm:text-xs text-emerald-300/60 border-t border-emerald-900/40 pt-2 font-mono">
+            <div className="flex justify-between text-[10px] sm:text-xs text-cyan-300/60 border-t border-blue-900/40 pt-2 font-mono">
               {points.filter((_, idx) => idx % Math.ceil(points.length / 5) === 0 || idx === points.length - 1).map((p, idx) => (
                 <span key={idx}>{p.label}</span>
               ))}
@@ -193,23 +193,23 @@ export default function TrendsPage() {
         {/* 3-Column Executive Signal Gauges */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {/* 1. Article Type Distribution */}
-          <div className="bg-[#04130d]/90 backdrop-blur-md border border-emerald-500/20 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3.5">
-            <div className="flex items-center justify-between border-b border-emerald-900/40 pb-2.5">
+          <div className="bg-[#08172c]/90 backdrop-blur-md border border-blue-500/20 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3.5">
+            <div className="flex items-center justify-between border-b border-blue-900/40 pb-2.5">
               <div className="flex items-center gap-2">
-                <Layers className="w-4 h-4 text-emerald-400" />
+                <Layers className="w-4 h-4 text-blue-400" />
                 <h3 className="font-display text-sm font-bold text-white">Signal Classification</h3>
               </div>
-              <span className="text-[10px] font-mono text-emerald-300/70 uppercase">By Category</span>
+              <span className="text-[10px] font-mono text-cyan-300/70 uppercase">By Category</span>
             </div>
 
             <div className="space-y-2.5 pt-1">
               {(analytics?.typeBreakdown || []).slice(0, 5).map((item, idx) => (
                 <div key={idx} className="space-y-1">
                   <div className="flex justify-between text-xs">
-                    <span className="text-emerald-100/90 truncate max-w-[190px]">{item.label}</span>
-                    <span className="font-mono text-emerald-300 font-bold tabular">{item.percentage}%</span>
+                    <span className="text-slate-200/90 truncate max-w-[190px]">{item.label}</span>
+                    <span className="font-mono text-cyan-300 font-bold tabular">{item.percentage}%</span>
                   </div>
-                  <div className="w-full h-1.5 bg-emerald-950/80 rounded-full overflow-hidden">
+                  <div className="w-full h-1.5 bg-blue-950/80 rounded-full overflow-hidden">
                     <div 
                       className="h-full rounded-full transition-all duration-500" 
                       style={{ width: `${Math.max(item.percentage, 4)}%`, backgroundColor: item.color }}
@@ -218,7 +218,7 @@ export default function TrendsPage() {
                 </div>
               ))}
               {(!analytics?.typeBreakdown || analytics.typeBreakdown.length === 0) && (
-                <div className="text-xs text-emerald-400/60 py-4 text-center font-mono">
+                <div className="text-xs text-blue-400/60 py-4 text-center font-mono">
                   Awaiting category telemetry...
                 </div>
               )}
@@ -226,18 +226,18 @@ export default function TrendsPage() {
           </div>
 
           {/* 2. Risk & Impact Exposure Radar */}
-          <div className="bg-[#04130d]/90 backdrop-blur-md border border-emerald-500/20 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3.5">
-            <div className="flex items-center justify-between border-b border-emerald-900/40 pb-2.5">
+          <div className="bg-[#08172c]/90 backdrop-blur-md border border-blue-500/20 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3.5">
+            <div className="flex items-center justify-between border-b border-blue-900/40 pb-2.5">
               <div className="flex items-center gap-2">
                 <ShieldAlert className="w-4 h-4 text-rose-400" />
                 <h3 className="font-display text-sm font-bold text-white">Risk Exposure Tier</h3>
               </div>
-              <span className="text-[10px] font-mono text-emerald-300/70 uppercase">Triage</span>
+              <span className="text-[10px] font-mono text-cyan-300/70 uppercase">Triage</span>
             </div>
 
             <div className="space-y-3 pt-1">
               {(analytics?.riskBreakdown || []).map((item, idx) => (
-                <div key={idx} className="bg-[#041910]/70 p-2.5 rounded-xl border border-emerald-900/40 flex items-center justify-between">
+                <div key={idx} className="bg-[#041910]/70 p-2.5 rounded-xl border border-blue-900/40 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span 
                       className="w-2.5 h-2.5 rounded-full" 
@@ -245,7 +245,7 @@ export default function TrendsPage() {
                     />
                     <div>
                       <div className="text-xs font-bold text-white">{item.level}</div>
-                      <div className="text-[10px] text-emerald-300/60 font-mono tabular">{item.count} items recorded</div>
+                      <div className="text-[10px] text-cyan-300/60 font-mono tabular">{item.count} items recorded</div>
                     </div>
                   </div>
                   <span className="font-mono text-sm font-bold tabular" style={{ color: item.color }}>
@@ -257,23 +257,23 @@ export default function TrendsPage() {
           </div>
 
           {/* 3. Source Category Footprint */}
-          <div className="bg-[#04130d]/90 backdrop-blur-md border border-emerald-500/20 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3.5">
-            <div className="flex items-center justify-between border-b border-emerald-900/40 pb-2.5">
+          <div className="bg-[#08172c]/90 backdrop-blur-md border border-blue-500/20 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3.5">
+            <div className="flex items-center justify-between border-b border-blue-900/40 pb-2.5">
               <div className="flex items-center gap-2">
                 <Radio className="w-4 h-4 text-cyan-400" />
                 <h3 className="font-display text-sm font-bold text-white">Source Footprint</h3>
               </div>
-              <span className="text-[10px] font-mono text-emerald-300/70 uppercase">Rotated Origin</span>
+              <span className="text-[10px] font-mono text-cyan-300/70 uppercase">Rotated Origin</span>
             </div>
 
             <div className="space-y-2.5 pt-1">
               {(analytics?.sourceBreakdown || []).map((item, idx) => (
                 <div key={idx} className="space-y-1">
                   <div className="flex justify-between text-xs">
-                    <span className="text-emerald-100/90 truncate">{item.category}</span>
-                    <span className="font-mono text-emerald-300 font-bold tabular">{item.count} hits</span>
+                    <span className="text-slate-200/90 truncate">{item.category}</span>
+                    <span className="font-mono text-cyan-300 font-bold tabular">{item.count} hits</span>
                   </div>
-                  <div className="w-full h-1.5 bg-emerald-950/80 rounded-full overflow-hidden">
+                  <div className="w-full h-1.5 bg-blue-950/80 rounded-full overflow-hidden">
                     <div 
                       className="h-full rounded-full transition-all duration-500" 
                       style={{ width: `${Math.max(item.percentage, 5)}%`, backgroundColor: item.color }}
@@ -286,18 +286,18 @@ export default function TrendsPage() {
         </div>
 
         {/* Stakeholder Heatmap & Activity Co-occurrence */}
-        <div className="bg-[#04130d]/90 backdrop-blur-md border border-emerald-500/20 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4">
-          <div className="flex items-center justify-between border-b border-emerald-900/50 pb-3">
+        <div className="bg-[#08172c]/90 backdrop-blur-md border border-blue-500/20 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4">
+          <div className="flex items-center justify-between border-b border-blue-900/50 pb-3">
             <div className="flex items-center gap-2.5">
-              <Building2 className="w-4 h-4 text-emerald-400" />
+              <Building2 className="w-4 h-4 text-blue-400" />
               <div>
                 <h3 className="font-display text-sm sm:text-base font-bold text-white">Active Stakeholder Mentions</h3>
-                <p className="text-xs text-emerald-200/70">
+                <p className="text-xs text-cyan-200/70">
                   Key entities, utilities and DFIs driving regulatory and operational disclosures
                 </p>
               </div>
             </div>
-            <span className="text-xs font-mono text-emerald-300 bg-emerald-950/80 px-2.5 py-1 rounded-lg border border-emerald-500/30">
+            <span className="text-xs font-mono text-cyan-300 bg-blue-950/80 px-2.5 py-1 rounded-lg border border-blue-500/30">
               Co-occurrence Matrix
             </span>
           </div>
@@ -306,20 +306,20 @@ export default function TrendsPage() {
             {(analytics?.stakeholderHeatmap || []).map((st, idx) => (
               <div 
                 key={idx} 
-                className="bg-[#041910]/90 border border-emerald-800/40 rounded-xl p-3 flex flex-col justify-between hover:border-emerald-500/50 transition-colors"
+                className="bg-[#041910]/90 border border-blue-800/40 rounded-xl p-3 flex flex-col justify-between hover:border-blue-500/50 transition-colors"
               >
                 <div className="text-xs font-bold text-white truncate" title={st.name}>
                   {st.name}
                 </div>
-                <div className="flex items-center justify-between mt-2 pt-2 border-t border-emerald-900/40">
-                  <span className="text-[10px] font-mono text-emerald-300/80 tabular">
+                <div className="flex items-center justify-between mt-2 pt-2 border-t border-blue-900/40">
+                  <span className="text-[10px] font-mono text-cyan-300/80 tabular">
                     {st.mentions} mentions
                   </span>
                   <span className={`text-[9px] px-1.5 py-0.5 rounded uppercase font-bold font-mono ${
                     st.sentiment === 'critical' 
                       ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' 
                       : st.sentiment === 'constructive'
-                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                      ? 'bg-blue-600/20 text-cyan-300 border border-blue-500/30'
                       : 'bg-slate-700/40 text-slate-300'
                   }`}>
                     {st.sentiment}
@@ -328,7 +328,7 @@ export default function TrendsPage() {
               </div>
             ))}
             {(!analytics?.stakeholderHeatmap || analytics.stakeholderHeatmap.length === 0) && (
-              <div className="col-span-full py-4 text-center text-xs text-emerald-300/60 font-mono">
+              <div className="col-span-full py-4 text-center text-xs text-cyan-300/60 font-mono">
                 Scanning entities from parsed intelligence...
               </div>
             )}
@@ -336,13 +336,13 @@ export default function TrendsPage() {
         </div>
 
         {/* Dynamic Tracked Topics Table */}
-        <div className="bg-[#04130d]/90 backdrop-blur-md border border-emerald-500/20 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4 text-white">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-900/50 pb-3">
+        <div className="bg-[#08172c]/90 backdrop-blur-md border border-blue-500/20 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4 text-white">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-blue-900/50 pb-3">
             <div className="flex items-center gap-2.5">
-              <TrendingUp className="w-4 h-4 text-emerald-400" />
+              <TrendingUp className="w-4 h-4 text-blue-400" />
               <div>
                 <h3 className="font-display text-sm sm:text-base font-bold text-white">Priority Tracked Strategic Themes</h3>
-                <p className="text-xs text-emerald-200/70">
+                <p className="text-xs text-cyan-200/70">
                   Continuous keyword velocity calculations across verified Zimbabwean gazettes and energy press
                 </p>
               </div>
@@ -350,7 +350,7 @@ export default function TrendsPage() {
 
             <button
               onClick={() => window.print()}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-95"
+              className="bg-blue-600 hover:bg-blue-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-95"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Export PDF Briefing</span>
@@ -360,7 +360,7 @@ export default function TrendsPage() {
           <div className="overflow-x-auto -mx-2 sm:mx-0 px-2 sm:px-0">
             <table className="w-full text-left text-xs min-w-[550px]">
               <thead>
-                <tr className="border-b border-emerald-900/50 text-emerald-300/60 uppercase font-mono tracking-wider text-[10px] sm:text-xs">
+                <tr className="border-b border-blue-900/50 text-cyan-300/60 uppercase font-mono tracking-wider text-[10px] sm:text-xs">
                   <th className="py-2.5 sm:py-3 px-3 sm:px-4 font-bold">Theme / Vector</th>
                   <th className="py-2.5 sm:py-3 px-3 sm:px-4 font-bold">Captures</th>
                   <th className="py-2.5 sm:py-3 px-3 sm:px-4 font-bold">Velocity Signal</th>
@@ -375,10 +375,10 @@ export default function TrendsPage() {
                     <td className="py-2.5 sm:py-3 px-3 sm:px-4 font-bold text-white">
                       {item.topic}
                     </td>
-                    <td className="py-2.5 sm:py-3 px-3 sm:px-4 font-mono font-bold text-emerald-300 tabular">
+                    <td className="py-2.5 sm:py-3 px-3 sm:px-4 font-mono font-bold text-cyan-300 tabular">
                       {item.count}
                     </td>
-                    <td className="py-2.5 sm:py-3 px-3 sm:px-4 font-mono font-bold text-emerald-300 tabular">
+                    <td className="py-2.5 sm:py-3 px-3 sm:px-4 font-mono font-bold text-cyan-300 tabular">
                       {item.trend}
                     </td>
                     <td className="py-2.5 sm:py-3 px-3 sm:px-4">
@@ -387,15 +387,15 @@ export default function TrendsPage() {
                           ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
                           : item.riskLevel === 'MED'
                           ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                          : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                          : 'bg-blue-600/20 text-cyan-300 border border-blue-500/40'
                       }`}>
                         {item.riskLevel}
                       </span>
                     </td>
-                    <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-emerald-200 font-semibold">
+                    <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-cyan-200 font-semibold">
                       {item.category}
                     </td>
-                    <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-emerald-200/70 font-normal">
+                    <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-cyan-200/70 font-normal">
                       {item.velocity}
                     </td>
                   </tr>

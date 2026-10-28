@@ -103,11 +103,11 @@ export default function CleanEnergyPipelineDashboard({
       case 'Solar PV':
         return <Sun className="w-4 h-4 text-amber-400" />;
       case 'Solar + BESS':
-        return <BatteryCharging className="w-4 h-4 text-emerald-400" />;
+        return <BatteryCharging className="w-4 h-4 text-blue-400" />;
       case 'Hydro':
         return <Droplets className="w-4 h-4 text-cyan-400" />;
       default:
-        return <Zap className="w-4 h-4 text-emerald-400" />;
+        return <Zap className="w-4 h-4 text-blue-400" />;
     }
   };
 
@@ -116,7 +116,7 @@ export default function CleanEnergyPipelineDashboard({
       case 'Solar PV':
         return 'border-l-amber-400 hover:border-amber-400/50';
       case 'Solar + BESS':
-        return 'border-l-emerald-400 hover:border-emerald-400/50';
+        return 'border-l-emerald-400 hover:border-blue-400/50';
       case 'Hydro':
         return 'border-l-cyan-400 hover:border-cyan-400/50';
       default:
@@ -134,13 +134,13 @@ export default function CleanEnergyPipelineDashboard({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3.5 sm:gap-4">
         
         {/* Card A: Hermit Clean Capacity Aggregate */}
-        <div className="bg-[#071f16]/90 backdrop-blur-xl rounded-2xl p-4 sm:p-5 border border-emerald-500/25 shadow-xl flex flex-col justify-between text-white">
+        <div className="bg-[#0c2242]/90 backdrop-blur-xl rounded-2xl p-4 sm:p-5 border border-blue-500/25 shadow-xl flex flex-col justify-between text-white">
           <div className="flex items-center justify-between gap-2 mb-2">
-            <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-emerald-300 flex items-center gap-1.5">
-              <Leaf className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-cyan-300 flex items-center gap-1.5">
+              <Leaf className="w-3.5 h-3.5 text-blue-400" />
               <span>Clean Pipeline Capacity</span>
             </span>
-            <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+            <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded-full bg-blue-600/20 text-cyan-300 border border-blue-500/30">
               3 Projects Active
             </span>
           </div>
@@ -149,17 +149,17 @@ export default function CleanEnergyPipelineDashboard({
             <span className="text-3xl sm:text-4xl font-black font-display tracking-tight text-white">
               38.5
             </span>
-            <span className="text-sm font-bold text-emerald-300">MW Total</span>
+            <span className="text-sm font-bold text-cyan-300">MW Total</span>
           </div>
 
-          <div className="mt-3 pt-3 border-t border-emerald-900/50 grid grid-cols-2 gap-2 text-[11px]">
+          <div className="mt-3 pt-3 border-t border-blue-900/50 grid grid-cols-2 gap-2 text-[11px]">
             <div>
-              <span className="text-emerald-300/70 block">Est. Annual Output</span>
+              <span className="text-cyan-300/70 block">Est. Annual Output</span>
               <strong className="text-white font-mono">~84,500 MWh/yr</strong>
             </div>
             <div>
-              <span className="text-emerald-300/70 block">CO₂ Abatement</span>
-              <strong className="text-emerald-400 font-mono">~68,400 T/yr</strong>
+              <span className="text-cyan-300/70 block">CO₂ Abatement</span>
+              <strong className="text-blue-400 font-mono">~68,400 T/yr</strong>
             </div>
           </div>
         </div>
@@ -210,13 +210,13 @@ export default function CleanEnergyPipelineDashboard({
             <span className="text-xs font-bold text-cyan-300">/ MWh Day-Ahead</span>
           </div>
 
-          <div className="mt-3 pt-3 border-t border-emerald-900/50 grid grid-cols-2 gap-2 text-[11px]">
+          <div className="mt-3 pt-3 border-t border-blue-900/50 grid grid-cols-2 gap-2 text-[11px]">
             <div>
-              <span className="text-emerald-300/70 block">ZERA Solar Benchmark</span>
+              <span className="text-cyan-300/70 block">ZERA Solar Benchmark</span>
               <strong className="text-white font-mono">{macroSignals.zeraSolarPpaBenchmark}</strong>
             </div>
             <div>
-              <span className="text-emerald-300/70 block">Regional SADC Shortfall</span>
+              <span className="text-cyan-300/70 block">Regional SADC Shortfall</span>
               <strong className="text-rose-400 font-mono">-{macroSignals.sappDeficitMw} MW</strong>
             </div>
           </div>
@@ -225,28 +225,28 @@ export default function CleanEnergyPipelineDashboard({
       </div>
 
       {/* 2. PROJECT PIPELINE TRACKERS (3 FLAGSHIP ASSETS) */}
-      <div className="bg-[#071f16]/90 backdrop-blur-xl rounded-2xl border border-emerald-500/20 p-4 sm:p-6 shadow-xl space-y-4 text-white">
+      <div className="bg-[#0c2242]/90 backdrop-blur-xl rounded-2xl border border-blue-500/20 p-4 sm:p-6 shadow-xl space-y-4 text-white">
         
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-emerald-900/50 pb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-blue-900/50 pb-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center justify-center shrink-0">
+            <div className="w-7 h-7 rounded-lg bg-blue-600/20 text-cyan-300 border border-blue-500/40 flex items-center justify-center shrink-0">
               <Activity className="w-4 h-4" />
             </div>
             <div>
               <h3 className="text-xs sm:text-sm font-black uppercase tracking-wider text-white flex items-center gap-2">
                 <span>Flagship Clean Assets & Portfolio Exposure</span>
-                <span className="text-[10px] font-mono px-2 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                <span className="text-[10px] font-mono px-2 py-0.2 rounded-full bg-blue-600/20 text-cyan-300 border border-blue-500/40">
                   Live Status Tracker
                 </span>
               </h3>
-              <p className="text-[11px] text-emerald-200/70">
+              <p className="text-[11px] text-cyan-200/70">
                 Continuous alignment between daily regulatory gazettes, ZETDC grid updates, and Hermit development milestones
               </p>
             </div>
           </div>
 
-          <div className="text-[11px] text-emerald-300/80 font-medium flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+          <div className="text-[11px] text-cyan-300/80 font-medium flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-blue-400 animate-ping" />
             <span>Click any project to inspect regulatory & technical dossier</span>
           </div>
         </div>
@@ -262,42 +262,42 @@ export default function CleanEnergyPipelineDashboard({
               <div
                 key={proj.id}
                 onClick={() => setSelectedProjectId(isSelected ? null : proj.id)}
-                className={`p-4 rounded-xl bg-[#0a422d]/45 hover:bg-[#0e563a]/65 border-l-4 ${techBorder} border border-emerald-400/20 transition-all flex flex-col justify-between gap-3 text-white cursor-pointer group shadow-lg ${
-                  isSelected ? 'ring-2 ring-emerald-400 bg-[#0e563a]/75' : ''
+                className={`p-4 rounded-xl bg-[#0a422d]/45 hover:bg-[#0e563a]/65 border-l-4 ${techBorder} border border-blue-400/20 transition-all flex flex-col justify-between gap-3 text-white cursor-pointer group shadow-lg ${
+                  isSelected ? 'ring-2 ring-blue-400 bg-[#0e563a]/75' : ''
                 }`}
               >
                 <div>
                   {/* Top Bar: Technology Pill + COD Date */}
                   <div className="flex items-center justify-between gap-2 mb-2">
-                    <span className="text-[10px] font-black uppercase text-white bg-emerald-950/90 px-2 py-0.5 rounded border border-emerald-500/30 flex items-center gap-1.5 shadow-sm">
+                    <span className="text-[10px] font-black uppercase text-white bg-blue-950/90 px-2 py-0.5 rounded border border-blue-500/30 flex items-center gap-1.5 shadow-sm">
                       {getTechIcon(proj.technology)}
                       <span>{proj.technology} &bull; {proj.capacity_mw} MW</span>
                     </span>
 
-                    <span className="text-[10px] font-mono text-emerald-300 font-bold bg-[#02130b] px-2 py-0.5 rounded border border-emerald-800/40">
+                    <span className="text-[10px] font-mono text-cyan-300 font-bold bg-[#02130b] px-2 py-0.5 rounded border border-blue-800/40">
                       COD: {proj.target_cod ? new Date(proj.target_cod).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) : 'TBD'}
                     </span>
                   </div>
 
                   {/* Project Name */}
-                  <h4 className="text-sm font-bold text-white group-hover:text-emerald-300 transition-colors leading-snug">
+                  <h4 className="text-sm font-bold text-white group-hover:text-cyan-300 transition-colors leading-snug">
                     {proj.name}
                   </h4>
 
-                  <div className="text-[11px] text-emerald-400/80 font-medium mt-0.5">
+                  <div className="text-[11px] text-blue-400/80 font-medium mt-0.5">
                     {proj.location} &bull; <span className="capitalize">{proj.status.replace('_', ' ')}</span>
                   </div>
 
                   {/* Milestone Progress Bar */}
                   {details && (
                     <div className="mt-3">
-                      <div className="flex items-center justify-between text-[10px] text-emerald-300/80 mb-1 font-mono">
+                      <div className="flex items-center justify-between text-[10px] text-cyan-300/80 mb-1 font-mono">
                         <span>Milestone: Stage {details.stageIndex + 1}/{details.stages.length}</span>
                         <span className="font-bold text-white">{details.stages[details.stageIndex]}</span>
                       </div>
-                      <div className="w-full bg-[#02140d] h-1.5 rounded-full overflow-hidden border border-emerald-900/50">
+                      <div className="w-full bg-[#02140d] h-1.5 rounded-full overflow-hidden border border-blue-900/50">
                         <div 
-                          className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-500"
+                          className="h-full bg-gradient-to-r from-blue-500 to-emerald-400 rounded-full transition-all duration-500"
                           style={{ width: `${((details.stageIndex + 1) / details.stages.length) * 100}%` }}
                         />
                       </div>
@@ -306,9 +306,9 @@ export default function CleanEnergyPipelineDashboard({
 
                   {/* Portfolio Exposure Signal */}
                   {details && (
-                    <div className="mt-3 p-2.5 rounded-lg bg-[#06281b]/55 border border-emerald-400/25 text-[11px] text-emerald-100/90 leading-relaxed">
-                      <span className="font-bold text-emerald-400 block mb-0.5 flex items-center gap-1">
-                        <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                    <div className="mt-3 p-2.5 rounded-lg bg-[#06281b]/55 border border-blue-400/25 text-[11px] text-slate-200/90 leading-relaxed">
+                      <span className="font-bold text-blue-400 block mb-0.5 flex items-center gap-1">
+                        <ShieldCheck className="w-3 h-3 text-blue-400" />
                         <span>Today&apos;s Policy & Market Exposure:</span>
                       </span>
                       {details.todaySignal}
@@ -321,7 +321,7 @@ export default function CleanEnergyPipelineDashboard({
                       {proj.key_tags.map((tag, tIdx) => (
                         <span 
                           key={tIdx}
-                          className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-900/40 text-emerald-200 border border-emerald-400/25 font-medium"
+                          className="text-[9px] px-1.5 py-0.5 rounded bg-blue-900/40 text-cyan-200 border border-blue-400/25 font-medium"
                         >
                           {tag}
                         </span>
@@ -331,15 +331,15 @@ export default function CleanEnergyPipelineDashboard({
                 </div>
 
                 {/* Footer: Manager + Deep Dive Trigger */}
-                <div className="pt-2 border-t border-emerald-900/40 flex items-center justify-between text-[11px] text-emerald-300/70">
+                <div className="pt-2 border-t border-blue-900/40 flex items-center justify-between text-[11px] text-cyan-300/70">
                   <span className="truncate flex items-center gap-1">
-                    <Users className="w-3 h-3 text-emerald-400" />
+                    <Users className="w-3 h-3 text-blue-400" />
                     <span>Lead: <strong className="text-white">{proj.lead_manager}</strong></span>
                   </span>
 
-                  <span className="text-[10px] font-bold text-emerald-300 flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
+                  <span className="text-[10px] font-bold text-cyan-300 flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
                     <span>{isSelected ? 'Collapse' : 'Dossier'}</span>
-                    <ChevronRight className="w-3.5 h-3.5 text-emerald-400" />
+                    <ChevronRight className="w-3.5 h-3.5 text-blue-400" />
                   </span>
                 </div>
               </div>
@@ -349,20 +349,20 @@ export default function CleanEnergyPipelineDashboard({
 
         {/* 3. EXPANDED DOSSIER DRAWER (WHEN A PROJECT IS SELECTED) */}
         {selectedProj && selectedDetails && (
-          <div className="mt-4 p-4 sm:p-5 rounded-xl bg-[#071f16]/95 border border-emerald-500/30 backdrop-blur-2xl animate-in fade-in slide-in-from-top-2 duration-200 shadow-2xl">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-800/40 pb-3">
+          <div className="mt-4 p-4 sm:p-5 rounded-xl bg-[#0c2242]/95 border border-blue-500/30 backdrop-blur-2xl animate-in fade-in slide-in-from-top-2 duration-200 shadow-2xl">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-blue-800/40 pb-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-blue-600/20 border border-blue-400/40 flex items-center justify-center shrink-0">
                   {getTechIcon(selectedProj.technology)}
                 </div>
                 <div>
                   <h4 className="text-sm sm:text-base font-black text-white flex items-center gap-2">
                     <span>{selectedProj.name}</span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-600/20 text-cyan-300 border border-blue-500/40">
                       {selectedProj.capacity_mw} MW
                     </span>
                   </h4>
-                  <p className="text-[11px] text-emerald-300/80">
+                  <p className="text-[11px] text-cyan-300/80">
                     Lead Manager: <strong className="text-white">{selectedProj.lead_manager}</strong> &bull; Target COD: <strong>{selectedProj.target_cod}</strong>
                   </p>
                 </div>
@@ -370,7 +370,7 @@ export default function CleanEnergyPipelineDashboard({
 
               <button
                 onClick={() => setSelectedProjectId(null)}
-                className="text-xs text-emerald-300 hover:text-white font-bold px-3 py-1.5 rounded-lg bg-emerald-900/50 border border-emerald-700/50 self-start sm:self-auto"
+                className="text-xs text-cyan-300 hover:text-white font-bold px-3 py-1.5 rounded-lg bg-blue-900/50 border border-blue-700/50 self-start sm:self-auto"
               >
                 Close Dossier
               </button>
@@ -378,30 +378,30 @@ export default function CleanEnergyPipelineDashboard({
 
             {/* Dossier 4-Column Technical Metrics */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-4 text-xs">
-              <div className="p-3 rounded-xl bg-[#040d09]/70 border border-emerald-500/20">
-                <span className="text-emerald-400/70 text-[10px] uppercase font-bold block mb-1">Commercial Offtaker</span>
+              <div className="p-3 rounded-xl bg-[#040d09]/70 border border-blue-500/20">
+                <span className="text-blue-400/70 text-[10px] uppercase font-bold block mb-1">Commercial Offtaker</span>
                 <span className="text-white font-medium">{selectedDetails.offtaker}</span>
               </div>
 
-              <div className="p-3 rounded-xl bg-[#040d09]/70 border border-emerald-500/20">
-                <span className="text-emerald-400/70 text-[10px] uppercase font-bold block mb-1">Blended Capital Facility</span>
+              <div className="p-3 rounded-xl bg-[#040d09]/70 border border-blue-500/20">
+                <span className="text-blue-400/70 text-[10px] uppercase font-bold block mb-1">Blended Capital Facility</span>
                 <span className="text-white font-medium">{selectedDetails.financingSource}</span>
               </div>
 
-              <div className="p-3 rounded-xl bg-[#040d09]/70 border border-emerald-500/20">
-                <span className="text-emerald-400/70 text-[10px] uppercase font-bold block mb-1">Grid Interconnection</span>
+              <div className="p-3 rounded-xl bg-[#040d09]/70 border border-blue-500/20">
+                <span className="text-blue-400/70 text-[10px] uppercase font-bold block mb-1">Grid Interconnection</span>
                 <span className="text-white font-medium">{selectedDetails.gridConnection}</span>
               </div>
 
-              <div className="p-3 rounded-xl bg-[#040d09]/70 border border-emerald-500/20">
-                <span className="text-emerald-400/70 text-[10px] uppercase font-bold block mb-1">Key Regulatory Gateway</span>
+              <div className="p-3 rounded-xl bg-[#040d09]/70 border border-blue-500/20">
+                <span className="text-blue-400/70 text-[10px] uppercase font-bold block mb-1">Key Regulatory Gateway</span>
                 <span className="text-white font-medium">{selectedDetails.regulatoryMilestone}</span>
               </div>
             </div>
 
             {/* Stage Timeline */}
-            <div className="mt-4 pt-3 border-t border-emerald-900/50">
-              <span className="text-[11px] font-bold text-emerald-300 block mb-2">Development Lifecycle Stages:</span>
+            <div className="mt-4 pt-3 border-t border-blue-900/50">
+              <span className="text-[11px] font-bold text-cyan-300 block mb-2">Development Lifecycle Stages:</span>
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                 {selectedDetails.stages.map((stg, sIdx) => {
                   const isDone = sIdx < selectedDetails.stageIndex;
@@ -411,10 +411,10 @@ export default function CleanEnergyPipelineDashboard({
                       key={sIdx}
                       className={`p-2 rounded-lg text-center border text-[11px] font-bold ${
                         isCurrent
-                          ? 'bg-emerald-600/30 text-white border-emerald-400 shadow-sm'
+                          ? 'bg-blue-600/30 text-white border-blue-400 shadow-sm'
                           : isDone
-                          ? 'bg-emerald-950/40 text-emerald-300/80 border-emerald-800/40'
-                          : 'bg-[#042015]/45 text-emerald-300/50 border-emerald-900/40'
+                          ? 'bg-blue-950/40 text-cyan-300/80 border-blue-800/40'
+                          : 'bg-[#042015]/45 text-cyan-300/50 border-blue-900/40'
                       }`}
                     >
                       <div className="text-[9px] uppercase tracking-wider mb-0.5 font-mono">
@@ -428,13 +428,13 @@ export default function CleanEnergyPipelineDashboard({
             </div>
 
             {/* Related Live News Signals */}
-            <div className="mt-4 pt-3 border-t border-emerald-900/50">
+            <div className="mt-4 pt-3 border-t border-blue-900/50">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-bold text-emerald-300 flex items-center gap-1.5">
-                  <Activity className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-[11px] font-bold text-cyan-300 flex items-center gap-1.5">
+                  <Activity className="w-3.5 h-3.5 text-blue-400" />
                   <span>Related Live Intelligence Feeds:</span>
                 </span>
-                <span className="text-[10px] text-emerald-400/70 font-mono">
+                <span className="text-[10px] text-blue-400/70 font-mono">
                   Real-time matching
                 </span>
               </div>
@@ -444,19 +444,19 @@ export default function CleanEnergyPipelineDashboard({
                   <div
                     key={art.id}
                     onClick={() => onSelectArticleById(art.id)}
-                    className="p-2.5 rounded-lg bg-[#040d09]/70 hover:bg-[#0a2b1e]/80 border border-emerald-400/25 hover:border-emerald-300/40 cursor-pointer flex items-center justify-between gap-3 text-white transition-all group"
+                    className="p-2.5 rounded-lg bg-[#040d09]/70 hover:bg-[#0a2b1e]/80 border border-blue-400/25 hover:border-blue-300/40 cursor-pointer flex items-center justify-between gap-3 text-white transition-all group"
                   >
                     <div className="min-w-0">
-                      <div className="flex items-center gap-2 text-[10px] text-emerald-400/80 mb-0.5">
+                      <div className="flex items-center gap-2 text-[10px] text-blue-400/80 mb-0.5">
                         <span className="font-bold">{art.source_name}</span>
                         <span>&bull;</span>
                         <span className="capitalize">{art.article_type.replace('_', ' ')}</span>
                       </div>
-                      <div className="text-xs font-semibold text-white group-hover:text-emerald-300 truncate">
+                      <div className="text-xs font-semibold text-white group-hover:text-cyan-300 truncate">
                         {art.headline}
                       </div>
                     </div>
-                    <span className="text-[10px] font-bold text-emerald-400 px-2 py-1 rounded bg-emerald-950/80 border border-emerald-800/60 shrink-0">
+                    <span className="text-[10px] font-bold text-blue-400 px-2 py-1 rounded bg-blue-950/80 border border-blue-800/60 shrink-0">
                       View Takeaway &rarr;
                     </span>
                   </div>

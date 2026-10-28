@@ -164,49 +164,49 @@ export default function DashboardClient({
       <main className="p-3.5 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-5 sm:space-y-6">
         
         {/* Executive Mode Selector & Status Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#071f16]/90 backdrop-blur-xl p-3 sm:p-4 rounded-2xl border border-emerald-400/25 shadow-lg">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0c2242]/90 backdrop-blur-xl p-3 sm:p-4 rounded-2xl border border-blue-400/25 shadow-lg">
           {/* View Mode Switcher Pills */}
-          <div className="flex items-center gap-1.5 sm:gap-2 bg-[#052618]/50 p-1 rounded-xl border border-emerald-500/20 w-full sm:w-auto">
+          <div className="flex items-center gap-1.5 sm:gap-2 bg-[#052618]/50 p-1 rounded-xl border border-blue-500/20 w-full sm:w-auto">
             <button
               onClick={() => setViewMode('brief')}
               className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs font-bold transition-all active:scale-95 ${
                 viewMode === 'brief'
-                  ? 'bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-md shadow-emerald-950/40 border border-emerald-400/30'
-                  : 'text-emerald-200/80 hover:text-white'
+                  ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md shadow-blue-950/40 border border-blue-400/30'
+                  : 'text-cyan-200/80 hover:text-white'
               }`}
             >
-              <BookOpen className="w-3.5 h-3.5 text-emerald-300 shrink-0" />
+              <BookOpen className="w-3.5 h-3.5 text-cyan-300 shrink-0" />
               <span className="hidden sm:inline">Daily Executive Briefing</span>
               <span className="sm:hidden">Executive Brief</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse shrink-0" />
             </button>
 
             <button
               onClick={() => setViewMode('feed')}
               className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs font-bold transition-all active:scale-95 ${
                 viewMode === 'feed'
-                  ? 'bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-md shadow-emerald-950/40 border border-emerald-400/30'
-                  : 'text-emerald-200/80 hover:text-white'
+                  ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md shadow-blue-950/40 border border-blue-400/30'
+                  : 'text-cyan-200/80 hover:text-white'
               }`}
             >
-              <Radio className="w-3.5 h-3.5 text-emerald-300 shrink-0" />
+              <Radio className="w-3.5 h-3.5 text-cyan-300 shrink-0" />
               <span className="hidden sm:inline">Live Intelligence Feed</span>
               <span className="sm:hidden">Live Feed</span>
-              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 shrink-0">
+              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-blue-600/30 text-cyan-300 border border-blue-500/40 shrink-0">
                 {articles.length}
               </span>
             </button>
           </div>
 
           {/* Quick Info & Direct Jump */}
-          <div className="flex items-center justify-between sm:justify-end gap-3 text-xs text-emerald-300/80 font-medium">
+          <div className="flex items-center justify-between sm:justify-end gap-3 text-xs text-cyan-300/80 font-medium">
             <span className="hidden md:inline">Continuous clean surveillance active across <strong className="text-white">55 portals (6 Pillars)</strong></span>
             <span className="hidden md:inline">&bull;</span>
             <button
               onClick={() => setIsCrawlModalOpen(true)}
-              className="text-emerald-300 font-bold hover:text-white flex items-center gap-1.5 transition-colors ml-auto sm:ml-0 active:scale-95"
+              className="text-cyan-300 font-bold hover:text-white flex items-center gap-1.5 transition-colors ml-auto sm:ml-0 active:scale-95"
             >
-              <Play className="w-3 h-3 fill-emerald-400 text-emerald-400" />
+              <Play className="w-3 h-3 fill-blue-400 text-blue-400" />
               <span>Run Live Crawl</span>
             </button>
           </div>
@@ -241,15 +241,15 @@ export default function DashboardClient({
         {viewMode === 'feed' && (
           <div className="space-y-4">
             {/* Filter controls */}
-            <div className="bg-[#071f16]/90 backdrop-blur-xl border border-emerald-500/20 rounded-2xl p-3.5 sm:p-4 shadow-xl flex flex-col gap-3 text-white">
+            <div className="bg-[#0c2242]/90 backdrop-blur-xl border border-blue-500/20 rounded-2xl p-3.5 sm:p-4 shadow-xl flex flex-col gap-3 text-white">
               <div className="relative w-full">
-                <Search className="w-4 h-4 text-emerald-400/80 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-blue-400/80 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Filter captures by headline, stakeholder, or keyword..."
-                  className="w-full pl-9 pr-4 py-2 text-xs border border-emerald-400/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-[#052618]/50 text-white placeholder:text-emerald-300/60 font-medium"
+                  className="w-full pl-9 pr-4 py-2 text-xs border border-blue-400/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 bg-[#052618]/50 text-white placeholder:text-cyan-300/60 font-medium"
                 />
               </div>
 
@@ -257,7 +257,7 @@ export default function DashboardClient({
                 <select
                   value={filterRelevance}
                   onChange={(e) => setFilterRelevance(e.target.value)}
-                  className="text-xs border border-emerald-500/30 rounded-xl px-2.5 sm:px-3 py-2 bg-[#041a12] text-emerald-100 font-bold focus:outline-none focus:ring-2 focus:ring-emerald-400 truncate"
+                  className="text-xs border border-blue-500/30 rounded-xl px-2.5 sm:px-3 py-2 bg-[#0a1e38] text-slate-200 font-bold focus:outline-none focus:ring-2 focus:ring-blue-400 truncate"
                 >
                   <option value="all">All Relevance</option>
                   <option value="high">Critical (≥ 75%)</option>
@@ -268,7 +268,7 @@ export default function DashboardClient({
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="text-xs border border-emerald-500/30 rounded-xl px-2.5 sm:px-3 py-2 bg-[#041a12] text-emerald-100 font-bold focus:outline-none focus:ring-2 focus:ring-emerald-400 truncate"
+                  className="text-xs border border-blue-500/30 rounded-xl px-2.5 sm:px-3 py-2 bg-[#0a1e38] text-slate-200 font-bold focus:outline-none focus:ring-2 focus:ring-blue-400 truncate"
                 >
                   <option value="all">All Article Types</option>
                   <option value="tariff_change">Tariff Changes</option>
@@ -285,7 +285,7 @@ export default function DashboardClient({
                   className={`col-span-2 sm:col-span-1 text-xs px-3 py-2 rounded-xl font-bold border transition-colors flex items-center justify-center gap-1.5 active:scale-95 ${
                     onlyUnreviewed
                       ? 'bg-amber-500/30 text-amber-300 border-amber-400/50'
-                      : 'bg-[#041a12] text-emerald-200 border-emerald-500/30 hover:border-emerald-400/50'
+                      : 'bg-[#0a1e38] text-cyan-200 border-blue-500/30 hover:border-blue-400/50'
                   }`}
                 >
                   <Clock className="w-3.5 h-3.5" />
@@ -297,7 +297,7 @@ export default function DashboardClient({
             {/* Articles List */}
             <div className="space-y-3">
               {filteredArticles.length === 0 ? (
-                <div className="bg-[#04130d]/90 backdrop-blur-md rounded-2xl border border-emerald-500/20 p-8 text-center text-emerald-200/70 text-xs">
+                <div className="bg-[#08172c]/90 backdrop-blur-md rounded-2xl border border-blue-500/20 p-8 text-center text-cyan-200/70 text-xs">
                   No articles match your current filter parameters.
                 </div>
               ) : (

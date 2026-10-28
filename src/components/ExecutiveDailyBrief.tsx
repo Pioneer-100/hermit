@@ -106,29 +106,29 @@ export default function ExecutiveDailyBrief({
   return (
     <div className="space-y-5 sm:space-y-6">
       {/* Main Executive Intelligence Document Container */}
-      <div className="bg-[#071f16]/90 backdrop-blur-xl rounded-2xl border border-emerald-500/20 shadow-2xl shadow-emerald-950/40 overflow-hidden text-white">
+      <div className="bg-[#0c2242]/90 backdrop-blur-xl rounded-2xl border border-blue-500/20 shadow-2xl shadow-blue-950/40 overflow-hidden text-white">
         
         {/* Document Header Band */}
-        <div className="bg-gradient-to-r from-[#051c13]/95 via-[#071e14]/95 to-[#051c13]/95 text-white p-4 sm:p-6 border-b border-emerald-500/20">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 pb-3.5 sm:pb-4 border-b border-emerald-800/50">
+        <div className="bg-gradient-to-r from-[#071932]/95 via-[#081c36]/95 to-[#071932]/95 text-white p-4 sm:p-6 border-b border-blue-500/20">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 pb-3.5 sm:pb-4 border-b border-blue-800/50">
             {/* Hermit Monogram & Document Title */}
             <div className="flex items-center gap-2.5 sm:gap-3">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 p-0.5 shadow-md flex items-center justify-center shrink-0">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 p-0.5 shadow-md flex items-center justify-center shrink-0">
                 <div className="w-full h-full bg-[#072418] rounded-[10px] flex items-center justify-center">
-                  <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 fill-emerald-400" />
+                  <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400 fill-blue-400" />
                 </div>
               </div>
 
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                  <span className="font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider sm:tracking-widest text-emerald-300 truncate">
+                  <span className="font-extrabold text-[10px] sm:text-[11px] uppercase tracking-wider sm:tracking-widest text-cyan-300 truncate">
                     HERMIT INVESTMENTS &bull; EXECUTIVE INTELLIGENCE
                   </span>
-                  <span className="px-1.5 sm:px-2 py-0.5 rounded-full text-[8px] sm:text-[9px] font-black uppercase bg-emerald-400/20 text-emerald-300 border border-emerald-400/40 shrink-0">
+                  <span className="px-1.5 sm:px-2 py-0.5 rounded-full text-[8px] sm:text-[9px] font-black uppercase bg-blue-400/20 text-cyan-300 border border-blue-400/40 shrink-0">
                     TODAY&apos;S BRIEF
                   </span>
                 </div>
-                <p className="text-[11px] sm:text-xs text-emerald-200/80 font-medium truncate mt-0.5">
+                <p className="text-[11px] sm:text-xs text-cyan-200/80 font-medium truncate mt-0.5">
                   {brief.date} &bull; What&apos;s Up Today &bull; Synthesized across {brief.total_articles_scanned} live sources
                 </p>
               </div>
@@ -141,8 +141,8 @@ export default function ExecutiveDailyBrief({
                 onClick={toggleAudio}
                 className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all border active:scale-95 ${
                   isPlayingAudio
-                    ? 'bg-emerald-500 text-emerald-950 border-emerald-400 shadow-md'
-                    : 'bg-emerald-900/50 hover:bg-emerald-800/70 text-emerald-200 border-emerald-600/50'
+                    ? 'bg-blue-600 text-blue-950 border-blue-400 shadow-md'
+                    : 'bg-blue-900/50 hover:bg-blue-800/70 text-cyan-200 border-blue-600/50'
                 }`}
                 title="Play Audio Executive Brief"
                 aria-label="Toggle Audio"
@@ -152,8 +152,8 @@ export default function ExecutiveDailyBrief({
                     <VolumeX className="w-3.5 h-3.5" />
                     <span>Stop</span>
                     <span className="flex gap-0.5 ml-1">
-                      <span className="w-1 h-3 bg-emerald-950 animate-pulse" />
-                      <span className="w-1 h-4 bg-emerald-950 animate-pulse delay-75" />
+                      <span className="w-1 h-3 bg-blue-950 animate-pulse" />
+                      <span className="w-1 h-4 bg-blue-950 animate-pulse delay-75" />
                     </span>
                   </>
                 ) : (
@@ -168,10 +168,10 @@ export default function ExecutiveDailyBrief({
               <button
                 onClick={onRegenerate}
                 disabled={isRegenerating}
-                className="bg-emerald-900/50 hover:bg-emerald-800/70 text-emerald-200 border border-emerald-600/50 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all disabled:opacity-50 active:scale-95"
+                className="bg-blue-900/50 hover:bg-blue-800/70 text-cyan-200 border border-blue-600/50 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all disabled:opacity-50 active:scale-95"
                 title="Regenerate Executive Synthesis via Gemini 2.0"
               >
-                <Sparkles className={`w-3.5 h-3.5 text-emerald-400 ${isRegenerating ? 'animate-spin' : ''}`} />
+                <Sparkles className={`w-3.5 h-3.5 text-blue-400 ${isRegenerating ? 'animate-spin' : ''}`} />
                 <span>{isRegenerating ? 'Synthesizing...' : 'Regen'}</span>
               </button>
 
@@ -179,7 +179,7 @@ export default function ExecutiveDailyBrief({
               <button
                 onClick={handleExportPdf}
                 disabled={isExportingPdf}
-                className="bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-400/40 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-md shadow-emerald-950/40 active:scale-95 disabled:opacity-50"
+                className="bg-blue-600 hover:bg-blue-600 text-white border border-blue-400/40 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-md shadow-blue-950/40 active:scale-95 disabled:opacity-50"
                 title="Download Executive Daily Briefing PDF"
                 aria-label="Download PDF"
               >
@@ -199,7 +199,7 @@ export default function ExecutiveDailyBrief({
               {/* Print / Export */}
               <button
                 onClick={() => window.print()}
-                className="bg-emerald-900/50 hover:bg-emerald-800/70 text-emerald-200 border border-emerald-600/50 p-2 rounded-xl transition-all active:scale-95"
+                className="bg-blue-900/50 hover:bg-blue-800/70 text-cyan-200 border border-blue-600/50 p-2 rounded-xl transition-all active:scale-95"
                 title="Print or Export PDF"
                 aria-label="Print"
               >
@@ -211,8 +211,8 @@ export default function ExecutiveDailyBrief({
           {/* Lead Headline & Status Metrics */}
           <div className="pt-3.5 sm:pt-4 space-y-2.5 sm:space-y-3">
             <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-              <span className="px-2 sm:px-2.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-emerald-400/20 text-emerald-300 border border-emerald-400/40 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="px-2 sm:px-2.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-blue-400/20 text-cyan-300 border border-blue-400/40 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
                 {brief.market_sentiment.toUpperCase()} TAILWINDS
               </span>
 
@@ -220,7 +220,7 @@ export default function ExecutiveDailyBrief({
                 RISK: {brief.risk_index}/100 ({brief.risk_label})
               </span>
 
-              <span className="text-[10px] sm:text-[11px] text-emerald-200/70 font-mono">
+              <span className="text-[10px] sm:text-[11px] text-cyan-200/70 font-mono">
                 {brief.total_articles_scanned} media captures &bull; {brief.high_relevance_count} critical flags
               </span>
             </div>
@@ -229,37 +229,37 @@ export default function ExecutiveDailyBrief({
               {brief.headline}
             </h2>
 
-            <p className="text-xs sm:text-sm text-emerald-100/90 leading-relaxed max-w-4xl font-normal">
+            <p className="text-xs sm:text-sm text-slate-200/90 leading-relaxed max-w-4xl font-normal">
               {brief.executive_summary}
             </p>
           </div>
         </div>
 
         {/* Visual Charts & Telemetry Strip */}
-        <div className="p-4 sm:p-6 bg-[#040f09]/60 border-b border-emerald-900/40 space-y-4 sm:space-y-6">
+        <div className="p-4 sm:p-6 bg-[#040f09]/60 border-b border-blue-900/40 space-y-4 sm:space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-emerald-400" />
-              <h3 className="text-xs font-black text-emerald-200 uppercase tracking-wider">
+              <TrendingUp className="w-4 h-4 text-blue-400" />
+              <h3 className="text-xs font-black text-cyan-200 uppercase tracking-wider">
                 Today&apos;s Media Telemetry & Sector Dynamics
               </h3>
             </div>
-            <span className="text-[10px] sm:text-[11px] text-emerald-300/70 font-mono">Real-Time</span>
+            <span className="text-[10px] sm:text-[11px] text-cyan-300/70 font-mono">Real-Time</span>
           </div>
 
           {/* 3 Visual Digest Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
             
             {/* Chart 1: Media Topic Allocation Donut Chart (5 cols) */}
-            <div className="lg:col-span-5 bg-[#071f16]/90 backdrop-blur-xl p-3.5 sm:p-4.5 rounded-2xl border border-emerald-500/20 shadow-md flex flex-col justify-between space-y-3">
+            <div className="lg:col-span-5 bg-[#0c2242]/90 backdrop-blur-xl p-3.5 sm:p-4.5 rounded-2xl border border-blue-500/20 shadow-md flex flex-col justify-between space-y-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-xs font-bold text-emerald-200 uppercase tracking-wide">
+                  <span className="text-xs font-bold text-cyan-200 uppercase tracking-wide">
                     Media Topic Allocation
                   </span>
-                  <p className="text-[10px] text-emerald-300/60 font-mono mt-0.5">Coverage Share by Sector</p>
+                  <p className="text-[10px] text-cyan-300/60 font-mono mt-0.5">Coverage Share by Sector</p>
                 </div>
-                <span className="text-[10px] font-mono text-emerald-400 font-bold bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                <span className="text-[10px] font-mono text-blue-400 font-bold bg-blue-950/80 px-2 py-0.5 rounded-full border border-blue-500/30">
                   100% Normalized
                 </span>
               </div>
@@ -314,7 +314,7 @@ export default function ExecutiveDailyBrief({
                     <span className="text-lg font-black text-white font-mono leading-none">
                       {brief.sector_breakdown.reduce((sum, item) => sum + item.count, 0)}
                     </span>
-                    <span className="text-[9px] uppercase tracking-wider text-emerald-300 font-bold mt-0.5">
+                    <span className="text-[9px] uppercase tracking-wider text-cyan-300 font-bold mt-0.5">
                       Stories
                     </span>
                   </div>
@@ -325,7 +325,7 @@ export default function ExecutiveDailyBrief({
                   {brief.sector_breakdown.map((item, idx) => (
                     <div 
                       key={idx} 
-                      className="flex items-center justify-between p-1.5 px-2.5 rounded-xl bg-[#03180f]/80 border border-emerald-900/50 hover:border-emerald-500/40 transition-colors"
+                      className="flex items-center justify-between p-1.5 px-2.5 rounded-xl bg-[#06162a]/80 border border-blue-900/50 hover:border-blue-500/40 transition-colors"
                       title={`${item.category}: ${item.count} stories`}
                     >
                       <div className="flex items-center gap-2 truncate">
@@ -333,15 +333,15 @@ export default function ExecutiveDailyBrief({
                           className="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm" 
                           style={{ backgroundColor: item.color }} 
                         />
-                        <span className="text-emerald-200 font-medium truncate text-[11px]">
+                        <span className="text-cyan-200 font-medium truncate text-[11px]">
                           {item.category}
                         </span>
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0 ml-1">
-                        <span className="text-[10px] text-emerald-300/60 font-mono">
+                        <span className="text-[10px] text-cyan-300/60 font-mono">
                           {item.count}
                         </span>
-                        <span className="font-bold text-white font-mono text-[11px] bg-emerald-950/90 px-1.5 py-0.5 rounded border border-emerald-500/25">
+                        <span className="font-bold text-white font-mono text-[11px] bg-blue-950/90 px-1.5 py-0.5 rounded border border-blue-500/25">
                           {item.percentage}%
                         </span>
                       </div>
@@ -352,9 +352,9 @@ export default function ExecutiveDailyBrief({
             </div>
 
             {/* Chart 2: Risk Gauge & Early Warning Indicators (3 cols) */}
-            <div className="lg:col-span-3 bg-[#071f16]/90 backdrop-blur-xl p-3.5 sm:p-4.5 rounded-2xl border border-emerald-500/20 shadow-md flex flex-col justify-between space-y-3">
+            <div className="lg:col-span-3 bg-[#0c2242]/90 backdrop-blur-xl p-3.5 sm:p-4.5 rounded-2xl border border-blue-500/20 shadow-md flex flex-col justify-between space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-emerald-200 uppercase tracking-wide">
+                <span className="text-xs font-bold text-cyan-200 uppercase tracking-wide">
                   Regulatory Risk Index
                 </span>
                 <span className="text-[10px] font-bold text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/40">
@@ -364,41 +364,41 @@ export default function ExecutiveDailyBrief({
 
               {/* Score Dial Representation */}
               <div className="flex items-center gap-3">
-                <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#040d09]/80 flex items-center justify-center shrink-0 border-2 border-emerald-500/40 shadow-inner">
+                <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#040d09]/80 flex items-center justify-center shrink-0 border-2 border-blue-500/40 shadow-inner">
                   <span className="text-lg sm:text-xl font-black text-white font-mono">
                     {brief.risk_index}
                   </span>
-                  <span className="text-[9px] text-emerald-400 absolute bottom-1 font-bold">/100</span>
+                  <span className="text-[9px] text-blue-400 absolute bottom-1 font-bold">/100</span>
                 </div>
-                <div className="text-[11px] text-emerald-100/90 space-y-0.5">
-                  <div className="font-bold text-emerald-300">Moderate Velocity:</div>
-                  <div className="text-[10.5px] text-emerald-200/80 leading-snug">
+                <div className="text-[11px] text-slate-200/90 space-y-0.5">
+                  <div className="font-bold text-cyan-300">Moderate Velocity:</div>
+                  <div className="text-[10.5px] text-cyan-200/80 leading-snug">
                     Tariff revision mentions up <strong className="text-rose-400">+340%</strong> over baseline.
                   </div>
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-emerald-900/40 text-[10px] text-emerald-300/70 flex items-center justify-between">
+              <div className="pt-2 border-t border-blue-900/40 text-[10px] text-cyan-300/70 flex items-center justify-between">
                 <span>Confidence: 94%</span>
-                <span className="text-emerald-400 font-bold">Active Signal</span>
+                <span className="text-blue-400 font-bold">Active Signal</span>
               </div>
             </div>
 
             {/* Chart 3: Active Institutional Stakeholders (4 cols) */}
-            <div className="lg:col-span-4 bg-[#071f16]/90 backdrop-blur-xl p-3.5 sm:p-4.5 rounded-2xl border border-emerald-500/20 shadow-md space-y-2">
+            <div className="lg:col-span-4 bg-[#0c2242]/90 backdrop-blur-xl p-3.5 sm:p-4.5 rounded-2xl border border-blue-500/20 shadow-md space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-emerald-200 uppercase tracking-wide">
+                <span className="text-xs font-bold text-cyan-200 uppercase tracking-wide">
                   Active Stakeholders Today
                 </span>
-                <span className="text-[10px] font-mono text-emerald-400/80">Mentions</span>
+                <span className="text-[10px] font-mono text-blue-400/80">Mentions</span>
               </div>
 
               <div className="space-y-1.5">
                 {brief.key_stakeholders_active.map((s, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-1.5 px-2.5 rounded-xl bg-[#040d09]/70 border border-emerald-500/20 text-xs">
+                  <div key={idx} className="flex items-center justify-between p-1.5 px-2.5 rounded-xl bg-[#040d09]/70 border border-blue-500/20 text-xs">
                     <div className="flex items-center gap-2 truncate">
-                      <Building2 className="w-3 h-3 text-emerald-400 shrink-0" />
-                      <span className="font-bold text-emerald-100 truncate">{s.name}</span>
+                      <Building2 className="w-3 h-3 text-blue-400 shrink-0" />
+                      <span className="font-bold text-slate-200 truncate">{s.name}</span>
                     </div>
 
                     <div className="flex items-center gap-1.5 shrink-0">
@@ -406,14 +406,14 @@ export default function ExecutiveDailyBrief({
                         s.stance === 'regulatory'
                           ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40'
                           : s.stance === 'financing'
-                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                          ? 'bg-blue-600/20 text-cyan-300 border border-blue-500/40'
                           : s.stance === 'warning'
                           ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
                           : 'bg-blue-500/20 text-blue-300 border border-blue-500/40'
                       }`}>
                         {s.stance}
                       </span>
-                      <span className="text-[11px] font-mono font-bold text-emerald-300">
+                      <span className="text-[11px] font-mono font-bold text-cyan-300">
                         {s.mentions}x
                       </span>
                     </div>
@@ -429,10 +429,10 @@ export default function ExecutiveDailyBrief({
         <div className="p-4 sm:p-6 lg:p-8 space-y-3.5 sm:space-y-4 bg-transparent">
           <div>
             <h3 className="text-xs sm:text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400" />
+              <span className="w-2 h-2 rounded-full bg-blue-400" />
               The 4 Strategic Intelligence Pillars of the Day
             </h3>
-            <p className="text-[11px] sm:text-xs text-emerald-200/75 mt-0.5">
+            <p className="text-[11px] sm:text-xs text-cyan-200/75 mt-0.5">
               Direct commercial implications & recommended response actions for Hermit Investments
             </p>
           </div>
@@ -441,14 +441,14 @@ export default function ExecutiveDailyBrief({
             {brief.strategic_pillars.map((pillar, idx) => (
               <div
                 key={idx}
-                className="bg-[#071f16]/90 backdrop-blur-xl rounded-2xl p-4 sm:p-5 border border-emerald-500/20 hover:border-emerald-400/35 hover:bg-[#0a2b1e]/95 shadow-md hover:shadow-xl transition-all flex flex-col justify-between gap-3 border-l-4 border-l-emerald-400 text-white"
+                className="bg-[#0c2242]/90 backdrop-blur-xl rounded-2xl p-4 sm:p-5 border border-blue-500/20 hover:border-blue-400/35 hover:bg-[#0a2b1e]/95 shadow-md hover:shadow-xl transition-all flex flex-col justify-between gap-3 border-l-4 border-l-emerald-400 text-white"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-2">
-                    <span className="text-[9px] sm:text-[10px] font-bold text-emerald-300 bg-emerald-950/80 px-2 sm:px-2.5 py-0.5 rounded-md border border-emerald-500/40 uppercase">
+                    <span className="text-[9px] sm:text-[10px] font-bold text-cyan-300 bg-blue-950/80 px-2 sm:px-2.5 py-0.5 rounded-md border border-blue-500/40 uppercase">
                       {pillar.category}
                     </span>
-                    <span className="text-[9px] sm:text-[10px] font-black text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded-full border border-emerald-500/40">
+                    <span className="text-[9px] sm:text-[10px] font-black text-cyan-300 bg-blue-600/20 px-2 py-0.5 rounded-full border border-blue-500/40">
                       {pillar.badge}
                     </span>
                   </div>
@@ -458,33 +458,33 @@ export default function ExecutiveDailyBrief({
                   </h4>
 
                   <div className="mt-2.5 sm:mt-3 space-y-2 text-xs">
-                    <div className="bg-[#040d09]/70 p-2.5 rounded-xl border border-emerald-500/20">
-                      <span className="font-bold text-emerald-300">Commercial Impact: </span>
-                      <span className="text-emerald-100/90">{pillar.impact}</span>
+                    <div className="bg-[#040d09]/70 p-2.5 rounded-xl border border-blue-500/20">
+                      <span className="font-bold text-cyan-300">Commercial Impact: </span>
+                      <span className="text-slate-200/90">{pillar.impact}</span>
                     </div>
 
-                    <div className="bg-[#051510]/80 p-2.5 rounded-xl border border-emerald-500/20">
-                      <span className="font-bold text-emerald-300">Strategic Takeaway: </span>
-                      <span className="text-emerald-100 font-medium">{pillar.takeaway}</span>
+                    <div className="bg-[#051510]/80 p-2.5 rounded-xl border border-blue-500/20">
+                      <span className="font-bold text-cyan-300">Strategic Takeaway: </span>
+                      <span className="text-slate-200 font-medium">{pillar.takeaway}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Pillar Card Footer - Clean Stacking for Mobile */}
-                <div className="pt-2.5 border-t border-emerald-900/40 flex flex-col xs:flex-row xs:items-center justify-between gap-2 text-xs">
+                <div className="pt-2.5 border-t border-blue-900/40 flex flex-col xs:flex-row xs:items-center justify-between gap-2 text-xs">
                   <div className="flex items-center justify-between xs:justify-start gap-2">
-                    <span className="text-[10px] sm:text-[11px] text-emerald-300/60 font-mono">
+                    <span className="text-[10px] sm:text-[11px] text-cyan-300/60 font-mono">
                       {pillar.source} &bull; {pillar.time}
                     </span>
                     {pillar.related_article_id && (
                       <span className={`text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full border flex items-center gap-1 ${
                         reviewedArticleIds.includes(pillar.related_article_id)
-                          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                          ? 'bg-blue-600/20 text-cyan-300 border-blue-500/40'
                           : 'bg-amber-500/20 text-amber-300 border-amber-500/40'
                       }`}>
                         {reviewedArticleIds.includes(pillar.related_article_id) ? (
                           <>
-                            <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400" />
+                            <CheckCircle2 className="w-2.5 h-2.5 text-blue-400" />
                             <span>Signed</span>
                           </>
                         ) : (
@@ -507,8 +507,8 @@ export default function ExecutiveDailyBrief({
                         }}
                         className={`text-[10px] font-bold px-2.5 py-1 rounded-xl border transition-all active:scale-95 ${
                           reviewedArticleIds.includes(pillar.related_article_id)
-                            ? 'bg-[#03180f] text-emerald-400 border-emerald-700/50 hover:bg-[#062418]'
-                            : 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400/40 shadow-sm'
+                            ? 'bg-[#06162a] text-blue-400 border-blue-700/50 hover:bg-[#062418]'
+                            : 'bg-blue-600 hover:bg-blue-600 text-white border-blue-400/40 shadow-sm'
                         }`}
                       >
                         {reviewedArticleIds.includes(pillar.related_article_id) ? 'Revoke' : 'Sign Off'}
@@ -518,7 +518,7 @@ export default function ExecutiveDailyBrief({
                     {pillar.related_article_id && (
                       <button
                         onClick={() => onSelectArticle(pillar.related_article_id!)}
-                        className="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 group py-1 active:scale-95"
+                        className="text-xs font-bold text-blue-400 hover:text-cyan-300 flex items-center gap-1 group py-1 active:scale-95"
                       >
                         <span>Full Dossier</span>
                         <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -532,16 +532,16 @@ export default function ExecutiveDailyBrief({
         </div>
 
         {/* Immediate Executive Action Plan */}
-        <div className="p-4 sm:p-6 bg-gradient-to-br from-[#041a10]/90 to-[#02130c]/90 border-t border-emerald-900/50 space-y-3">
+        <div className="p-4 sm:p-6 bg-gradient-to-br from-[#0a1d36]/90 to-[#02130c]/90 border-t border-blue-900/50 space-y-3">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-emerald-500 text-emerald-950 font-black flex items-center justify-center">
+            <div className="w-6 h-6 rounded-lg bg-blue-600 text-blue-950 font-black flex items-center justify-center">
               <CheckCircle2 className="w-4 h-4" />
             </div>
             <div>
               <h4 className="text-xs font-black uppercase tracking-wider text-white">
                 Hermit Executive Action Plan (Communications & Management)
               </h4>
-              <p className="text-[10px] sm:text-[11px] text-emerald-200/70">Immediate directives derived from today&apos;s surveillance</p>
+              <p className="text-[10px] sm:text-[11px] text-cyan-200/70">Immediate directives derived from today&apos;s surveillance</p>
             </div>
           </div>
 
@@ -549,7 +549,7 @@ export default function ExecutiveDailyBrief({
             {brief.management_actions.map((act, i) => {
               const isClaimed = Boolean(claimedActions[i]);
               return (
-                <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 rounded-2xl bg-[#071f16]/90 backdrop-blur-xl border border-emerald-500/20 shadow-md text-xs">
+                <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 rounded-2xl bg-[#0c2242]/90 backdrop-blur-xl border border-blue-500/20 shadow-md text-xs">
                   <div className="flex items-start gap-2.5">
                     <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider shrink-0 mt-0.5 ${
                       act.priority === 'immediate'
@@ -558,11 +558,11 @@ export default function ExecutiveDailyBrief({
                     }`}>
                       {act.priority}
                     </span>
-                    <span className="text-emerald-100 font-medium leading-relaxed">{act.action}</span>
+                    <span className="text-slate-200 font-medium leading-relaxed">{act.action}</span>
                   </div>
 
                   <div className="flex items-center gap-2 shrink-0 self-start sm:self-center">
-                    <span className="text-[10px] sm:text-[11px] font-bold text-emerald-300 bg-emerald-950/80 px-2.5 py-1 rounded-xl border border-emerald-500/40">
+                    <span className="text-[10px] sm:text-[11px] font-bold text-cyan-300 bg-blue-950/80 px-2.5 py-1 rounded-xl border border-blue-500/40">
                       {isClaimed ? `Assigned: ${claimedActions[i]}` : `Dept: ${act.owner}`}
                     </span>
 
@@ -570,13 +570,13 @@ export default function ExecutiveDailyBrief({
                       onClick={() => handleClaimAction(i)}
                       className={`px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center gap-1 transition-all border active:scale-95 ${
                         isClaimed
-                          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                          : 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400/40 shadow-sm'
+                          ? 'bg-blue-600/20 text-cyan-300 border-blue-500/40'
+                          : 'bg-blue-600 hover:bg-blue-600 text-white border-blue-400/40 shadow-sm'
                       }`}
                     >
                       {isClaimed ? (
                         <>
-                          <Check className="w-3 h-3 text-emerald-400" />
+                          <Check className="w-3 h-3 text-blue-400" />
                           <span>Claimed</span>
                         </>
                       ) : (
@@ -594,9 +594,9 @@ export default function ExecutiveDailyBrief({
         </div>
 
         {/* Direct Transition Banner to the Full Live Feed */}
-        <div className="bg-[#051510]/80 text-emerald-200 p-4 px-4 sm:px-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-emerald-500/20">
+        <div className="bg-[#051510]/80 text-cyan-200 p-4 px-4 sm:px-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-blue-500/20">
           <div className="flex items-center gap-2 text-xs">
-            <Radio className="w-4 h-4 text-emerald-400 animate-pulse shrink-0" />
+            <Radio className="w-4 h-4 text-blue-400 animate-pulse shrink-0" />
             <span>
               Want to inspect individual raw captures or filter by source?
             </span>
@@ -604,7 +604,7 @@ export default function ExecutiveDailyBrief({
 
           <button
             onClick={onViewLiveFeed}
-            className="w-full sm:w-auto text-center justify-center bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-black px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-md active:scale-98"
+            className="w-full sm:w-auto text-center justify-center bg-blue-600 hover:bg-blue-400 text-blue-950 font-black px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-md active:scale-98"
           >
             <span>Explore Full Live Feed ({brief.total_articles_scanned} Captures)</span>
             <ArrowRight className="w-3.5 h-3.5" />

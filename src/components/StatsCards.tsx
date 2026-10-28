@@ -15,7 +15,7 @@ export default function StatsCards({ stats }: StatsCardsProps) {
       subtext: stats.totalArticles ? `${stats.totalArticles} active in database` : 'Real-time sync',
       icon: Layers,
       accentBorder: 'border-l-4 border-l-emerald-400',
-      iconBg: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+      iconBg: 'bg-blue-600/20 text-cyan-300 border-blue-500/30',
       badge: 'Today'
     },
     {
@@ -42,7 +42,7 @@ export default function StatsCards({ stats }: StatsCardsProps) {
       subtext: 'Across 6 Clean Pillars',
       icon: Globe2,
       accentBorder: 'border-l-4 border-l-emerald-400',
-      iconBg: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+      iconBg: 'bg-blue-600/20 text-cyan-300 border-blue-500/30',
       badge: '100% Operational'
     }
   ];
@@ -54,10 +54,10 @@ export default function StatsCards({ stats }: StatsCardsProps) {
         return (
           <div
             key={idx}
-            className={`bg-[#083825]/45 backdrop-blur-xl rounded-2xl p-3 sm:p-4.5 shadow-lg border border-emerald-400/25 hover:border-emerald-300/40 hover:bg-[#0d4f34]/60 transition-all ${c.accentBorder} flex flex-col justify-between`}
+            className={`bg-[#0b2144]/45 backdrop-blur-xl rounded-2xl p-3 sm:p-4.5 shadow-lg border border-blue-400/25 hover:border-blue-300/40 hover:bg-[#0d4f34]/60 transition-all ${c.accentBorder} flex flex-col justify-between`}
           >
             <div className="flex items-center justify-between gap-1.5 mb-1.5">
-              <span className="text-[10px] sm:text-xs font-bold text-emerald-300/80 uppercase tracking-wider truncate">
+              <span className="text-[10px] sm:text-xs font-bold text-cyan-300/80 uppercase tracking-wider truncate">
                 {c.title}
               </span>
               <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-lg flex items-center justify-center shrink-0 border ${c.iconBg}`}>
@@ -69,12 +69,12 @@ export default function StatsCards({ stats }: StatsCardsProps) {
               <div className="font-display tabular text-xl sm:text-3xl font-black text-white tracking-tight">
                 {c.value}
               </div>
-              <span className="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-emerald-950/70 text-emerald-300 border border-emerald-500/30 shrink-0">
+              <span className="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-blue-950/70 text-cyan-300 border border-blue-500/30 shrink-0">
                 {c.badge}
               </span>
             </div>
 
-            <div className="text-[10px] sm:text-xs text-emerald-200/70 font-medium mt-2 pt-1.5 sm:pt-2 border-t border-emerald-900/40 flex items-center justify-between">
+            <div className="text-[10px] sm:text-xs text-cyan-200/70 font-medium mt-2 pt-1.5 sm:pt-2 border-t border-blue-900/40 flex items-center justify-between">
               <span className="truncate">{c.subtext}</span>
             </div>
           </div>

@@ -3,11 +3,11 @@ import { Report, DailyBrief } from '@/types';
 
 // Palette definitions matching Hermit Investments brand
 const BRAND = {
-  emeraldDark: [6, 78, 59] as [number, number, number],       // #064e3b
-  emeraldPrimary: [5, 150, 105] as [number, number, number],  // #059669
-  emeraldLight: [16, 185, 129] as [number, number, number],   // #10b981
-  emeraldTint: [240, 253, 244] as [number, number, number],   // #f0fdf4
-  emeraldBorder: [167, 243, 208] as [number, number, number], // #a7f3d0
+  emeraldDark: [15, 35, 75] as [number, number, number],       // #0f234b (Navy Blue)
+  emeraldPrimary: [29, 78, 216] as [number, number, number],  // #1d4ed8 (Cool Blue)
+  emeraldLight: [56, 189, 248] as [number, number, number],   // #38bdf8 (Cyan Accent)
+  emeraldTint: [240, 249, 255] as [number, number, number],   // #f0f9ff (Ice Blue Tint)
+  emeraldBorder: [186, 230, 253] as [number, number, number], // #bae6fd (Light Blue Border)
   slateDark: [15, 23, 42] as [number, number, number],        // #0f172a
   slateBody: [51, 65, 85] as [number, number, number],        // #334155
   slateMuted: [100, 116, 139] as [number, number, number],    // #64748b

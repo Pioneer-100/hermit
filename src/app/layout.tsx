@@ -35,7 +35,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`h-full ${spaceGrotesk.variable} ${inter.variable}`}>
-      <body className="h-full flex bg-[#052418] text-emerald-50 antialiased font-sans overflow-hidden">
+      <body className="h-full flex bg-[#07152b] text-slate-100 antialiased font-sans overflow-hidden">
         <AuthProvider>
           <AuthGuard>
             <DrawerProvider>
@@ -45,11 +45,11 @@ export default function RootLayout({
               style={{ backgroundImage: "url('/kariba_dam_solar.jpg')" }}
             />
             {/* Lighter, translucent, sunlit emerald atmosphere */}
-            <div className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-b from-emerald-950/15 via-[#063020]/25 to-[#031d13]/35 backdrop-contrast-105" />
-            <div className="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(ellipse_100%_75%_at_50%_0%,rgba(16,185,129,0.22),transparent_75%)]" />
+            <div className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-b from-slate-950/40 via-[#07152b]/55 to-[#040d1a]/70 backdrop-contrast-105" />
+            <div className="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(ellipse_100%_75%_at_50%_0%,rgba(59,130,246,0.18),transparent_75%)]" />
             
             {/* Left-edge vignette softened so background shines clearly through glassy sidebar */}
-            <div className="hidden md:block fixed inset-y-0 left-0 w-80 pointer-events-none z-0 bg-gradient-to-r from-emerald-950/15 via-transparent to-transparent" />
+            <div className="hidden md:block fixed inset-y-0 left-0 w-80 pointer-events-none z-0 bg-gradient-to-r from-blue-950/15 via-transparent to-transparent" />
 
             {/* Fixed Left Executive Sidebar (Hidden on mobile) */}
             <div className="hidden md:flex relative z-20">

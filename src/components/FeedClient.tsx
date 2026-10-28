@@ -151,23 +151,23 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
           <div className="lg:col-span-8 space-y-4">
             
             {/* Search & Filter Control Bar (Sticky on Scroll) */}
-            <div className="sticky top-14 sm:top-[69px] z-20 bg-[#071f16]/90 backdrop-blur-xl border border-emerald-500/20 rounded-2xl p-3.5 sm:p-5 shadow-xl space-y-3">
+            <div className="sticky top-14 sm:top-[69px] z-20 bg-[#0c2242]/90 backdrop-blur-xl border border-blue-500/20 rounded-2xl p-3.5 sm:p-5 shadow-xl space-y-3">
               {/* Search Input & Category Dropdown */}
               <div className="flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center justify-between">
                 {/* Search Input */}
                 <div className="relative flex-1">
-                  <Search className="w-4 h-4 text-emerald-400/80 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <Search className="w-4 h-4 text-blue-400/80 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search by keywords, quoted stakeholders (e.g. ZERA, Kariba, AfDB)..."
-                    className="w-full pl-9 pr-4 py-2 text-xs border border-emerald-400/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-[#052618]/50 text-white placeholder:text-emerald-300/60 font-medium"
+                    className="w-full pl-9 pr-4 py-2 text-xs border border-blue-400/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 bg-[#052618]/50 text-white placeholder:text-cyan-300/60 font-medium"
                   />
                   {searchQuery && (
                     <button
                       onClick={() => setSearchQuery('')}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-emerald-300/70 hover:text-white font-bold"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-cyan-300/70 hover:text-white font-bold"
                     >
                       &times;
                     </button>
@@ -178,7 +178,7 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
                 <select
                   value={selectedType}
                   onChange={(e) => setSelectedType(e.target.value)}
-                  className="text-xs border border-emerald-400/30 rounded-xl px-3 py-2 bg-[#040d09]/80 text-emerald-100 font-bold focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  className="text-xs border border-blue-400/30 rounded-xl px-3 py-2 bg-[#040d09]/80 text-slate-200 font-bold focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
                   <option value="all">All Article Types</option>
                   <option value="tariff_change">Tariff Revision</option>
@@ -192,10 +192,10 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
               </div>
 
               {/* Secondary Filter Badges */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-2 border-t border-emerald-900/40 text-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-2 border-t border-blue-900/40 text-xs">
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="text-[11px] font-bold text-emerald-300/80 flex items-center gap-1 mr-1">
-                    <Filter className="w-3 h-3 text-emerald-400" />
+                  <span className="text-[11px] font-bold text-cyan-300/80 flex items-center gap-1 mr-1">
+                    <Filter className="w-3 h-3 text-blue-400" />
                     Relevance:
                   </span>
 
@@ -209,8 +209,8 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
                             ? 'bg-rose-500 text-white shadow-sm'
                             : lvl === 'medium'
                             ? 'bg-amber-500 text-slate-950 font-black'
-                            : 'bg-emerald-600 text-white'
-                          : 'bg-[#041a12] text-emerald-200/80 hover:bg-[#083525] border border-emerald-900/50'
+                            : 'bg-blue-600 text-white'
+                          : 'bg-[#0a1e38] text-cyan-200/80 hover:bg-[#083525] border border-blue-900/50'
                       }`}
                     >
                       {lvl === 'all' ? 'All' : lvl.toUpperCase()}
@@ -224,14 +224,14 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
                     className={`px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold border transition-colors flex items-center gap-1.5 active:scale-95 ${
                       onlyUnreviewed
                         ? 'bg-amber-500/20 text-amber-300 border-amber-400/50'
-                        : 'bg-[#041a12] text-emerald-200/80 hover:bg-[#083525] border-emerald-900/50'
+                        : 'bg-[#0a1e38] text-cyan-200/80 hover:bg-[#083525] border-blue-900/50'
                     }`}
                   >
                     <Clock className="w-3 h-3 text-amber-400" />
                     <span>Unreviewed ({pendingCount})</span>
                   </button>
 
-                  <span className="text-emerald-300/70 font-mono text-[10px] sm:text-[11px] font-bold">
+                  <span className="text-cyan-300/70 font-mono text-[10px] sm:text-[11px] font-bold">
                     {filtered.length} of {articles.length} items
                   </span>
                 </div>
@@ -241,8 +241,8 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
             {/* Articles Stream with Chronological Day Boundaries */}
             <div className="space-y-6">
               {filtered.length === 0 ? (
-                <div className="bg-[#04130d]/90 backdrop-blur-md rounded-2xl border border-emerald-500/20 p-8 sm:p-12 text-center text-emerald-200/70 text-xs space-y-3">
-                  <SlidersHorizontal className="w-8 h-8 text-emerald-400/60 mx-auto" />
+                <div className="bg-[#08172c]/90 backdrop-blur-md rounded-2xl border border-blue-500/20 p-8 sm:p-12 text-center text-cyan-200/70 text-xs space-y-3">
+                  <SlidersHorizontal className="w-8 h-8 text-blue-400/60 mx-auto" />
                   <p className="font-bold text-white text-sm">No media captures match active filters</p>
                   <p>Try broadening your search keywords or resetting relevance filter pills.</p>
                 </div>
@@ -251,14 +251,14 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
                   <div key={group.day} className="space-y-3">
                     {/* Daily Boundary Pill Divider */}
                     <div className="flex items-center gap-3 pt-2">
-                      <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-300 text-xs font-bold shadow-md">
-                        <Calendar className="w-3.5 h-3.5 text-emerald-400" />
+                      <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/80 border border-blue-500/30 text-cyan-300 text-xs font-bold shadow-md">
+                        <Calendar className="w-3.5 h-3.5 text-blue-400" />
                         <span>{group.label}</span>
-                        <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-800/60 text-emerald-200 font-mono">
+                        <span className="ml-1 text-[10px] px-1.5 py-0.5 rounded-full bg-blue-800/60 text-cyan-200 font-mono">
                           {group.items.length} {group.items.length === 1 ? 'article' : 'articles'}
                         </span>
                       </div>
-                      <div className="flex-1 h-px bg-gradient-to-r from-emerald-500/30 via-emerald-800/20 to-transparent" />
+                      <div className="flex-1 h-px bg-gradient-to-r from-blue-500/30 via-emerald-800/20 to-transparent" />
                     </div>
 
                     {/* Articles under this boundary */}
@@ -283,8 +283,8 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
           <div className="lg:col-span-4 space-y-4">
             
             {/* Widget 1: Priority Escalation Queue */}
-            <div className="bg-[#071f16]/90 backdrop-blur-xl border border-emerald-500/20 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3 text-white">
-              <div className="flex items-center justify-between pb-3 border-b border-emerald-900/50">
+            <div className="bg-[#0c2242]/90 backdrop-blur-xl border border-blue-500/20 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3 text-white">
+              <div className="flex items-center justify-between pb-3 border-b border-blue-900/50">
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/40 flex items-center justify-center">
                     <ShieldAlert className="w-3.5 h-3.5" />
@@ -293,7 +293,7 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
                     <h3 className="text-xs font-black text-white uppercase tracking-wider">
                       Critical Alerts
                     </h3>
-                    <p className="text-[10px] text-emerald-200/70">Relevance score &ge; 75%</p>
+                    <p className="text-[10px] text-cyan-200/70">Relevance score &ge; 75%</p>
                   </div>
                 </div>
                 <span className="text-xs font-mono font-bold text-rose-300 bg-rose-950/60 px-2 py-0.5 rounded border border-rose-500/40">
@@ -306,10 +306,10 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
                   <div
                     key={art.id}
                     onClick={() => setSelectedArticle(art)}
-                    className="p-3 rounded-xl bg-[#040d09]/70 hover:bg-[#0a2b1e]/80 border border-emerald-400/20 hover:border-emerald-300/40 transition-all cursor-pointer space-y-1.5 border-l-4 border-l-rose-500 text-white active:scale-99"
+                    className="p-3 rounded-xl bg-[#040d09]/70 hover:bg-[#0a2b1e]/80 border border-blue-400/20 hover:border-blue-300/40 transition-all cursor-pointer space-y-1.5 border-l-4 border-l-rose-500 text-white active:scale-99"
                   >
                     <div className="flex items-center justify-between text-[10px]">
-                      <span className="font-bold text-emerald-300 bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-500/30">
+                      <span className="font-bold text-cyan-300 bg-blue-950/80 px-1.5 py-0.5 rounded border border-blue-500/30">
                         {art.source_name}
                       </span>
                       <span className="font-mono text-rose-300 font-bold">
@@ -320,11 +320,11 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
                       {art.headline}
                     </h4>
 
-                    <div className="flex items-center justify-between pt-1.5 border-t border-emerald-900/40 text-[11px]">
+                    <div className="flex items-center justify-between pt-1.5 border-t border-blue-900/40 text-[11px]">
                       <span className="text-slate-400 text-[10px]">
                         {art.is_reviewed ? (
-                          <span className="text-emerald-300 font-semibold flex items-center gap-1">
-                            <CheckCircle2 className="w-3 h-3 text-emerald-400" /> Reviewed
+                          <span className="text-cyan-300 font-semibold flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3 text-blue-400" /> Reviewed
                           </span>
                         ) : (
                           <span className="text-amber-300 font-semibold flex items-center gap-1">
@@ -338,7 +338,7 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
                           e.stopPropagation();
                           setSelectedArticle(art);
                         }}
-                        className="text-xs font-bold text-emerald-400 hover:text-emerald-300 underline"
+                        className="text-xs font-bold text-blue-400 hover:text-cyan-300 underline"
                       >
                         Action Note &rarr;
                       </button>
@@ -349,65 +349,65 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
             </div>
 
             {/* Widget 2: Energy Sector Intelligence Radar */}
-            <div className="bg-[#071f16]/90 backdrop-blur-xl border border-emerald-500/20 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3.5 text-white">
-              <div className="flex items-center gap-2 pb-3 border-b border-emerald-900/50">
-                <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center justify-center">
+            <div className="bg-[#0c2242]/90 backdrop-blur-xl border border-blue-500/20 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3.5 text-white">
+              <div className="flex items-center gap-2 pb-3 border-b border-blue-900/50">
+                <div className="w-6 h-6 rounded-lg bg-blue-600/20 text-cyan-300 border border-blue-500/40 flex items-center justify-center">
                   <TrendingUp className="w-3.5 h-3.5" />
                 </div>
                 <div>
                   <h3 className="text-xs font-black text-white uppercase tracking-wider">
                     Sector Radar
                   </h3>
-                  <p className="text-[10px] text-emerald-200/70">Today&apos;s media concentration</p>
+                  <p className="text-[10px] text-cyan-200/70">Today&apos;s media concentration</p>
                 </div>
               </div>
 
               <div className="space-y-2.5 text-xs">
                 <div>
-                  <div className="flex justify-between font-bold text-emerald-200 mb-1">
+                  <div className="flex justify-between font-bold text-cyan-200 mb-1">
                     <span>Regulatory & ZERA Policy</span>
-                    <span className="text-emerald-400 font-mono">38%</span>
+                    <span className="text-blue-400 font-mono">38%</span>
                   </div>
-                  <div className="w-full bg-[#03180f] h-2 rounded-full overflow-hidden border border-emerald-900/40">
-                    <div className="bg-emerald-500 h-full rounded-full" style={{ width: '38%' }} />
+                  <div className="w-full bg-[#06162a] h-2 rounded-full overflow-hidden border border-blue-900/40">
+                    <div className="bg-blue-600 h-full rounded-full" style={{ width: '38%' }} />
                   </div>
                 </div>
 
                 <div>
-                  <div className="flex justify-between font-bold text-emerald-200 mb-1">
+                  <div className="flex justify-between font-bold text-cyan-200 mb-1">
                     <span>Solar IPPs & Projects</span>
-                    <span className="text-emerald-400 font-mono">28%</span>
+                    <span className="text-blue-400 font-mono">28%</span>
                   </div>
-                  <div className="w-full bg-[#03180f] h-2 rounded-full overflow-hidden border border-emerald-900/40">
-                    <div className="bg-emerald-400 h-full rounded-full" style={{ width: '28%' }} />
+                  <div className="w-full bg-[#06162a] h-2 rounded-full overflow-hidden border border-blue-900/40">
+                    <div className="bg-blue-400 h-full rounded-full" style={{ width: '28%' }} />
                   </div>
                 </div>
 
                 <div>
-                  <div className="flex justify-between font-bold text-emerald-200 mb-1">
+                  <div className="flex justify-between font-bold text-cyan-200 mb-1">
                     <span>DFI Funding (AfDB/WB)</span>
-                    <span className="text-emerald-400 font-mono">20%</span>
+                    <span className="text-blue-400 font-mono">20%</span>
                   </div>
-                  <div className="w-full bg-[#03180f] h-2 rounded-full overflow-hidden border border-emerald-900/40">
+                  <div className="w-full bg-[#06162a] h-2 rounded-full overflow-hidden border border-blue-900/40">
                     <div className="bg-teal-400 h-full rounded-full" style={{ width: '20%' }} />
                   </div>
                 </div>
 
                 <div>
-                  <div className="flex justify-between font-bold text-emerald-200 mb-1">
+                  <div className="flex justify-between font-bold text-cyan-200 mb-1">
                     <span>Grid Access & SAPP</span>
-                    <span className="text-emerald-400 font-mono">14%</span>
+                    <span className="text-blue-400 font-mono">14%</span>
                   </div>
-                  <div className="w-full bg-[#03180f] h-2 rounded-full overflow-hidden border border-emerald-900/40">
+                  <div className="w-full bg-[#06162a] h-2 rounded-full overflow-hidden border border-blue-900/40">
                     <div className="bg-blue-400 h-full rounded-full" style={{ width: '14%' }} />
                   </div>
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-emerald-900/50">
+              <div className="pt-2 border-t border-blue-900/50">
                 <Link
                   href="/trends"
-                  className="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center justify-between"
+                  className="text-xs font-bold text-blue-400 hover:text-cyan-300 flex items-center justify-between"
                 >
                   <span>Explore 30-Day Velocity Charts</span>
                   <ChevronRight className="w-3.5 h-3.5" />
@@ -416,24 +416,24 @@ export default function FeedClient({ initialArticles }: FeedClientProps) {
             </div>
 
             {/* Widget 3: Live Surveillance Engine Card */}
-            <div className="bg-gradient-to-br from-[#051c13]/90 to-[#04130d]/90 backdrop-blur-xl border border-emerald-400/25 rounded-2xl p-4 sm:p-5 text-white shadow-xl space-y-3">
+            <div className="bg-gradient-to-br from-[#071932]/90 to-[#08172c]/90 backdrop-blur-xl border border-blue-400/25 rounded-2xl p-4 sm:p-5 text-white shadow-xl space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-xs font-bold uppercase tracking-wider text-emerald-300">
+                  <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-cyan-300">
                     Continuous Engine
                   </span>
                 </div>
-                <span className="text-[10px] font-mono bg-emerald-400/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-400/30">
+                <span className="text-[10px] font-mono bg-blue-400/20 text-cyan-300 px-2 py-0.5 rounded border border-blue-400/30">
                   ACTIVE
                 </span>
               </div>
 
-              <p className="text-xs text-emerald-100/80 leading-relaxed">
+              <p className="text-xs text-slate-200/80 leading-relaxed">
                 70+ verified portals tracked. Relevance validation and impact analysis automated through Gemini 2.0.
               </p>
 
-              <div className="pt-2 border-t border-emerald-900/60 flex items-center justify-between text-[11px] text-emerald-300/80">
+              <div className="pt-2 border-t border-blue-900/60 flex items-center justify-between text-[11px] text-cyan-300/80">
                 <span>Free-tier Zero Cost</span>
                 <Link href="/sources" className="underline hover:text-white font-semibold">
                   Manage 70+ Sources
