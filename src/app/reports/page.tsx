@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import { Report } from '@/types';
+import { sortReportArticleSummaries } from '@/lib/report-utils';
 import { FileText, Plus, CheckCircle, Calendar, Sparkles, Zap, Printer, BookOpen, Archive, Download, Loader2, ExternalLink, Clock } from 'lucide-react';
 import { generateReportPdf } from '@/lib/pdfGenerator';
 import { INITIAL_REPORTS } from '@/lib/mock-data';
@@ -586,14 +587,14 @@ export default function ReportsPage() {
                       <span className="text-[10px] text-blue-400/70 font-mono normal-case">5-line synthesis per item</span>
                     </h3>
                     <div className="space-y-3">
-                      {selectedReport.content.article_summaries.map((item, idx) => (
+                      {sortReportArticleSummaries(selectedReport.content.article_summaries).map((item, idx) => (
                         <div key={idx} className="p-4 rounded-xl border border-blue-500/25 bg-[#0a1e38]/80 space-y-2.5">
-                          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 border-b border-blue-500/15 pb-2">
+                          <div className="flex flex-col gap-1.5 border-b border-blue-500/15 pb-2">
                             {/* Article Headline in bold */}
-                            <h4 className="text-sm font-bold text-white tracking-wide leading-snug">
+                            <h4 className="w-full whitespace-normal break-words [overflow-wrap:anywhere] text-sm font-bold text-white tracking-wide leading-snug">
                               {item.headline}
                             </h4>
-                            <div className="flex items-center gap-1.5 shrink-0">
+                            <div className="flex flex-wrap items-center gap-1.5">
                               <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-blue-950 text-cyan-300 border border-blue-500/30">
                                 {item.source}
                               </span>

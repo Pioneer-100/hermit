@@ -18,7 +18,7 @@ Open [http://localhost:3009](http://localhost:3009) with your browser to see the
 
 ### Daily Google Search updates
 
-The automated crawl also searches Google through SerpApi for Zimbabwe renewable-energy updates published on the current calendar day in Zimbabwe time. To enable it locally, add your SerpApi key to `.env.local`:
+The automated crawl also searches Google News through SerpApi for renewable-energy news across Africa from the past 24 hours, matching Google's recent-news tab and time filter. It searches for renewable energy, solar, hydropower, wind, or battery topics. Africa is included as a search term; Google does not provide a single continent-wide `gl` location code, so results are screened by the crawler's existing relevance checks. To enable it locally, add your SerpApi key to `.env.local`:
 
 ```env
 SERPAPI_API_KEY=your_serpapi_key

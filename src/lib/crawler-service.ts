@@ -116,20 +116,13 @@ export async function crawlGoogleEnergyUpdates(): Promise<CrawlResult> {
     throw new Error('SERPAPI_API_KEY is not configured');
   }
 
-  const harareToday = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'Africa/Harare',
-    month: '2-digit',
-    day: '2-digit',
-    year: 'numeric'
-  }).format(new Date());
   const params = new URLSearchParams({
     engine: 'google',
-    q: '(renewable energy OR solar OR hydropower OR wind OR battery) Zimbabwe',
-    location: 'Zimbabwe',
-    gl: 'zw',
+    q: '(renewable energy OR solar OR hydropower OR wind OR battery) news Africa',
+    tbm: 'nws',
     hl: 'en',
     num: '10',
-    tbs: `cdr:1,cd_min:${harareToday},cd_max:${harareToday}`,
+    tbs: 'qdr:d',
     api_key: apiKey
   });
   const response = await fetch(`https://serpapi.com/search.json?${params}`, {
@@ -142,7 +135,7 @@ export async function crawlGoogleEnergyUpdates(): Promise<CrawlResult> {
 
   const data = await response.json() as {
     error?: string;
-    organic_results?: Array<{
+    news_results?: Array<{
       title?: string;
       link?: string;
       snippet?: string;
@@ -151,9 +144,7 @@ export async function crawlGoogleEnergyUpdates(): Promise<CrawlResult> {
     }>;
   };
   if (data.error?.includes("hasn't returned any results")) {
-    logger.info('SerpApi returned no Google energy results for the current Zimbabwe date', {
-      date: harareToday
-    });
+    logger.info('SerpApi returned no Google energy results from the past 24 hours');
     return {
       sourceName: 'Google Search (SerpApi)',
       category: 'renewables',
@@ -167,7 +158,7 @@ export async function crawlGoogleEnergyUpdates(): Promise<CrawlResult> {
     throw new Error(`SerpApi search failed: ${data.error}`);
   }
 
-  const rawItems = (data.organic_results || []).flatMap(result => {
+  const rawItems = (data.news_results || []).flatMap(result => {
     if (!result.title || !result.link || !result.snippet) return [];
 
     let resultUrl: URL;
@@ -271,6 +262,14 @@ async function processRawItems(
 
     try {
       const deepExtracted = await extractDeepArticleText(item.link, item.summary);
+      if (
+        /(?:\.{3}|…)\s*$/.test(headlineToUse) &&
+        deepExtracted.headline &&
+        !/(?:\.{3}|…)\s*$/.test(deepExtracted.headline)
+      ) {
+        headlineToUse = deepExtracted.headline;
+      }
+
       if (deepExtracted.extractedSuccess && deepExtracted.fullText.length > item.summary.length) {
         enrichedContent = deepExtracted.fullText;
 

@@ -1,5 +1,6 @@
 import { jsPDF } from 'jspdf';
 import { Report, DailyBrief } from '@/types';
+import { sortReportArticleSummaries } from '@/lib/report-utils';
 
 // Palette definitions matching Hermit Investments brand
 const BRAND = {
@@ -427,27 +428,8 @@ class PdfBuilder {
     this.doc.line(this.margin, this.currentY, this.pageWidth - this.margin, this.currentY);
     this.currentY += 6;
 
-    // 3. Five-line summary block with light background card
-    const summaryLines = this.doc.splitTextToSize(item.summary, this.contentWidth - 16);
-    const cardH = summaryLines.length * 11.5 + 10;
-    this.checkPageBreak(cardH + 30);
-
-    const cardY = this.currentY;
-    this.doc.setFillColor(...BRAND.slateBg);
-    this.doc.setDrawColor(...BRAND.emeraldBorder);
-    this.doc.setLineWidth(0.4);
-    this.doc.roundedRect(this.margin, cardY, this.contentWidth, cardH, 2, 2, 'FD');
-
-    // Left indicator bar
-    this.doc.setFillColor(...BRAND.emeraldPrimary);
-    this.doc.roundedRect(this.margin, cardY, 3, cardH, 1, 1, 'F');
-
-    this.doc.setFont('helvetica', 'normal');
-    this.doc.setFontSize(8);
-    this.doc.setTextColor(...BRAND.slateBody);
-    this.doc.text(summaryLines, this.margin + 8, cardY + 10);
-
-    this.currentY = cardY + cardH + 8;
+    // 3. Article body uses the same plain paragraph styling as the executive overview.
+    this.drawParagraph(item.summary, 9.5);
 
     // 4. Skip a line and put link to full article on source
     if (item.source_link && item.source_link !== '#') {
@@ -642,7 +624,7 @@ export function createReportPdfBuilder(report: Report): PdfBuilder {
   // Article Detailed Summaries (Bold Headline + 5-Line Summary for all articles in the report)
   if (report.content?.article_summaries && report.content.article_summaries.length > 0) {
     builder.drawSectionHeader('3. Monitored Article Intelligence Summaries');
-    report.content.article_summaries.forEach((item) => {
+    sortReportArticleSummaries(report.content.article_summaries).forEach((item) => {
       builder.drawArticleSummaryItem(item);
     });
   }

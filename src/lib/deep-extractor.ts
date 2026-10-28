@@ -12,10 +12,33 @@ export interface ExtractedArticleContent {
   fullText: string;
   wordCount: number;
   extractedSuccess: boolean;
+  headline?: string;
   byline?: string;
   isPdfDocument?: boolean;
   statutoryInstrumentNumber?: string;
   tariffScheduleDetected?: boolean;
+}
+
+function extractArticleHeadline(html: string): string | undefined {
+  const metaTags = html.match(/<meta\b[^>]*>/gi) || [];
+  for (const property of ['og:title', 'twitter:title']) {
+    const metaTag = metaTags.find(tag => {
+      const propertyMatch = tag.match(/(?:property|name)\s*=\s*["']([^"']+)["']/i);
+      return propertyMatch?.[1].toLowerCase() === property;
+    });
+    const content = metaTag?.match(/\bcontent\s*=\s*["']([^"']+)["']/i)?.[1];
+    if (content) {
+      const headline = cleanHtmlToText(content);
+      if (headline) return headline;
+    }
+  }
+
+  const headlineMarkup = html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i)?.[1]
+    || html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)?.[1];
+  if (!headlineMarkup) return undefined;
+
+  const headline = cleanHtmlToText(headlineMarkup);
+  return headline || undefined;
 }
 
 /**
@@ -83,6 +106,7 @@ export async function extractDeepArticleText(
     }
   }
 
+  let extractedHeadline: string | undefined;
   try {
     const res = await fetch(url, {
       headers: BROWSER_HEADERS,
@@ -99,6 +123,7 @@ export async function extractDeepArticleText(
     }
 
     const html = await res.text();
+    extractedHeadline = extractArticleHeadline(html);
     const text = cleanHtmlToText(html);
 
     // If extracted text is reasonably long (> 80 words), extract paragraphs
@@ -109,7 +134,8 @@ export async function extractDeepArticleText(
       return {
         fullText: boundedText,
         wordCount: Math.min(words.length, 1200),
-        extractedSuccess: true
+        extractedSuccess: true,
+        headline: extractedHeadline
       };
     }
   } catch {
@@ -119,7 +145,8 @@ export async function extractDeepArticleText(
   return {
     fullText: fallbackText,
     wordCount: fallbackText.split(/\s+/).length,
-    extractedSuccess: false
+    extractedSuccess: false,
+    headline: extractedHeadline
   };
 }
 
