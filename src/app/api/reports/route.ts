@@ -5,6 +5,7 @@ import { authenticateApiRequest } from '@/lib/api-auth';
 import { checkRateLimit } from '@/lib/rate-limiter';
 import { getOrSetCache, invalidateCache } from '@/lib/cache';
 import { GenerateReportSchema } from '@/lib/schemas';
+import { filterArticlesForDailyWindow, getDailyWindowStart } from '@/lib/daily-article-window';
 
 export async function GET() {
   const reports = await getOrSetCache<Report[]>('hermit_reports_list', 120, async () => {
@@ -41,14 +42,14 @@ export async function POST(req: NextRequest) {
     const reportType = parsed.data.report_type;
     
     const allFetchedArticles = await fetchArticles();
-    // For daily reports, only include articles scraped/captured today or yesterday (last 48 hours)
     const articles = reportType === 'daily' 
-      ? filterDailyArticlesWindow(allFetchedArticles) 
+      ? filterArticlesForDailyWindow(allFetchedArticles)
       : allFetchedArticles;
     const highArticles = articles.filter(a => a.relevance_level === 'high');
 
+    const reportGeneratedAt = new Date();
     const titles: Record<string, string> = {
-      daily: `Daily Energy Sector Intelligence Digest — ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`,
+      daily: `Daily Energy Sector Intelligence Digest — ${reportGeneratedAt.toLocaleDateString('en-GB', { timeZone: 'Africa/Harare', day: 'numeric', month: 'long', year: 'numeric' })}`,
       weekly: `Weekly Energy Strategic Summary — Week ${getWeekNumber(new Date())}`,
       monthly: `Monthly Energy Media & Regulatory Review — ${new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}`,
       special: `Special Intelligence Brief: Urgent Regulatory & Grid Development`
@@ -78,7 +79,7 @@ export async function POST(req: NextRequest) {
           `- [ID: ${a.id}] [${a.source_name}] (${a.article_type}, Relevance: ${a.relevance_level}): ${a.headline} | Database Link: ${a.source_link || '#'}${a.summary ? ` — ${a.summary.slice(0, 150)}` : ''}`
         ).join('\n');
 
-        const periodLabel = reportType === 'daily' ? "today's" : reportType === 'weekly' ? "this week's" : reportType === 'monthly' ? "this month's" : "the current";
+        const periodLabel = reportType === 'daily' ? "today's or yesterday's" : reportType === 'weekly' ? "this week's" : reportType === 'monthly' ? "this month's" : "the current";
         const isWeekly = reportType === 'weekly';
         const currentYear = new Date().getFullYear();
         const currentWeekNum = getWeekNumber(new Date());
@@ -254,9 +255,12 @@ Include an entry in article_summaries for every monitored article listed above, 
     }
 
     // Build the report — use Gemini output if available, otherwise heuristic fallback
+    const noDailyUpdates = reportType === 'daily' && articles.length === 0;
     const highlights = geminiReport?.highlights
       || (highArticles.length > 0
         ? highArticles.slice(0, 4).map(a => `${a.source_name}: ${a.headline}`)
+        : noDailyUpdates
+          ? ['No articles published today or yesterday matched the monitored energy topics.']
         : [
           'No high-relevance captures in current monitoring cycle.',
           'Continuous surveillance active across 70+ energy portals.',
@@ -271,15 +275,21 @@ Include an entry in article_summaries for every monitored article listed above, 
     const newReportPayload: Omit<Report, 'id'> = {
       report_type: reportType,
       title: geminiReport?.title || body.title || titles[reportType],
-      summary: geminiReport?.summary || body.summary || `Consolidated monitoring summary capturing ${articles.length} items with focus on feed-in tariffs, DFI facilities and utility agreements.`,
-      period_start: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
-      period_end: new Date().toISOString(),
+      summary: noDailyUpdates
+        ? 'No articles published today or yesterday matched the monitored energy topics.'
+        : geminiReport?.summary || body.summary || `Consolidated monitoring summary capturing ${articles.length} items with focus on feed-in tariffs, DFI facilities and utility agreements.`,
+      period_start: reportType === 'daily'
+        ? getDailyWindowStart(reportGeneratedAt).toISOString()
+        : new Date(reportGeneratedAt.getTime() - 24 * 3600 * 1000).toISOString(),
+      period_end: reportGeneratedAt.toISOString(),
       article_count: articles.length,
       generated_at: new Date().toISOString(),
       content: {
         highlights,
         category_breakdown: categoryBreakdown,
-        executive_takeaway: geminiReport?.executive_takeaway || 'High level of deal momentum observed across solar IPPs. Hermit Investments should prioritize commercial engagement with mining and agricultural off-takers while advancing eligibility discussions with concessional DFI lenders.',
+        executive_takeaway: geminiReport?.executive_takeaway || (noDailyUpdates
+          ? 'No qualifying updates from today or yesterday were available for this report.'
+          : 'High level of deal momentum observed across solar IPPs. Hermit Investments should prioritize commercial engagement with mining and agricultural off-takers while advancing eligibility discussions with concessional DFI lenders.'),
         structured_weekly: geminiReport?.structured_weekly || (reportType === 'weekly' ? buildDefaultWeeklyTemplate(articles, highArticles) : undefined),
         article_summaries: geminiReport?.article_summaries 
           ? geminiReport.article_summaries.map((s: any) => {
@@ -468,16 +478,4 @@ function buildDefaultArticleSummaries(articles: any[]) {
       captured_at: a.captured_at || a.publication_date || new Date().toISOString()
     };
   });
-}
-
-
-function filterDailyArticlesWindow(articles: any[]) {
-  const cutoff = Date.now() - 48 * 3600 * 1000;
-  const filtered = articles.filter(a => {
-    const time = a.captured_at 
-      ? new Date(a.captured_at).getTime() 
-      : (a.publication_date ? new Date(a.publication_date).getTime() : 0);
-    return time >= cutoff;
-  });
-  return filtered.length > 0 ? filtered : articles.slice(0, 15);
 }

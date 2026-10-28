@@ -12,7 +12,7 @@ interface CrawlModalProps {
 }
 
 export default function CrawlModal({ isOpen, onClose, onCrawlComplete }: CrawlModalProps) {
-  const [crawlMode, setCrawlMode] = useState<'auto_rotating' | 'single_source'>('auto_rotating');
+  const [crawlMode, setCrawlMode] = useState<'auto_rotating' | 'single_source' | 'google_search'>('auto_rotating');
   const [selectedSourceId, setSelectedSourceId] = useState<number>(18); // Default: ZERA
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(false);
@@ -41,9 +41,11 @@ export default function CrawlModal({ isOpen, onClose, onCrawlComplete }: CrawlMo
         headers['Authorization'] = `Bearer ${token}`;
       }
 
-      const bodyPayload = crawlMode === 'auto_rotating'
-        ? {} // Empty body triggers automated intelligent rotation across sources
-        : { sourceId: selectedSourceId };
+      const bodyPayload = crawlMode === 'google_search'
+        ? { googleSearchOnly: true }
+        : crawlMode === 'auto_rotating'
+          ? {} // Empty body triggers automated intelligent rotation across sources
+          : { sourceId: selectedSourceId };
 
       const res = await fetch('/api/crawl', {
         method: 'POST',
@@ -99,7 +101,7 @@ export default function CrawlModal({ isOpen, onClose, onCrawlComplete }: CrawlMo
             <label className="block text-xs font-bold text-cyan-300 uppercase tracking-wider mb-1.5">
               Surveillance Mode
             </label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-3 gap-2">
               <button
                 type="button"
                 onClick={() => setCrawlMode('auto_rotating')}
@@ -111,6 +113,19 @@ export default function CrawlModal({ isOpen, onClose, onCrawlComplete }: CrawlMo
               >
                 <span>Automated Rotation</span>
                 <span className="text-[10px] text-blue-400/70 font-normal">Cycles across all 70+ portals</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCrawlMode('google_search')}
+                className={`p-2.5 rounded-xl text-xs font-bold border transition-all text-left flex flex-col gap-0.5 ${
+                  crawlMode === 'google_search'
+                    ? 'bg-blue-600/20 text-cyan-300 border-blue-400/50 shadow-inner'
+                    : 'bg-[#06162a] text-slate-300 border-blue-900/50 hover:border-blue-600/40'
+                }`}
+              >
+                <span>Google Search</span>
+                <span className="text-[10px] text-blue-400/70 font-normal">Today in Zimbabwe</span>
               </button>
 
               <button
@@ -172,15 +187,19 @@ export default function CrawlModal({ isOpen, onClose, onCrawlComplete }: CrawlMo
             </div>
             <p className="text-[11px] text-cyan-200/80">
               {crawlMode === 'auto_rotating'
-                ? 'Balanced batch scheduler will automatically pull from rotated regulators, national press, regional grids, and DFIs, rejecting any stale items (>30 days) and political metaphors.'
-                : 'Pulls from selected portal with deep-article extraction, freshness verification, and Gemini impact analysis.'}
+                ? 'Rotates across regulators, national press, regional grids, and DFIs, and searches Google for updates published today in Zimbabwe when SerpApi is configured. Stale and irrelevant items are filtered out.'
+                : crawlMode === 'google_search'
+                  ? 'Searches Google for energy updates published today in Zimbabwe, then runs matching results through Hermit’s article analysis and alert workflow.'
+                  : 'Pulls from selected portal with deep-article extraction, freshness verification, and Gemini impact analysis.'}
             </p>
           </div>
 
           {resultMessage && (
             <div className={`p-3 rounded-xl text-xs font-bold flex items-center gap-2 ${
-              resultMessage.includes('successfully')
-                ? 'bg-blue-600/20 text-cyan-300 border border-blue-500/40'
+              resultMessage.startsWith('Crawl completed')
+                ? resultMessage.includes('Google Search updates were')
+                  ? 'bg-amber-500/20 text-amber-200 border border-amber-500/40'
+                  : 'bg-blue-600/20 text-cyan-300 border border-blue-500/40'
                 : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
             }`}>
               <CheckCircle2 className="w-4 h-4 shrink-0 text-blue-400" />

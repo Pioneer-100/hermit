@@ -107,6 +107,119 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
     rawItems.push(generateContextualHeadline(source));
   }
 
+  return processRawItems(source.name, source.id, source.category, rawItems);
+}
+
+export async function crawlGoogleEnergyUpdates(): Promise<CrawlResult> {
+  const apiKey = process.env.SERPAPI_API_KEY;
+  if (!apiKey) {
+    throw new Error('SERPAPI_API_KEY is not configured');
+  }
+
+  const harareToday = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Africa/Harare',
+    month: '2-digit',
+    day: '2-digit',
+    year: 'numeric'
+  }).format(new Date());
+  const params = new URLSearchParams({
+    engine: 'google',
+    q: '(renewable energy OR solar OR hydropower OR wind OR battery) Zimbabwe',
+    location: 'Zimbabwe',
+    gl: 'zw',
+    hl: 'en',
+    num: '10',
+    tbs: `cdr:1,cd_min:${harareToday},cd_max:${harareToday}`,
+    api_key: apiKey
+  });
+  const response = await fetch(`https://serpapi.com/search.json?${params}`, {
+    signal: AbortSignal.timeout(15000)
+  });
+
+  if (!response.ok) {
+    throw new Error(`SerpApi request failed with status ${response.status}`);
+  }
+
+  const data = await response.json() as {
+    error?: string;
+    organic_results?: Array<{
+      title?: string;
+      link?: string;
+      snippet?: string;
+      date?: string;
+      source?: string;
+    }>;
+  };
+  if (data.error?.includes("hasn't returned any results")) {
+    logger.info('SerpApi returned no Google energy results for the current Zimbabwe date', {
+      date: harareToday
+    });
+    return {
+      sourceName: 'Google Search (SerpApi)',
+      category: 'renewables',
+      articlesFound: 0,
+      newArticlesInserted: 0,
+      highRelevanceCount: 0,
+      articles: []
+    };
+  }
+  if (data.error) {
+    throw new Error(`SerpApi search failed: ${data.error}`);
+  }
+
+  const rawItems = (data.organic_results || []).flatMap(result => {
+    if (!result.title || !result.link || !result.snippet) return [];
+
+    let resultUrl: URL;
+    try {
+      resultUrl = new URL(result.link);
+    } catch {
+      return [];
+    }
+    if (resultUrl.protocol !== 'https:' && resultUrl.protocol !== 'http:') return [];
+
+    return [{
+      headline: result.title,
+      link: resultUrl.toString(),
+      summary: result.snippet,
+      pubDate: parseSearchResultDate(result.date),
+      author: result.source || 'Google Search'
+    }];
+  }).slice(0, 5);
+
+  logger.info('SerpApi Google energy search completed', { resultCount: rawItems.length });
+  return processRawItems('Google Search (SerpApi)', null, 'renewables', rawItems);
+}
+
+function parseSearchResultDate(date?: string): string | undefined {
+  if (!date) return undefined;
+
+  const relativeDate = date.match(/^(\d+)\s+(minute|hour|day)s?\s+ago$/i);
+  if (relativeDate) {
+    const amount = Number(relativeDate[1]);
+    const unit = relativeDate[2].toLowerCase();
+    const millisecondsPerUnit = unit === 'minute'
+      ? 60_000
+      : unit === 'hour'
+        ? 3_600_000
+        : 86_400_000;
+    return new Date(Date.now() - amount * millisecondsPerUnit).toISOString();
+  }
+
+  if (/^yesterday$/i.test(date.trim())) {
+    return new Date(Date.now() - 86_400_000).toISOString();
+  }
+
+  const parsedDate = new Date(date);
+  return Number.isNaN(parsedDate.getTime()) ? undefined : parsedDate.toISOString();
+}
+
+async function processRawItems(
+  sourceName: string,
+  sourceId: number | null,
+  category: string,
+  rawItems: Array<{ headline: string; link: string; summary: string; pubDate?: string; author?: string }>
+): Promise<CrawlResult> {
   // Fetch recent articles once to perform semantic deduplication before LLM analysis
   let recentArticles: Article[] = [];
   try {
@@ -183,7 +296,7 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
     }
 
     // 4. Process enriched content through Gemini AI (or intelligent heuristics fallback)
-    const analysis = await analyzeArticleWithGemini(headlineToUse, enrichedContent, source.name);
+    const analysis = await analyzeArticleWithGemini(headlineToUse, enrichedContent, sourceName);
 
     // 5. Semantic Relevance Gate: Deduce true commercial & sustainability meaning
     // If Gemini analysis or semantic heuristics deduce zero relevance (e.g. violent crime, political metaphor, irrelevant domestic story), drop it immediately.
@@ -206,8 +319,8 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
     const articlePayload: Omit<Article, 'id'> = {
       publication_date: freshness.parsedDate,
       headline: headlineToUse,
-      source_id: source.id,
-      source_name: source.name,
+      source_id: sourceId,
+      source_name: sourceName,
       author: item.author || 'Energy Correspondent',
       summary: item.summary,
       key_stakeholders: analysis.key_stakeholders,
@@ -248,8 +361,8 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
   }
 
   return {
-    sourceName: source.name,
-    category: source.category,
+    sourceName,
+    category,
     articlesFound: rawItems.length,
     newArticlesInserted: processedArticles.length,
     highRelevanceCount: highCount,

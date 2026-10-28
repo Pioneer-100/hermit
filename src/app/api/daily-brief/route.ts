@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { fetchArticles } from '@/lib/supabase';
-import { INITIAL_DAILY_BRIEF } from '@/lib/mock-data';
 import { DailyBrief } from '@/types';
 import { synthesizeDailyBriefFromArticles } from '@/lib/brief-generator';
 import { getOrSetCache, invalidateCache } from '@/lib/cache';
 import { checkDistributedRateLimit } from '@/lib/rate-limiter';
 import { verifyApiAuthorization } from '@/lib/api-auth';
+import { filterArticlesForDailyWindow } from '@/lib/daily-article-window';
 
 export async function GET(req: NextRequest) {
   try {
@@ -19,18 +19,15 @@ export async function GET(req: NextRequest) {
     }
 
     // Cache the dynamic brief for 300 seconds (5 minutes)
-    const brief = await getOrSetCache<DailyBrief>('hermit_daily_brief_get', 300, async () => {
+    const brief = await getOrSetCache<DailyBrief>('hermit_daily_brief_get_v2', 300, async () => {
       const allArticles = await fetchArticles();
-      if (!allArticles || allArticles.length === 0) {
-        return INITIAL_DAILY_BRIEF;
-      }
-      const recentArticles = filterArticlesRecentWindow(allArticles);
+      const recentArticles = filterArticlesForDailyWindow(allArticles);
       return synthesizeDailyBriefFromArticles(recentArticles);
     });
 
     return NextResponse.json({ brief });
   } catch (err: any) {
-    return NextResponse.json({ brief: INITIAL_DAILY_BRIEF, error: err.message });
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
 
@@ -53,7 +50,7 @@ export async function POST(req: NextRequest) {
     }
 
     const allArticles = await fetchArticles();
-    const articles = filterArticlesRecentWindow(allArticles);
+    const articles = filterArticlesForDailyWindow(allArticles);
     const baseBrief = synthesizeDailyBriefFromArticles(articles);
     const apiKey = process.env.GEMINI_API_KEY;
 
@@ -74,10 +71,10 @@ export async function POST(req: NextRequest) {
           try {
             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
             const prompt = `You are the Chief Intelligence Officer at Hermit Investments (Zimbabwe).
-Synthesize today's monitored energy sector captures into an executive macro report answering "What's Up Today" for management.
+Synthesize monitored energy sector updates published today or yesterday into an executive macro report answering "What's Up Today" for management.
 Make the headline dynamic, crisp, and informative (NOT generic, NO static text).
 
-Articles Scanned Today:
+Articles Published Today or Yesterday:
 ${topHeadlines}
 
 Return ONLY valid JSON matching this exact structure:
@@ -123,7 +120,7 @@ Return ONLY valid JSON matching this exact structure:
           };
 
           // Invalidate GET cache so new brief immediately surfaces to team
-          invalidateCache('hermit_daily_brief');
+          invalidateCache('hermit_daily_brief_get_v2');
           return NextResponse.json({ brief: dynamicBrief, regenerated: true });
         }
       } catch (geminiErr) {
@@ -131,27 +128,9 @@ Return ONLY valid JSON matching this exact structure:
       }
     }
 
-    invalidateCache('hermit_daily_brief');
+    invalidateCache('hermit_daily_brief_get_v2');
     return NextResponse.json({ brief: baseBrief, regenerated: true });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
-}
-
-
-/**
- * Ensures articles included in the Daily Brief were scraped/captured today
- * or yesterday (within the last 48 hours).
- */
-function filterArticlesRecentWindow(articles: any[]) {
-  const cutoff = Date.now() - 48 * 3600 * 1000;
-  const filtered = articles.filter(a => {
-    const time = a.captured_at 
-      ? new Date(a.captured_at).getTime() 
-      : (a.publication_date ? new Date(a.publication_date).getTime() : 0);
-    return time >= cutoff;
-  });
-  // If no articles fall in last 48 hours (e.g. fresh environment or slow weekend),
-  // fall back gracefully to the most recent articles
-  return filtered.length > 0 ? filtered : articles.slice(0, 15);
 }

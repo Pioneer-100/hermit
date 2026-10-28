@@ -1,6 +1,7 @@
 import DashboardClient from '@/components/DashboardClient';
 import { fetchArticles, getDashboardStats } from '@/lib/supabase';
 import { synthesizeDailyBriefFromArticles } from '@/lib/brief-generator';
+import { filterArticlesForDailyWindow } from '@/lib/daily-article-window';
 
 // Server-side revalidation cadence (in seconds)
 export const revalidate = 60;
@@ -11,11 +12,12 @@ export default async function DashboardPage() {
     getDashboardStats()
   ]);
 
-  const dynamicBrief = synthesizeDailyBriefFromArticles(articles);
+  const recentArticles = filterArticlesForDailyWindow(articles);
+  const dynamicBrief = synthesizeDailyBriefFromArticles(recentArticles);
 
   return (
     <DashboardClient
-      initialArticles={articles}
+      initialArticles={recentArticles}
       initialStats={stats}
       initialDailyBrief={dynamicBrief}
     />

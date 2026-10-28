@@ -14,7 +14,6 @@ import {
   Menu, 
   X, 
   MessageSquare, 
-  Users, 
   LogOut, 
   Zap,
   ChevronRight,
@@ -35,10 +34,9 @@ const PRIMARY_NAV = [
 
 export default function MobileNav() {
   const pathname = usePathname();
-  const { currentUser, availableUsers, switchUser, logout } = useAuth();
+  const { currentUser, logout } = useAuth();
   const { openChat } = useDrawer();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSwitchingUser, setIsSwitchingUser] = useState(false);
 
   if (pathname === '/login') {
     return null;
@@ -56,7 +54,7 @@ export default function MobileNav() {
       {/* Mobile Drawer / Bottom Sheet Overlay */}
       {isMenuOpen && (
         <div 
-          onClick={() => { setIsMenuOpen(false); setIsSwitchingUser(false); }}
+          onClick={() => setIsMenuOpen(false)}
           className="md:hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
           aria-hidden="true"
         />
@@ -74,7 +72,7 @@ export default function MobileNav() {
               </span>
             </div>
             <button
-              onClick={() => { setIsMenuOpen(false); setIsSwitchingUser(false); }}
+              onClick={() => setIsMenuOpen(false)}
               className="p-1 rounded-lg text-cyan-300 hover:text-white hover:bg-blue-800/40"
               aria-label="Close menu"
             >
@@ -82,64 +80,21 @@ export default function MobileNav() {
             </button>
           </div>
 
-          {/* User Profile & Role Switcher */}
+          {/* User Profile */}
           <div className="my-3.5 p-3 rounded-2xl bg-[#091f3a]/85 border border-blue-500/25">
             {currentUser ? (
-              <div className="space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-blue-800 text-white font-black text-xs flex items-center justify-center shrink-0 border border-blue-400/40">
-                      {currentUser.full_name.charAt(0)}
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-xs font-bold text-white truncate">
-                        {currentUser.full_name}
-                      </div>
-                      <div className="text-[10px] text-cyan-300/80 font-mono capitalize">
-                        {currentUser.title || currentUser.role}
-                      </div>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => setIsSwitchingUser(!isSwitchingUser)}
-                    className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-blue-600/20 text-cyan-300 border border-blue-500/30 flex items-center gap-1 active:scale-95"
-                  >
-                    <Users className="w-3 h-3" />
-                    <span>{isSwitchingUser ? 'Hide' : 'Switch'}</span>
-                  </button>
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-blue-800 text-white font-black text-xs flex items-center justify-center shrink-0 border border-blue-400/40">
+                  {currentUser.full_name.charAt(0)}
                 </div>
-
-                {/* Submenu: Demo Persona Switcher */}
-                {isSwitchingUser && (
-                  <div className="pt-2 border-t border-blue-900/50 space-y-1 animate-in fade-in duration-150">
-                    <div className="text-[9px] font-mono uppercase text-blue-400/70 pb-1">
-                      Select Persona (RBAC):
-                    </div>
-                    {availableUsers.map((u) => (
-                      <button
-                        key={u.id}
-                        onClick={() => {
-                          switchUser(u.id);
-                          setIsSwitchingUser(false);
-                        }}
-                        className={`w-full text-left p-2 rounded-xl text-xs flex items-center justify-between transition-all ${
-                          u.id === currentUser.id
-                            ? 'bg-blue-600/30 text-cyan-200 border border-blue-500/40'
-                            : 'text-slate-300 hover:bg-blue-900/40'
-                        }`}
-                      >
-                        <div>
-                          <div className="font-bold text-white">{u.full_name}</div>
-                          <div className="text-[10px] text-blue-400/80">{u.title}</div>
-                        </div>
-                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded uppercase bg-blue-950 text-cyan-300 border border-blue-800/40">
-                          {u.role}
-                        </span>
-                      </button>
-                    ))}
+                <div className="min-w-0">
+                  <div className="text-xs font-bold text-white truncate">
+                    {currentUser.full_name}
                   </div>
-                )}
+                  <div className="text-[10px] text-cyan-300/80 font-mono capitalize">
+                    {currentUser.title || currentUser.role}
+                  </div>
+                </div>
               </div>
             ) : (
               <Link
@@ -193,7 +148,7 @@ export default function MobileNav() {
               <ChevronRight className="w-4 h-4 text-blue-400/70" />
             </Link>
 
-            <Link
+            {/*<Link
               href="/sources"
               prefetch={true}
               onClick={() => setIsMenuOpen(false)}
@@ -203,17 +158,17 @@ export default function MobileNav() {
                   : 'bg-[#06162a]/80 text-slate-200 border-blue-900/50 hover:bg-[#072418]'
               }`}
             >
-              <div className="flex items-center gap-2.5">
-                <Globe2 className="w-4 h-4 text-blue-400" />
-                <div>
-                  <div className="font-bold">Source Coverage Directory</div>
-                  <div className="text-[10px] text-cyan-300/70">70+ monitored Zimbabwean energy portals</div>
-                </div>
+                <div className="flex items-center gap-2.5">
+                  <Globe2 className="w-4 h-4 text-blue-400" />
+                  <div>
+                    <div className="font-bold">Source Coverage Directory</div>
+                    <div className="text-[10px] text-cyan-300/70">70+ monitored Zimbabwean energy portals</div>
+                  </div>
               </div>
               <ChevronRight className="w-4 h-4 text-blue-400/70" />
-            </Link>
+            </Link>*/}
 
-            <Link
+           {/* <Link
               href="/settings"
               prefetch={true}
               onClick={() => setIsMenuOpen(false)}
@@ -231,7 +186,7 @@ export default function MobileNav() {
                 </div>
               </div>
               <ChevronRight className="w-4 h-4 text-blue-400/70" />
-            </Link>
+            </Link>*/}
 
             {/* AI Advisor Shortcut */}
             <button
@@ -311,7 +266,6 @@ export default function MobileNav() {
         <button
           onClick={() => {
             setIsMenuOpen(!isMenuOpen);
-            setIsSwitchingUser(false);
           }}
           className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all min-w-[56px] relative ${
             isMoreActive 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { crawlSource, CrawlResult } from '@/lib/crawler-service';
+import { crawlGoogleEnergyUpdates, crawlSource, CrawlResult } from '@/lib/crawler-service';
 import { MONITORED_SOURCES } from '@/lib/sources';
 import { CrawlRequestSchema } from '@/lib/schemas';
 import { verifyApiAuthorization } from '@/lib/api-auth';
@@ -36,6 +36,7 @@ async function handleCrawl(req: NextRequest, isGet: boolean) {
   try {
     let sourceId: number | undefined;
     let category: string | undefined;
+    let googleSearchOnly = false;
 
     if (!isGet) {
       try {
@@ -44,9 +45,11 @@ async function handleCrawl(req: NextRequest, isGet: boolean) {
         if (parsed.success) {
           sourceId = parsed.data.sourceId;
           category = parsed.data.category;
+          googleSearchOnly = parsed.data.googleSearchOnly || false;
         } else {
           sourceId = typeof rawBody.sourceId === 'number' ? rawBody.sourceId : undefined;
           category = typeof rawBody.category === 'string' ? rawBody.category : undefined;
+          googleSearchOnly = rawBody.googleSearchOnly === true;
         }
       } catch {
         sourceId = undefined;
@@ -56,11 +59,15 @@ async function handleCrawl(req: NextRequest, isGet: boolean) {
       const { searchParams } = new URL(req.url);
       sourceId = searchParams.get('sourceId') ? Number(searchParams.get('sourceId')) : undefined;
       category = searchParams.get('category') || undefined;
+      googleSearchOnly = searchParams.get('googleSearchOnly') === 'true';
     }
 
     const results: CrawlResult[] = [];
+    const providerWarnings: string[] = [];
 
-    if (sourceId) {
+    if (googleSearchOnly) {
+      results.push(await crawlGoogleEnergyUpdates());
+    } else if (sourceId) {
       const res = await crawlSource(sourceId);
       results.push(res);
     } else if (category && category !== 'all') {
@@ -85,6 +92,17 @@ async function handleCrawl(req: NextRequest, isGet: boolean) {
           logger.warn(`Error crawling rotating source ${src.name}:`, { error: String(srcErr) });
         }
       }
+
+      if (process.env.SERPAPI_API_KEY) {
+        try {
+          results.push(await crawlGoogleEnergyUpdates());
+        } catch (searchError) {
+          logger.warn('SerpApi Google energy search failed', { error: String(searchError) });
+          providerWarnings.push('Google Search updates were unavailable; check the SerpApi configuration and server logs.');
+        }
+      } else {
+        providerWarnings.push('Google Search updates were skipped because SERPAPI_API_KEY is not configured.');
+      }
     }
 
     const totalNew = results.reduce((acc, curr) => acc + curr.newArticlesInserted, 0);
@@ -96,10 +114,13 @@ async function handleCrawl(req: NextRequest, isGet: boolean) {
       totalHighRelevance: totalHigh
     });
 
+    const warningMessage = providerWarnings.length > 0 ? ` ${providerWarnings.join(' ')}` : '';
+
     return NextResponse.json({
       success: true,
-      message: `Crawl completed across ${results.length} sources. Captured ${totalNew} items (${totalHigh} high relevance).`,
-      results
+      message: `Crawl completed across ${results.length} sources. Captured ${totalNew} items (${totalHigh} high relevance).${warningMessage}`,
+      results,
+      warnings: providerWarnings
     });
   } catch (error: any) {
     logger.error('Crawl execution failed', error);

@@ -17,7 +17,7 @@ import {
   TrendingUp,
   Zap,
   ShieldCheck,
-  Users,
+  ChevronDown,
   LogOut
 } from 'lucide-react';
 import { useAuth } from '@/components/AuthContext';
@@ -30,7 +30,6 @@ const NAV_ITEMS = [
   { href: '/alerts', label: 'Priority Alerts', icon: Bell, badge: '4', badgeColor: 'bg-rose-500/20 text-rose-300 border-rose-500/30' },
   { href: '/reports', label: 'Executive Reports', icon: FileText, subtext: 'Daily & Weekly' },
   { href: '/trends', label: 'Trends & Signals', icon: TrendingUp, subtext: 'Early warnings' },
-  { href: '/sources', label: 'Source Directory', icon: Globe2, badge: '70+', badgeColor: 'bg-blue-600/15 text-cyan-300 border-blue-500/30' },
 ];
 
 export default function Sidebar() {
@@ -104,7 +103,7 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* User Profile Card & Role Switcher */}
+      {/* User Profile */}
       <UserProfileBar />
 
       
@@ -113,7 +112,7 @@ export default function Sidebar() {
 }
 
 function UserProfileBar() {
-  const { currentUser, availableUsers, switchUser, logout } = useAuth();
+  const { currentUser, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
   if (!currentUser) {
@@ -150,46 +149,22 @@ function UserProfileBar() {
             </span>
           </div>
         </div>
-        <Users className="w-3.5 h-3.5 text-blue-400/70 group-hover:text-cyan-300 shrink-0" />
+        <ChevronDown className="w-3.5 h-3.5 text-blue-400/70 group-hover:text-cyan-300 shrink-0" />
       </button>
 
       {/* Dropdown switch menu */}
       {isOpen && (
         <div className="absolute bottom-full left-3 right-3 mb-2 bg-[#03170e]/95 border border-blue-500/35 rounded-xl shadow-2xl p-2 z-50 space-y-1 backdrop-blur-2xl">
-          <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-blue-400 border-b border-blue-900/50 flex items-center justify-between">
-            <span>Switch Role / User</span>
-            <span className="text-[9px] text-cyan-300/60 font-mono">RBAC</span>
-          </div>
-          {availableUsers.map((u) => (
-            <button
-              key={u.id}
-              onClick={() => {
-                switchUser(u.id);
-                setIsOpen(false);
-              }}
-              className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex flex-col transition-all ${
-                u.id === currentUser.id
-                  ? 'bg-blue-600/30 text-cyan-200 border border-blue-500/30'
-                  : 'text-slate-300 hover:bg-blue-900/40 hover:text-white'
-              }`}
-            >
-              <span className="font-bold">{u.full_name}</span>
-              <span className="text-[10px] text-blue-400/70">{u.title}</span>
-            </button>
-          ))}
-
-          <div className="pt-1.5 mt-1 border-t border-blue-900/50">
-            <button
-              onClick={async () => {
-                setIsOpen(false);
-                await logout();
-              }}
-              className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-rose-300 hover:bg-rose-950/40 hover:text-rose-200 transition-colors"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span>Sign Out</span>
-            </button>
-          </div>
+          <button
+            onClick={async () => {
+              setIsOpen(false);
+              await logout();
+            }}
+            className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-rose-300 hover:bg-rose-950/40 hover:text-rose-200 transition-colors"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Sign Out</span>
+          </button>
         </div>
       )}
     </div>

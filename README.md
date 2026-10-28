@@ -14,7 +14,17 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3009](http://localhost:3009) with your browser to see the result.
+
+### Daily Google Search updates
+
+The automated crawl also searches Google through SerpApi for Zimbabwe renewable-energy updates published on the current calendar day in Zimbabwe time. To enable it locally, add your SerpApi key to `.env.local`:
+
+```env
+SERPAPI_API_KEY=your_serpapi_key
+```
+
+Restart the development server after adding the key. Set the same variable in your deployment environment to enable the scheduled crawl there. Without the key, the existing crawler continues to run and reports that Google Search updates were skipped.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

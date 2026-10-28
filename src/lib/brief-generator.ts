@@ -1,5 +1,4 @@
 import { Article, DailyBrief } from '@/types';
-import { INITIAL_DAILY_BRIEF } from './mock-data';
 
 /**
  * Builds a rich, dynamic Daily Executive Briefing from actual scanned articles.
@@ -9,13 +8,25 @@ import { INITIAL_DAILY_BRIEF } from './mock-data';
 export function synthesizeDailyBriefFromArticles(articles: Article[]): DailyBrief {
   if (!articles || articles.length === 0) {
     return {
-      ...INITIAL_DAILY_BRIEF,
+      id: `brief-${Date.now()}`,
       date: new Date().toLocaleDateString('en-GB', {
+        timeZone: 'Africa/Harare',
         weekday: 'long',
         day: 'numeric',
         month: 'long',
         year: 'numeric'
-      })
+      }),
+      headline: 'No new energy updates today or yesterday',
+      executive_summary: 'No monitored energy updates published today or yesterday are currently available for the executive briefing.',
+      market_sentiment: 'neutral',
+      risk_index: 0,
+      risk_label: 'No recent updates',
+      sector_breakdown: [],
+      strategic_pillars: [],
+      key_stakeholders_active: [],
+      management_actions: [],
+      total_articles_scanned: 0,
+      high_relevance_count: 0
     };
   }
 
@@ -70,12 +81,10 @@ export function synthesizeDailyBriefFromArticles(articles: Article[]): DailyBrie
   // Executive summary synthesis
   const tariffCount = articles.filter(a => a.article_type === 'tariff_change' || a.article_type === 'new_regulation').length;
   const fundingCount = articles.filter(a => a.article_type === 'funding_announcement').length;
-  const ppaCount = articles.filter(a => a.article_type === 'partnership' || a.article_type === 'project_update').length;
-
-  const executive_summary = `Across ${total} energy sector captures scanned across Zimbabwe, today is characterized by ${
-    tariffCount > 0 ? `${tariffCount} regulatory/tariff adjustments` : 'steady regulatory conditions'
+  const executive_summary = `Across ${total} energy sector updates published today or yesterday, ${
+    tariffCount > 0 ? `${tariffCount} regulatory/tariff adjustments were identified` : 'no regulatory/tariff adjustments were identified'
   }${fundingCount > 0 ? `, alongside ${fundingCount} major capital and facility developments` : ''}. ${
-    topArticle?.ai_summary || topArticle?.summary || 'Key monitored sources reflect active sector realignments impacting Hermit investments and IPP off-take structures.'
+    topArticle?.ai_summary || topArticle?.summary || 'No additional summary is available for the leading update.'
   }`;
 
   // 3. Compute market sentiment & risk index
@@ -99,7 +108,7 @@ export function synthesizeDailyBriefFromArticles(articles: Article[]): DailyBrie
   const candidateArticles = [...highArticles, ...mediumArticles, ...articles].slice(0, 4);
   const strategic_pillars = candidateArticles.map((art, idx) => {
     const timeFormatted = art.captured_at
-      ? new Date(art.captured_at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) + ' CAT'
+      ? new Date(art.captured_at).toLocaleTimeString('en-GB', { timeZone: 'Africa/Harare', hour: '2-digit', minute: '2-digit' }) + ' CAT'
       : `${8 + idx}:00 CAT`;
 
     return {
@@ -140,16 +149,6 @@ export function synthesizeDailyBriefFromArticles(articles: Article[]): DailyBrie
       mentions: data.count
     }));
 
-  // Fallback stakeholders if none extracted
-  if (key_stakeholders_active.length === 0) {
-    key_stakeholders_active.push(
-      { name: 'ZERA', role: 'Energy Regulator', stance: 'regulatory', mentions: 5 },
-      { name: 'AfDB', role: 'Multilateral DFI', stance: 'financing', mentions: 4 },
-      { name: 'Ministry of Energy', role: 'Policy Formulation', stance: 'favorable', mentions: 3 },
-      { name: 'ZESA / ZETDC', role: 'National Utility', stance: 'warning', mentions: 3 }
-    );
-  }
-
   // 6. Management Actions derived from top articles
   const management_actions = candidateArticles.slice(0, 3).map((art, i) => ({
     priority: (i === 0 ? 'immediate' : (i === 1 ? 'immediate' : 'medium')) as 'immediate' | 'medium' | 'standard',
@@ -158,6 +157,7 @@ export function synthesizeDailyBriefFromArticles(articles: Article[]): DailyBrie
   }));
 
   const todayStr = new Date().toLocaleDateString('en-GB', {
+    timeZone: 'Africa/Harare',
     weekday: 'long',
     day: 'numeric',
     month: 'long',
@@ -172,10 +172,10 @@ export function synthesizeDailyBriefFromArticles(articles: Article[]): DailyBrie
     market_sentiment,
     risk_index,
     risk_label,
-    sector_breakdown: sector_breakdown.length > 0 ? sector_breakdown : INITIAL_DAILY_BRIEF.sector_breakdown,
-    strategic_pillars: strategic_pillars.length > 0 ? strategic_pillars : INITIAL_DAILY_BRIEF.strategic_pillars,
+    sector_breakdown,
+    strategic_pillars,
     key_stakeholders_active,
-    management_actions: management_actions.length > 0 ? management_actions : INITIAL_DAILY_BRIEF.management_actions,
+    management_actions,
     total_articles_scanned: total,
     high_relevance_count: highArticles.length
   };

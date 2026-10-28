@@ -2,7 +2,8 @@ import { z } from 'zod';
 
 export const CrawlRequestSchema = z.object({
   sourceId: z.coerce.number().int().positive().optional(),
-  category: z.string().max(50).optional()
+  category: z.string().max(50).optional(),
+  googleSearchOnly: z.boolean().optional()
 });
 
 export const InsertArticleSchema = z.object({
