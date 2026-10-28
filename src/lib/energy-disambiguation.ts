@@ -10,7 +10,7 @@ const ENERGY_STRONG_ENTITIES = [
   'zesa', 'zetdc', 'zpc', 'zera', 'sapp', 'reaz', 'southern african power pool',
   'kariba', 'hwange', 'munyati', 'bulawayo power station', 'harare power station',
   'batoka', 'zambezi river authority', 'zra', 'ministry of energy', 'power purchase agreement',
-  'ppa', 'independent power producer', 'ipp', 'wheeling', 'bess', 'net metering',
+  'ppa', 'independent power producer', 'ipp', 'ippaz', 'wheeling', 'bess', 'net metering',
   'feed-in tariff', 'refit', 'photovoltaic', 'solar park', 'solar plant', 'mini-grid',
   'concession', 'transmission line', 'step-up transformer', 'substation', 'inverter'
 ];
@@ -37,7 +37,12 @@ const ENERGY_CONTEXTUAL_TERMS = [
   'solar', 'hydropower', 'hydroelectric', 'hydro-power', 'wind energy', 'biomass',
   'renewable energy', 'clean energy', 'battery storage', 'lithium battery',
   'electricity supply', 'power deficit', 'generation capacity', 'energy transition',
-  'power crisis', 'power utility', 'energy fund', 'power generation'
+  'power crisis', 'power utility', 'energy fund', 'power generation',
+  'circular economy', 'waste-to-energy', 'waste to energy', 'biogas',
+  'anaerobic digestion', 'food-water-energy', 'solar irrigation',
+  'food-water-energy nexus', 'water-energy nexus', 'e-waste',
+  'electronic waste', 'resource recovery', 'climate finance',
+  'clean energy finance', 'renewable energy funding'
 ];
 
 // High-frequency political metaphor phrases that cause false positives
@@ -108,7 +113,10 @@ export function validateEnergyRelevance(headline: string, summary?: string): Ene
 
   // 2. Match strong sector entities
   for (const entity of ENERGY_STRONG_ENTITIES) {
-    if (combined.includes(entity)) {
+    const isMatch = entity === 'ipp'
+      ? /\bipp\b/i.test(combined)
+      : combined.includes(entity);
+    if (isMatch) {
       matchedEntities.push(entity.toUpperCase());
     }
   }

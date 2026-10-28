@@ -1,8 +1,8 @@
 import { fetchArticles } from '@/lib/supabase';
 import Header from '@/components/Header';
 import ArticleCard from '@/components/ArticleCard';
-import { Droplets, Recycle, Sparkles, Sprout, ArrowRight } from 'lucide-react';
-import Link from 'next/link';
+import { Droplets, Recycle, Sparkles, Sprout } from 'lucide-react';
+import { isRelevantNexusArticle } from '@/lib/nexus-filter';
 
 export const metadata = {
   title: 'Food-Water-Energy Nexus & Waste-to-Energy Tracker | Hermit Sustainability Advisory',
@@ -15,37 +15,12 @@ export default async function NexusPage() {
   // Import semantic gate validation
   const { evaluateSemanticFitness } = await import('@/lib/semantic-gate');
 
-  // Filter articles for genuine Food-Water-Energy Nexus & Waste-to-Energy
+  // Filter articles for direct Nexus and Circular Economy relevance.
   const nexusArticles = articles.filter(a => {
-    // 1. Must pass semantic fitness (no crime, no metaphors)
     const fitness = evaluateSemanticFitness(a.headline, a.summary || '', a.relevance_to_hermit || '', a.relevance_score);
     if (!fitness.isFitToDisplay) return false;
 
-    // 2. Direct categorization
-    if (a.article_type === 'nexus' || a.article_type === 'waste_to_energy') return true;
-
-    // 3. Technical nexus & circular economy keywords (NOT just generic 'water')
-    const text = `${a.headline} ${a.summary || ''} ${a.raw_content || ''} ${a.sector || ''}`.toLowerCase();
-    const hasNexusSubject = 
-      text.includes('dam level') ||
-      text.includes('live storage') ||
-      text.includes('kariba') ||
-      text.includes('zinwa') ||
-      text.includes('hydropower') ||
-      text.includes('hydro-power') ||
-      text.includes('solar-powered irrigation') ||
-      text.includes('solar irrigation') ||
-      text.includes('water pumping') ||
-      text.includes('biogas') ||
-      text.includes('anaerobic digestion') ||
-      text.includes('landfill gas') ||
-      text.includes('waste-to-energy') ||
-      text.includes('circular economy') ||
-      text.includes('wastewater treatment') ||
-      text.includes('food-water-energy') ||
-      text.includes('refuse-derived fuel');
-
-    return hasNexusSubject;
+    return isRelevantNexusArticle(a);
   });
 
   return (

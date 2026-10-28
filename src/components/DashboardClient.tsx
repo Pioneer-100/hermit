@@ -1,26 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import StatsCards from '@/components/StatsCards';
 import ArticleCard from '@/components/ArticleCard';
 import ArticleDetailModal from '@/components/ArticleDetailModal';
 import CrawlModal from '@/components/CrawlModal';
 import ExecutiveDailyBrief from '@/components/ExecutiveDailyBrief';
-import CleanEnergyPipelineDashboard from '@/components/CleanEnergyPipelineDashboard';
 import { Article, DashboardStats, DailyBrief } from '@/types';
-import { INITIAL_HERMIT_PROJECTS } from '@/lib/users-and-projects';
 import { getSupabaseClient } from '@/lib/supabase';
 import { 
   Search, 
   Radio, 
   Clock, 
   Play,
-  BookOpen,
-  ArrowRight,
-  FolderKanban
+  BookOpen
 } from 'lucide-react';
-import Link from 'next/link';
 import { getAuthHeaders } from '@/lib/api-client';
 
 interface DashboardClientProps {
@@ -47,6 +42,24 @@ export default function DashboardClient({
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [onlyUnreviewed, setOnlyUnreviewed] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+
+  useEffect(() => {
+    let isMounted = true;
+
+    void fetch('/api/daily-brief')
+      .then(async response => {
+        if (!response.ok) throw new Error(`Daily briefing request failed with status ${response.status}`);
+        const data = await response.json();
+        if (isMounted && data.brief) setDailyBrief(data.brief);
+      })
+      .catch(error => {
+        console.warn('Failed to load the generated daily briefing:', error);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const loadData = async () => {
     try {
@@ -226,13 +239,6 @@ export default function DashboardClient({
               onViewLiveFeed={() => setViewMode('feed')}
               onReviewToggle={handleReviewToggle}
               reviewedArticleIds={articles.filter(a => a.is_reviewed).map(a => a.id)}
-            />
-
-            {/* Clean Energy Asset & Pipeline Intelligence Tracker */}
-            <CleanEnergyPipelineDashboard
-              projects={INITIAL_HERMIT_PROJECTS}
-              articles={articles}
-              onSelectArticleById={handleSelectArticleById}
             />
           </div>
         )}

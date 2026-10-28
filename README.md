@@ -18,7 +18,7 @@ Open [http://localhost:3009](http://localhost:3009) with your browser to see the
 
 ### Daily Google Search updates
 
-The automated crawl also searches Google News through SerpApi for renewable-energy news across Africa from the past 24 hours, matching Google's recent-news tab and time filter. It searches for renewable energy, solar, hydropower, wind, or battery topics. Africa is included as a search term; Google does not provide a single continent-wide `gl` location code, so results are screened by the crawler's existing relevance checks. To enable it locally, add your SerpApi key to `.env.local`:
+The automated crawl also runs four focused Google News searches through SerpApi for stories from the past 24 hours: renewables and independent power producers (IPPs), food-water-energy nexus and circular-economy topics, clean-energy events and conferences, and clean-energy funding and tenders. The events query covers Zimbabwe, neighboring southern African countries, SADC, Africa, and international/global coverage. The funding query separately targets grants, calls for proposals/applications, tenders, and financing opportunities across the same markets. Search results go through the existing deduplication and relevance checks, then Gemini classifies them for the Renewables, Nexus, or Events & Funding trackers. Event deadlines, names, and funding amounts are saved when available. Google does not provide a single continent-wide `gl` location code, so geographic terms in the queries and the crawler's relevance checks are used to screen results. This uses up to four SerpApi searches per automated crawl. To enable it locally, add your SerpApi key to `.env.local`:
 
 ```env
 SERPAPI_API_KEY=your_serpapi_key

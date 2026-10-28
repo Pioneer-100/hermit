@@ -1,4 +1,4 @@
-import { Article, DailyBrief } from '@/types';
+import type { Article, DailyBrief } from '@/types';
 
 /**
  * Builds a rich, dynamic Daily Executive Briefing from actual scanned articles.
@@ -115,8 +115,8 @@ export function synthesizeDailyBriefFromArticles(articles: Article[]): DailyBrie
       title: art.headline,
       category: formatCategoryTitle(art.article_type),
       badge: art.relevance_score ? `${Math.round(art.relevance_score * 100)}% Relevance` : 'Sector Priority',
-      impact: art.relevance_to_hermit || art.ai_impact_note || art.summary || 'Strategic significance for IPP pipeline and off-take negotiations.',
-      takeaway: (art.suggested_actions && art.suggested_actions[0]) || 'Review commercial parameters with engineering and legal teams.',
+      impact: limitWords(art.ai_summary || art.summary || art.raw_content || art.headline, 250),
+      takeaway: normalizeCommercialImpact(art.ai_impact_note || art.relevance_to_hermit || ''),
       related_article_id: art.id,
       source: art.source_name || 'Portal Feed',
       time: timeFormatted
@@ -179,6 +179,22 @@ export function synthesizeDailyBriefFromArticles(articles: Article[]): DailyBrie
     total_articles_scanned: total,
     high_relevance_count: highArticles.length
   };
+}
+
+function limitWords(text: string, limit: number): string {
+  return text.trim().split(/\s+/).slice(0, limit).join(' ');
+}
+
+function normalizeCommercialImpact(text: string): string {
+  const firstLine = text.split(/\r?\n/)[0].replace(/^\s*(?:\d+[.)]\s*[-:]?\s*|[-*]\s*)/, '').trim();
+  const words = firstLine.split(/\s+/).filter(Boolean);
+
+  if (words.length < 15) {
+    return "This development may affect Hermit's project pipeline, financing assumptions, investment decisions, and commercial market positioning.";
+  }
+
+  const trimmedImpact = words.slice(0, 20).join(' ').replace(/[.,;:!?]+$/, '');
+  return `${trimmedImpact}.`;
 }
 
 function mapArticleTypeToCategory(type: string): string {

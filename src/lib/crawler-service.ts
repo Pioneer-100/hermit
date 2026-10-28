@@ -110,76 +110,109 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
   return processRawItems(source.name, source.id, source.category, rawItems);
 }
 
-export async function crawlGoogleEnergyUpdates(): Promise<CrawlResult> {
+const GOOGLE_NEWS_SEARCHES = [
+  {
+    name: 'Google News — Renewables & IPPs',
+    category: 'renewables',
+    query: '(renewable energy OR solar OR hydropower OR wind OR battery OR "independent power producer" OR IPP OR IPPAZ) Africa'
+  },
+  {
+    name: 'Google News — Nexus & Circular Economy',
+    category: 'nexus_waste',
+    query: '("circular economy" OR "waste-to-energy" OR biogas OR "anaerobic digestion" OR "e-waste" OR "electronic waste" OR "resource recovery" OR "food-water-energy nexus" OR "water-energy nexus" OR "solar irrigation") Africa'
+  },
+  {
+    name: 'Google News — Energy Events & Conferences',
+    category: 'tenders_events',
+    query: '(renewable energy OR clean energy OR solar OR hydropower OR wind power OR battery storage OR "independent power producer" OR climate) (conference OR summit OR workshop OR webinar OR expo OR exhibition OR forum) (Zimbabwe OR Zambia OR Malawi OR Mozambique OR Botswana OR Namibia OR South Africa OR SADC OR Africa OR regional OR global OR international)'
+  },
+  {
+    name: 'Google News — Clean Energy Funding & Tenders',
+    category: 'tenders_events',
+    query: '(renewable energy OR clean energy OR solar OR hydropower OR wind power OR battery storage OR climate finance) (funding OR grants OR "call for proposals" OR "call for applications" OR "request for proposals" OR RFP OR EOI OR tender OR tenders OR "funding opportunity" OR "financing opportunity") (Zimbabwe OR Zambia OR Malawi OR Mozambique OR Botswana OR Namibia OR South Africa OR SADC OR Africa OR regional OR global OR international)'
+  }
+] as const;
+
+export async function crawlGoogleEnergyUpdates(): Promise<{ results: CrawlResult[]; warnings: string[] }> {
   const apiKey = process.env.SERPAPI_API_KEY;
   if (!apiKey) {
     throw new Error('SERPAPI_API_KEY is not configured');
   }
 
-  const params = new URLSearchParams({
-    engine: 'google',
-    q: '(renewable energy OR solar OR hydropower OR wind OR battery) news Africa',
-    tbm: 'nws',
-    hl: 'en',
-    num: '10',
-    tbs: 'qdr:d',
-    api_key: apiKey
-  });
-  const response = await fetch(`https://serpapi.com/search.json?${params}`, {
-    signal: AbortSignal.timeout(15000)
-  });
+  const results: CrawlResult[] = [];
+  const warnings: string[] = [];
 
-  if (!response.ok) {
-    throw new Error(`SerpApi request failed with status ${response.status}`);
-  }
-
-  const data = await response.json() as {
-    error?: string;
-    news_results?: Array<{
-      title?: string;
-      link?: string;
-      snippet?: string;
-      date?: string;
-      source?: string;
-    }>;
-  };
-  if (data.error?.includes("hasn't returned any results")) {
-    logger.info('SerpApi returned no Google energy results from the past 24 hours');
-    return {
-      sourceName: 'Google Search (SerpApi)',
-      category: 'renewables',
-      articlesFound: 0,
-      newArticlesInserted: 0,
-      highRelevanceCount: 0,
-      articles: []
-    };
-  }
-  if (data.error) {
-    throw new Error(`SerpApi search failed: ${data.error}`);
-  }
-
-  const rawItems = (data.news_results || []).flatMap(result => {
-    if (!result.title || !result.link || !result.snippet) return [];
-
-    let resultUrl: URL;
+  for (const search of GOOGLE_NEWS_SEARCHES) {
     try {
-      resultUrl = new URL(result.link);
-    } catch {
-      return [];
+      const params = new URLSearchParams({
+        engine: 'google',
+        q: search.query,
+        tbm: 'nws',
+        hl: 'en',
+        num: '10',
+        tbs: 'qdr:d',
+        api_key: apiKey
+      });
+      const response = await fetch(`https://serpapi.com/search.json?${params}`, {
+        signal: AbortSignal.timeout(15000)
+      });
+
+      if (!response.ok) {
+        throw new Error(`SerpApi request failed with status ${response.status}`);
+      }
+
+      const data = await response.json() as {
+        error?: string;
+        news_results?: Array<{
+          title?: string;
+          link?: string;
+          snippet?: string;
+          date?: string;
+          source?: string;
+        }>;
+      };
+
+      if (data.error && !data.error.includes("hasn't returned any results")) {
+        throw new Error(`SerpApi search failed: ${data.error}`);
+      }
+
+      const rawItems = (data.news_results || []).flatMap(result => {
+        if (!result.title || !result.link || !result.snippet) return [];
+
+        let resultUrl: URL;
+        try {
+          resultUrl = new URL(result.link);
+        } catch {
+          return [];
+        }
+        if (resultUrl.protocol !== 'https:' && resultUrl.protocol !== 'http:') return [];
+
+        return [{
+          headline: result.title,
+          link: resultUrl.toString(),
+          summary: result.snippet,
+          pubDate: parseSearchResultDate(result.date),
+          author: result.source || 'Google News'
+        }];
+      }).slice(0, 5);
+
+      logger.info('SerpApi Google News search completed', {
+        search: search.name,
+        resultCount: rawItems.length
+      });
+      results.push(await processRawItems(search.name, null, search.category, rawItems));
+    } catch (error) {
+      const message = `${search.name} failed: ${error instanceof Error ? error.message : String(error)}`;
+      logger.warn('SerpApi Google News search failed', { search: search.name, error: message });
+      warnings.push(message);
     }
-    if (resultUrl.protocol !== 'https:' && resultUrl.protocol !== 'http:') return [];
+  }
 
-    return [{
-      headline: result.title,
-      link: resultUrl.toString(),
-      summary: result.snippet,
-      pubDate: parseSearchResultDate(result.date),
-      author: result.source || 'Google Search'
-    }];
-  }).slice(0, 5);
+  if (results.length === 0 && warnings.length > 0) {
+    throw new Error(warnings.join('; '));
+  }
 
-  logger.info('SerpApi Google energy search completed', { resultCount: rawItems.length });
-  return processRawItems('Google Search (SerpApi)', null, 'renewables', rawItems);
+  return { results, warnings };
 }
 
 function parseSearchResultDate(date?: string): string | undefined {
@@ -332,6 +365,12 @@ async function processRawItems(
       ai_summary: analysis.ai_summary,
       ai_impact_note: analysis.ai_impact_note,
       suggested_actions: analysis.suggested_actions,
+      sector: analysis.sector,
+      country_market: analysis.country_market,
+      capacity_or_funding: analysis.capacity_or_funding,
+      deadline: analysis.deadline,
+      project_or_event_name: analysis.project_or_event_name,
+      contact_info: analysis.contact_info,
       is_reviewed: false,
       is_alert_sent: analysis.relevance_level === 'high',
       captured_at: new Date().toISOString(),

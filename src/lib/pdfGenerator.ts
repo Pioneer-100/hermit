@@ -736,12 +736,8 @@ export function createDailyBriefPdfBuilder(brief: DailyBrief): PdfBuilder {
       builder.currentY += 12;
 
       builder.doc.setFont('helvetica', 'normal');
-      builder.doc.setFontSize(8.5);
-      builder.doc.setTextColor(...BRAND.slateBody);
-      const impactText = `Impact: ${pillar.impact} — Takeaway: ${pillar.takeaway}`;
-      const lines = builder.doc.splitTextToSize(impactText, builder.contentWidth);
-      builder.doc.text(lines, builder.margin, builder.currentY);
-      builder.currentY += lines.length * 12 + 8;
+      const impactText = `Article Summary: ${pillar.impact} — Commercial Impact: ${pillar.takeaway}`;
+      builder.drawParagraph(impactText, 8.5);
     });
   }
 

@@ -106,10 +106,10 @@ export default function ExecutiveDailyBrief({
   return (
     <div className="space-y-5 sm:space-y-6">
       {/* Main Executive Intelligence Document Container */}
-      <div className="bg-[#0c2242]/90 backdrop-blur-xl rounded-2xl border border-blue-500/20 shadow-2xl shadow-blue-950/40 overflow-hidden text-white">
+      <div className="flex flex-col bg-[#0c2242]/90 backdrop-blur-xl rounded-2xl border border-blue-500/20 shadow-2xl shadow-blue-950/40 overflow-hidden text-white">
         
         {/* Document Header Band */}
-        <div className="bg-gradient-to-r from-[#071932]/95 via-[#081c36]/95 to-[#071932]/95 text-white p-4 sm:p-6 border-b border-blue-500/20">
+        <div className="order-1 bg-gradient-to-r from-[#071932]/95 via-[#081c36]/95 to-[#071932]/95 text-white p-4 sm:p-6 border-b border-blue-500/20">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 pb-3.5 sm:pb-4 border-b border-blue-800/50">
             {/* Hermit Monogram & Document Title */}
             <div className="flex items-center gap-2.5 sm:gap-3">
@@ -236,7 +236,7 @@ export default function ExecutiveDailyBrief({
         </div>
 
         {/* Visual Charts & Telemetry Strip */}
-        <div className="p-4 sm:p-6 bg-[#040f09]/60 border-b border-blue-900/40 space-y-4 sm:space-y-6">
+        <div className="order-3 p-4 sm:p-6 bg-[#040f09]/60 border-b border-blue-900/40 space-y-4 sm:space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-blue-400" />
@@ -426,7 +426,7 @@ export default function ExecutiveDailyBrief({
         </div>
 
         {/* The 4 Strategic Intelligence Pillars of the Day */}
-        <div className="p-4 sm:p-6 lg:p-8 space-y-3.5 sm:space-y-4 bg-transparent">
+        <div className="order-2 p-4 sm:p-6 lg:p-8 space-y-3.5 sm:space-y-4 bg-transparent">
           <div>
             <h3 className="text-xs sm:text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-blue-400" />
@@ -437,7 +437,7 @@ export default function ExecutiveDailyBrief({
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
+          <div className="grid grid-cols-1 gap-3.5 sm:gap-4">
             {brief.strategic_pillars.map((pillar, idx) => (
               <div
                 key={idx}
@@ -459,12 +459,12 @@ export default function ExecutiveDailyBrief({
 
                   <div className="mt-2.5 sm:mt-3 space-y-2 text-xs">
                     <div className="bg-[#040d09]/70 p-2.5 rounded-xl border border-blue-500/20">
-                      <span className="font-bold text-cyan-300">Commercial Impact: </span>
-                      <span className="text-slate-200/90">{pillar.impact}</span>
+                      <span className="font-bold text-cyan-300">Article Summary: </span>
+                      <span className="text-slate-200/90 whitespace-pre-line">{pillar.impact}</span>
                     </div>
 
                     <div className="bg-[#051510]/80 p-2.5 rounded-xl border border-blue-500/20">
-                      <span className="font-bold text-cyan-300">Strategic Takeaway: </span>
+                      <span className="font-bold text-cyan-300">Commercial Impact: </span>
                       <span className="text-slate-200 font-medium">{pillar.takeaway}</span>
                     </div>
                   </div>
@@ -532,7 +532,7 @@ export default function ExecutiveDailyBrief({
         </div>
 
         {/* Immediate Executive Action Plan */}
-        <div className="p-4 sm:p-6 bg-gradient-to-br from-[#0a1d36]/90 to-[#02130c]/90 border-t border-blue-900/50 space-y-3">
+        <div className="order-4 p-4 sm:p-6 bg-gradient-to-br from-[#0a1d36]/90 to-[#02130c]/90 border-t border-blue-900/50 space-y-3">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-lg bg-blue-600 text-blue-950 font-black flex items-center justify-center">
               <CheckCircle2 className="w-4 h-4" />
@@ -594,7 +594,7 @@ export default function ExecutiveDailyBrief({
         </div>
 
         {/* Direct Transition Banner to the Full Live Feed */}
-        <div className="bg-[#051510]/80 text-cyan-200 p-4 px-4 sm:px-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-blue-500/20">
+        <div className="order-5 bg-[#051510]/80 text-cyan-200 p-4 px-4 sm:px-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-blue-500/20">
           <div className="flex items-center gap-2 text-xs">
             <Radio className="w-4 h-4 text-blue-400 animate-pulse shrink-0" />
             <span>

@@ -59,6 +59,8 @@ export interface Article {
   sector?: string | null;
   project_or_event_name?: string | null;
   capacity_or_funding?: string | null;
+  country_market?: string | null;
+  contact_info?: string | null;
   is_reviewed: boolean;
   is_alert_sent: boolean;
   captured_at: string;

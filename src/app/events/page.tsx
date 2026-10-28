@@ -16,6 +16,7 @@ import {
   BookmarkPlus
 } from 'lucide-react';
 import { Article } from '@/types';
+import { isActionableEnergyOpportunity, isFundingOpportunity } from '@/lib/events-funding-filter';
 
 export const metadata = {
   title: 'Events, Workshops & Funding Opportunities Tracker | Hermit Sustainability Advisory',
@@ -25,34 +26,9 @@ export const metadata = {
 export default async function EventsPage() {
   const articles = await fetchArticles();
 
-  // Filter for events, conferences, workshops, funding calls, RFPs, tenders
-  const eventArticles = articles.filter(a => {
-    const text = `${a.headline} ${a.summary || ''} ${a.raw_content || ''} ${a.article_type}`.toLowerCase();
-    return (
-      a.article_type === 'event' ||
-      a.article_type === 'funding_announcement' ||
-      text.includes('conference') ||
-      text.includes('workshop') ||
-      text.includes('forum') ||
-      text.includes('webinar') ||
-      text.includes('expo') ||
-      text.includes('rfp') ||
-      text.includes('eoi') ||
-      text.includes('tender') ||
-      text.includes('call for proposals') ||
-      text.includes('grant') ||
-      text.includes('facility') ||
-      Boolean(a.deadline)
-    );
-  });
+  const eventArticles = articles.filter(article => isActionableEnergyOpportunity(article));
 
-  // Split into:
-  // 1. Funding Calls & Tenders (RFPs, Grants, Facilities)
-  // 2. Industry Events & Workshops (Conferences, Summits, Webinars)
-  const fundingCalls = eventArticles.filter(a => {
-    const t = `${a.headline} ${a.summary || ''} ${a.article_type}`.toLowerCase();
-    return t.includes('funding') || t.includes('rfp') || t.includes('tender') || t.includes('call') || t.includes('grant') || t.includes('facility') || t.includes('debt');
-  });
+  const fundingCalls = eventArticles.filter(article => isFundingOpportunity(article));
 
   const upcomingEvents = eventArticles.filter(a => !fundingCalls.includes(a));
 
@@ -72,7 +48,7 @@ export default async function EventsPage() {
               Events, Workshops & Funding Opportunities Tracker
             </h1>
             <p className="text-sm text-amber-100/80 leading-relaxed">
-              Curated intelligence tracking upcoming Zimbabwean & regional power summits, active DFI grant windows, RFPs, and stakeholder workshops — calibrated so HSA management can make advance arrangements to attend, sponsor, or apply.
+              Curated, energy-related opportunities only: open funding calls, tenders, and upcoming industry events with a clear application or participation path.
             </p>
           </div>
 
@@ -245,7 +221,7 @@ function OpportunityCard({ article, type }: { article: Article; type: 'funding' 
       <div className="pt-4 mt-4 border-t border-blue-500/20 flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-1.5 text-[11px] text-blue-400/80 font-medium">
           <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" />
-          <span>Status: Verified for participation</span>
+          <span>Review eligibility and dates with the organizer</span>
         </div>
 
         {article.source_link && (

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { fetchArticles } from '@/lib/supabase';
 import { DailyBrief } from '@/types';
 import { synthesizeDailyBriefFromArticles } from '@/lib/brief-generator';
+import { generateExecutivePillarContent } from '@/lib/gemini';
 import { getOrSetCache, invalidateCache } from '@/lib/cache';
 import { checkDistributedRateLimit } from '@/lib/rate-limiter';
 import { verifyApiAuthorization } from '@/lib/api-auth';
@@ -19,10 +20,11 @@ export async function GET(req: NextRequest) {
     }
 
     // Cache the dynamic brief for 300 seconds (5 minutes)
-    const brief = await getOrSetCache<DailyBrief>('hermit_daily_brief_get_v2', 300, async () => {
+    const brief = await getOrSetCache<DailyBrief>('hermit_daily_brief_get_v3', 300, async () => {
       const allArticles = await fetchArticles();
       const recentArticles = filterArticlesForDailyWindow(allArticles);
-      return synthesizeDailyBriefFromArticles(recentArticles);
+      const baseBrief = synthesizeDailyBriefFromArticles(recentArticles);
+      return generateExecutivePillarContent(baseBrief, recentArticles);
     });
 
     return NextResponse.json({ brief });
@@ -51,7 +53,10 @@ export async function POST(req: NextRequest) {
 
     const allArticles = await fetchArticles();
     const articles = filterArticlesForDailyWindow(allArticles);
-    const baseBrief = synthesizeDailyBriefFromArticles(articles);
+    const baseBrief = await generateExecutivePillarContent(
+      synthesizeDailyBriefFromArticles(articles),
+      articles
+    );
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (apiKey && !apiKey.includes('AIzaSy_fake') && apiKey.length > 10 && articles.length > 0) {
@@ -120,7 +125,7 @@ Return ONLY valid JSON matching this exact structure:
           };
 
           // Invalidate GET cache so new brief immediately surfaces to team
-          invalidateCache('hermit_daily_brief_get_v2');
+          invalidateCache('hermit_daily_brief_get_v3');
           return NextResponse.json({ brief: dynamicBrief, regenerated: true });
         }
       } catch (geminiErr) {
@@ -128,7 +133,7 @@ Return ONLY valid JSON matching this exact structure:
       }
     }
 
-    invalidateCache('hermit_daily_brief_get_v2');
+    invalidateCache('hermit_daily_brief_get_v3');
     return NextResponse.json({ brief: baseBrief, regenerated: true });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });

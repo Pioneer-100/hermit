@@ -66,7 +66,9 @@ async function handleCrawl(req: NextRequest, isGet: boolean) {
     const providerWarnings: string[] = [];
 
     if (googleSearchOnly) {
-      results.push(await crawlGoogleEnergyUpdates());
+      const googleCrawl = await crawlGoogleEnergyUpdates();
+      results.push(...googleCrawl.results);
+      providerWarnings.push(...googleCrawl.warnings);
     } else if (sourceId) {
       const res = await crawlSource(sourceId);
       results.push(res);
@@ -95,7 +97,9 @@ async function handleCrawl(req: NextRequest, isGet: boolean) {
 
       if (process.env.SERPAPI_API_KEY) {
         try {
-          results.push(await crawlGoogleEnergyUpdates());
+          const googleCrawl = await crawlGoogleEnergyUpdates();
+          results.push(...googleCrawl.results);
+          providerWarnings.push(...googleCrawl.warnings);
         } catch (searchError) {
           logger.warn('SerpApi Google energy search failed', { error: String(searchError) });
           providerWarnings.push('Google Search updates were unavailable; check the SerpApi configuration and server logs.');

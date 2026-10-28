@@ -2,7 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
-import { TrendAnalytics } from '@/types';
+import ArticleDetailModal from '@/components/ArticleDetailModal';
+import CleanEnergyPipelineDashboard from '@/components/CleanEnergyPipelineDashboard';
+import { Article, TrendAnalytics } from '@/types';
+import { INITIAL_HERMIT_PROJECTS } from '@/lib/users-and-projects';
+import { getAuthHeaders } from '@/lib/api-client';
 import { 
   Download, 
   AlertTriangle, 
@@ -13,32 +17,86 @@ import {
   Building2, 
   TrendingUp,
   Radio,
-  FileSpreadsheet
 } from 'lucide-react';
 
 export default function TrendsPage() {
   const [analytics, setAnalytics] = useState<TrendAnalytics | null>(null);
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadTrends = async () => {
-    setIsLoading(true);
     try {
-      const res = await fetch('/api/trends');
-      if (res.ok) {
-        const data = await res.json();
-        if (data.analytics) {
-          setAnalytics(data.analytics);
-        }
+      const [trendsResponse, articlesResponse] = await Promise.all([
+        fetch('/api/trends'),
+        fetch('/api/articles')
+      ]);
+
+      if (trendsResponse.ok) {
+        const data = await trendsResponse.json();
+        if (data.analytics) setAnalytics(data.analytics);
+      }
+
+      if (articlesResponse.ok) {
+        const data = await articlesResponse.json();
+        if (Array.isArray(data.articles)) setArticles(data.articles);
       }
     } catch (err) {
-      console.warn('Failed to load dynamic trends:', err);
+      console.warn('Failed to load trends and pipeline intelligence:', err);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const refreshTrends = () => {
+    setIsLoading(true);
+    void loadTrends();
+  };
+
+  const handleSelectArticleById = (articleId: number) => {
+    const article = articles.find(item => item.id === articleId);
+    if (article) setSelectedArticle(article);
+  };
+
+  const handleReviewToggle = async (id: number, reviewed: boolean) => {
+    try {
+      const response = await fetch(`/api/articles/${id}`, {
+        method: 'PATCH',
+        headers: await getAuthHeaders(),
+        body: JSON.stringify({ is_reviewed: reviewed })
+      });
+      if (!response.ok) throw new Error(`Article review update failed with status ${response.status}`);
+
+      setArticles(previous => previous.map(article =>
+        article.id === id ? { ...article, is_reviewed: reviewed } : article
+      ));
+      setSelectedArticle(previous =>
+        previous?.id === id ? { ...previous, is_reviewed: reviewed } : previous
+      );
+    } catch (error) {
+      console.error('Failed to update article review status:', error);
+    }
+  };
+
+  const handleDispatchAlert = async (id: number) => {
+    try {
+      const response = await fetch('/api/alerts', {
+        method: 'POST',
+        headers: await getAuthHeaders(),
+        body: JSON.stringify({ articleId: id })
+      });
+      if (!response.ok) throw new Error(`Alert dispatch failed with status ${response.status}`);
+
+      setArticles(previous => previous.map(article =>
+        article.id === id ? { ...article, is_alert_sent: true } : article
+      ));
+    } catch (error) {
+      console.error('Failed to dispatch article alert:', error);
+    }
+  };
+
   useEffect(() => {
-    loadTrends();
+    void Promise.resolve().then(loadTrends);
   }, []);
 
   // Compute SVG coordinates dynamically based on timeline data points
@@ -79,11 +137,16 @@ export default function TrendsPage() {
       <Header
         title="Trend & Risk Signals"
         subtitle="Phase C — Early-Warning Indicators, Multi-Source Velocity & Market Intelligence"
-        onRefresh={loadTrends}
+        onRefresh={refreshTrends}
       />
 
       <main className="p-3.5 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-6">
-        
+        <CleanEnergyPipelineDashboard
+          projects={INITIAL_HERMIT_PROJECTS}
+          articles={articles}
+          onSelectArticleById={handleSelectArticleById}
+        />
+
         {/* Figure 4 Main Chart Container: Media Velocity & Mentions */}
         <div className="bg-[#08172c]/90 backdrop-blur-md border border-blue-500/20 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4 sm:space-y-6 text-white">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-blue-900/50 pb-3.5">
@@ -405,6 +468,13 @@ export default function TrendsPage() {
           </div>
         </div>
       </main>
+
+      <ArticleDetailModal
+        article={selectedArticle}
+        onClose={() => setSelectedArticle(null)}
+        onReviewToggle={handleReviewToggle}
+        onDispatchAlert={handleDispatchAlert}
+      />
     </div>
   );
 }
