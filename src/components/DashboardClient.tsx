@@ -7,6 +7,8 @@ import ArticleCard from '@/components/ArticleCard';
 import ArticleDetailModal from '@/components/ArticleDetailModal';
 import CrawlModal from '@/components/CrawlModal';
 import ExecutiveDailyBrief from '@/components/ExecutiveDailyBrief';
+import ExecutiveGreetingBanner from '@/components/ExecutiveGreetingBanner';
+import { useAuth } from '@/components/AuthContext';
 import { Article, DashboardStats, DailyBrief } from '@/types';
 import { getSupabaseClient } from '@/lib/supabase';
 import { 
@@ -29,6 +31,7 @@ export default function DashboardClient({
   initialStats,
   initialDailyBrief
 }: DashboardClientProps) {
+  const { currentUser } = useAuth();
   const [articles, setArticles] = useState<Article[]>(initialArticles);
   const [stats, setStats] = useState<DashboardStats>(initialStats);
   const [dailyBrief, setDailyBrief] = useState<DailyBrief>(initialDailyBrief);
@@ -175,6 +178,8 @@ export default function DashboardClient({
       />
 
       <main className="p-3.5 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-5 sm:space-y-6">
+        {/* Dynamic Catchy Greeting Banner with realistic typewriter effect */}
+        <ExecutiveGreetingBanner userName={currentUser?.full_name} />
         
         {/* Executive Mode Selector & Status Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0c2242]/90 backdrop-blur-xl p-3 sm:p-4 rounded-2xl border border-blue-400/25 shadow-lg">

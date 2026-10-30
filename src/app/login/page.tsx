@@ -24,8 +24,6 @@ export default function LoginPage() {
     signIn, 
     signUp, 
     resendConfirmationEmail,
-    loginAsDemoUser, 
-    availableUsers, 
     isSupabaseConfigured 
   } = useAuth();
 
@@ -93,10 +91,7 @@ export default function LoginPage() {
     }
   };
 
-  const handleDemoLogin = (userId: string) => {
-    loginAsDemoUser(userId);
-    router.push('/');
-  };
+
 
   return (
     <div className="min-h-screen w-full flex flex-col justify-center items-center px-3.5 py-6 sm:py-12 relative z-20">

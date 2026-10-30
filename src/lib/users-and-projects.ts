@@ -1,39 +1,6 @@
-import { UserProfile, HermitProject, ActionTask } from '@/types';
+import { UserProfile, HermitProject } from '@/types';
 
-export const INITIAL_HERMIT_USERS: UserProfile[] = [
-  {
-    id: 'u-1',
-    email: 'director@hermitinvestments.co.zw',
-    full_name: 'Farai Chigumira',
-    role: 'executive',
-    title: 'Managing Director & CIO',
-    avatar_url: ''
-  },
-  {
-    id: 'u-2',
-    email: 'legal@hermitinvestments.co.zw',
-    full_name: 'Tariro Moyo',
-    role: 'analyst',
-    title: 'Senior Regulatory & Legal Officer',
-    avatar_url: ''
-  },
-  {
-    id: 'u-3',
-    email: 'finance@hermitinvestments.co.zw',
-    full_name: 'Simba Nyathi',
-    role: 'director',
-    title: 'Head of Project Finance & PPAs',
-    avatar_url: ''
-  },
-  {
-    id: 'u-4',
-    email: 'engineering@hermitinvestments.co.zw',
-    full_name: 'Eng. Rutendo Shumba',
-    role: 'engineer',
-    title: 'Lead Grid & BESS Project Engineer',
-    avatar_url: ''
-  }
-];
+export const INITIAL_HERMIT_USERS: UserProfile[] = [];
 
 export const INITIAL_HERMIT_PROJECTS: HermitProject[] = [
   {

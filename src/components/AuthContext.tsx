@@ -2,21 +2,17 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { UserProfile, UserRole } from '@/types';
-import { INITIAL_HERMIT_USERS } from '@/lib/users-and-projects';
 import { getSupabaseClient } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
 
 interface AuthContextType {
   currentUser: UserProfile | null;
-  availableUsers: UserProfile[];
   isAuthenticated: boolean;
   isLoading: boolean;
   isSupabaseConfigured: boolean;
   signIn: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   signUp: (email: string, password: string, fullName: string, role?: UserRole, title?: string) => Promise<{ success: boolean; requiresEmailConfirmation?: boolean; error?: string }>;
   resendConfirmationEmail: (email: string) => Promise<{ success: boolean; error?: string }>;
-  loginAsDemoUser: (userId: string) => void;
-  switchUser: (userId: string) => void;
   logout: () => Promise<void>;
 }
 
@@ -103,12 +99,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const profile = await fetchOrCreateProfile(session.user);
           if (isMounted) setCurrentUser(profile);
         } else {
-          // If no Supabase session, check demo persona in localStorage
-          const savedDemoId = localStorage.getItem('hermit_demo_user_id');
-          if (savedDemoId) {
-            const found = INITIAL_HERMIT_USERS.find(u => u.id === savedDemoId);
-            if (found && isMounted) setCurrentUser(found);
-          }
+          if (isMounted) setCurrentUser(null);
         }
         if (isMounted) setIsLoading(false);
       });
@@ -120,17 +111,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const profile = await fetchOrCreateProfile(session.user);
           if (isMounted) {
             setCurrentUser(profile);
-            localStorage.removeItem('hermit_demo_user_id');
           }
         } else if (event === 'SIGNED_OUT') {
           if (isMounted) {
-            const savedDemoId = localStorage.getItem('hermit_demo_user_id');
-            if (savedDemoId) {
-              const found = INITIAL_HERMIT_USERS.find(u => u.id === savedDemoId);
-              setCurrentUser(found || null);
-            } else {
-              setCurrentUser(null);
-            }
+            setCurrentUser(null);
           }
         }
       });
@@ -140,16 +124,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         subscription.unsubscribe();
       };
     } else {
-      // Supabase is not configured (offline / local dev mode)
+      // Supabase is not configured
       setIsSupabaseConfigured(false);
-      const savedDemoId = localStorage.getItem('hermit_demo_user_id') || localStorage.getItem('hermit_current_user_id');
-      if (savedDemoId) {
-        const found = INITIAL_HERMIT_USERS.find(u => u.id === savedDemoId);
-        setCurrentUser(found || INITIAL_HERMIT_USERS[0]);
-      } else {
-        // Default to first user for seamless local experience
-        setCurrentUser(INITIAL_HERMIT_USERS[0]);
-      }
+      setCurrentUser(null);
       setIsLoading(false);
     }
   }, [fetchOrCreateProfile]);
@@ -157,14 +134,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signIn = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     const sb = getSupabaseClient();
     if (!sb) {
-      // Mock credentials check for demo
-      const found = INITIAL_HERMIT_USERS.find(u => u.email.toLowerCase() === email.toLowerCase());
-      if (found) {
-        setCurrentUser(found);
-        localStorage.setItem('hermit_demo_user_id', found.id);
-        return { success: true };
-      }
-      return { success: false, error: 'Supabase credentials not configured in .env.local. Use quick demo access or configure Supabase.' };
+      return { success: false, error: 'Authentication service not available. Supabase credentials must be configured.' };
     }
 
     try {
@@ -175,7 +145,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (data.user) {
         const profile = await fetchOrCreateProfile(data.user);
         setCurrentUser(profile);
-        localStorage.removeItem('hermit_demo_user_id');
         return { success: true };
       }
       return { success: false, error: 'Sign in failed.' };
@@ -232,7 +201,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (data.session && data.user) {
         const profile = await fetchOrCreateProfile(data.user);
         setCurrentUser(profile);
-        localStorage.removeItem('hermit_demo_user_id');
         return { success: true, requiresEmailConfirmation: false };
       }
 
@@ -273,23 +241,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const loginAsDemoUser = (userId: string) => {
-    const found = INITIAL_HERMIT_USERS.find(u => u.id === userId);
-    if (found) {
-      setCurrentUser(found);
-      localStorage.setItem('hermit_demo_user_id', found.id);
-    }
-  };
-
-  const switchUser = (userId: string) => {
-    const found = INITIAL_HERMIT_USERS.find(u => u.id === userId);
-    if (found) {
-      setCurrentUser(found);
-      localStorage.setItem('hermit_demo_user_id', found.id);
-      localStorage.setItem('hermit_current_user_id', found.id);
-    }
-  };
-
   const logout = async () => {
     const sb = getSupabaseClient();
     if (sb) {
@@ -299,8 +250,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.warn('Sign out error:', e);
       }
     }
-    localStorage.removeItem('hermit_demo_user_id');
-    localStorage.removeItem('hermit_current_user_id');
     setCurrentUser(null);
   };
 
@@ -308,15 +257,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider
       value={{
         currentUser,
-        availableUsers: INITIAL_HERMIT_USERS,
         isAuthenticated: !!currentUser,
         isLoading,
         isSupabaseConfigured,
         signIn,
         signUp,
         resendConfirmationEmail,
-        loginAsDemoUser,
-        switchUser,
         logout
       }}
     >

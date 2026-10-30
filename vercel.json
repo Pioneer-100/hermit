@@ -2,11 +2,13 @@
   "crons": [
     {
       "path": "/api/crawl",
-      "schedule": "45 8 * * *"
+      "schedule": "0 5 * * *",
+      "comment": "7:00 AM Zimbabwe time (UTC+2) — morning catch-up"
     },
     {
       "path": "/api/crawl",
-      "schedule": "45 12 * * *"
+      "schedule": "0 11 * * *",
+      "comment": "1:00 PM Zimbabwe time — midday refresh"
     }
   ]
 }
