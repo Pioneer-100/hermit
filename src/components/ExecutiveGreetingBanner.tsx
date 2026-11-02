@@ -16,7 +16,6 @@ export default function ExecutiveGreetingBanner({ userName }: ExecutiveGreetingB
   const [displayText, setDisplayText] = useState('');
   const [isTypingDone, setIsTypingDone] = useState(false);
   const [weatherHint, setWeatherHint] = useState<string>('Harare · Live Weather Syncing...');
-  const [isLoadingGreeting, setIsLoadingGreeting] = useState<boolean>(true);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Play human typewriter sequence on text change
@@ -48,14 +47,17 @@ export default function ExecutiveGreetingBanner({ userName }: ExecutiveGreetingB
     let isMounted = true;
     const nameParam = userName?.trim() || 'Melo';
 
-    // 1. Start with instant heuristic phrase so the screen is never blank
+    // 1. Queue instant heuristic greeting so the screen isn't blank
     const instantFallback = generatePersonalizedGreeting(userName);
-    playTypewriterSequence(instantFallback);
+    const initialTimer = setTimeout(() => {
+      if (isMounted) {
+        playTypewriterSequence(instantFallback);
+      }
+    }, 0);
 
     // 2. Fetch live real-time weather & AI dynamic phrasing from Gemini
     async function loadDynamicGreeting() {
       try {
-        setIsLoadingGreeting(true);
         const res = await fetch(`/api/greeting?name=${encodeURIComponent(nameParam)}`);
         if (!res.ok) throw new Error('Failed to fetch AI greeting');
         const data = await res.json();
@@ -65,7 +67,6 @@ export default function ExecutiveGreetingBanner({ userName }: ExecutiveGreetingB
             setWeatherHint(data.weather.displayString);
           }
           if (data.greeting && data.greeting.trim() !== instantFallback.trim()) {
-            // Re-type the newly tailored AI generated greeting
             playTypewriterSequence(data.greeting.trim());
           }
         }
@@ -74,8 +75,6 @@ export default function ExecutiveGreetingBanner({ userName }: ExecutiveGreetingB
         if (isMounted) {
           setWeatherHint('Harare · 23°C Partly Cloudy');
         }
-      } finally {
-        if (isMounted) setIsLoadingGreeting(false);
       }
     }
 
@@ -83,6 +82,7 @@ export default function ExecutiveGreetingBanner({ userName }: ExecutiveGreetingB
 
     return () => {
       isMounted = false;
+      clearTimeout(initialTimer);
       if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, [userName]);

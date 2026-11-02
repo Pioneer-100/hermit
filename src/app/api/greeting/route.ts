@@ -77,7 +77,7 @@ export async function GET(request: Request) {
   let weather: WeatherReport;
   try {
     weather = await fetchLiveHarareWeather();
-  } catch (err) {
+  } catch (_err) {
     // Intelligent fallback if Open-Meteo is temporarily unreachable
     const hour = new Date().getHours();
     const temp = hour >= 10 && hour <= 15 ? 28 : 22;
