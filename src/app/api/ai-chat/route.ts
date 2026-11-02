@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    let body: any;
+    let body: unknown;
     try {
       body = await req.json();
     } catch {
@@ -129,8 +129,8 @@ Provide a well-structured, objective, and executive-level answer.`;
           lastError = await res.text();
           console.warn(`Model ${model} returned status ${res.status}`);
         }
-      } catch (err: any) {
-        lastError = err?.message || String(err);
+      } catch (err: unknown) {
+        lastError = (err as Error)?.message || String(err);
         console.warn(`Model ${model} failed:`, lastError);
       }
     }
@@ -144,7 +144,7 @@ Provide a well-structured, objective, and executive-level answer.`;
     }
 
     return NextResponse.json({ answer });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('AI chat endpoint error:', error);
     return NextResponse.json(
       { answer: 'Unable to process your inquiry at this moment. Please check your connection and try again.' },

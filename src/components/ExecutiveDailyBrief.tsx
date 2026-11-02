@@ -282,12 +282,14 @@ export default function ExecutiveDailyBrief({
                     {(() => {
                       const radius = 36;
                       const circumference = 2 * Math.PI * radius; // ≈ 226.19
-                      let accumulatedPercentage = 0;
+                      // Pre-compute cumulative offsets to avoid mutation inside render
+                      const segmentOffsets = brief.sector_breakdown.map((_, idx) =>
+                        brief.sector_breakdown.slice(0, idx).reduce((sum, s) => sum + s.percentage, 0)
+                      );
 
                       return brief.sector_breakdown.map((item, idx) => {
                         const strokeDasharray = `${(item.percentage / 100) * circumference} ${circumference}`;
-                        const strokeDashoffset = -((accumulatedPercentage / 100) * circumference);
-                        accumulatedPercentage += item.percentage;
+                        const strokeDashoffset = -((segmentOffsets[idx] / 100) * circumference);
 
                         return (
                           <circle

@@ -51,7 +51,7 @@ function ConfirmContent() {
         if (tokenHash && type) {
           const { error } = await sb.auth.verifyOtp({
             token_hash: tokenHash,
-            type: type as any
+            type: type as 'signup' | 'recovery' | 'invite' | 'magiclink' | 'email' | 'email_change'
           });
           if (error) throw error;
         } else if (code) {

@@ -90,6 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const sb = getSupabaseClient();
 
     if (sb) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsSupabaseConfigured(true);
 
       // 1. Check existing Supabase session

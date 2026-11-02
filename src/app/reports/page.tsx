@@ -36,8 +36,9 @@ export default function ReportsPage() {
     }
   };
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
-    loadReports();
+    void loadReports();
   }, []);
 
   const handleGenerate = async () => {

@@ -38,8 +38,9 @@ export default function AlertsPage() {
     }
   };
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
-    loadData();
+    void loadData();
   }, []);
 
   const pendingCount = articles.filter(a => !a.is_reviewed).length;

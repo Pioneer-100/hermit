@@ -30,7 +30,7 @@ export interface Source {
   url: string;
   category: SourceCategory | string;
   source_type: 'web' | 'rss' | 'social';
-  crawl_config?: Record<string, any>;
+  crawl_config?: Record<string, unknown>;
   is_active: boolean;
   last_crawled_at: string | null;
   last_crawl_status: 'success' | 'error' | 'idle' | 'running';

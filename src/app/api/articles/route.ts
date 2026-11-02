@@ -48,9 +48,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const article = await insertArticle(parsed.data as any);
+    const article = // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await insertArticle(parsed.data as any);
     return NextResponse.json({ article, success: true }, { status: 201 });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 400 });
+  } catch (err: unknown) {
+    return NextResponse.json({ error: (err as Error).message }, { status: 400 });
   }
 }

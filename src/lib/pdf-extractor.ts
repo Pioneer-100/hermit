@@ -82,10 +82,10 @@ export async function extractPdfFromUrl(
       statutoryInstrumentNumber,
       tariffScheduleDetected
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
     logger.warn('Failed to extract PDF from URL', {
       pdfUrl,
-      error: err?.message || String(err)
+      error: (err as Error)?.message || String(err)
     });
     return {
       text: '',

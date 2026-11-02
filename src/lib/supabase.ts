@@ -45,9 +45,9 @@ export function getSupabaseAdminClient(): SupabaseClient | null {
 }
 
 // Global in-memory storage for resilient fallback / local demo mode
-let articlesStore: Article[] = [...INITIAL_ARTICLES];
-let reportsStore: Report[] = [...INITIAL_REPORTS];
-let alertsStore: AlertLog[] = [...INITIAL_ALERTS];
+const articlesStore: Article[] = [...INITIAL_ARTICLES];
+const reportsStore: Report[] = [...INITIAL_REPORTS];
+const alertsStore: AlertLog[] = [...INITIAL_ALERTS];
 
 export async function fetchArticles(filters?: {
   category?: string;

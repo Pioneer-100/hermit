@@ -2,11 +2,10 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useDrawer } from '@/components/DrawerContext';
-import { useAuth } from '@/components/AuthContext';
 import { getSupabaseClient } from '@/lib/supabase';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Sparkles, Send, X } from 'lucide-react';
+import { Send, X } from 'lucide-react';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -89,9 +88,9 @@ export default function AIChatDrawer() {
       const data = await resp.json();
       setLoading(false);
       await streamIncomingMessage(data.answer || 'No response generated.');
-    } catch (err: any) {
+    } catch (err: unknown) {
       setLoading(false);
-      const errMsg = { role: 'assistant' as const, content: err?.message || 'Sorry, I could not process your request at this moment.' };
+      const errMsg = { role: 'assistant' as const, content: (err as Error)?.message || 'Sorry, I could not process your request at this moment.' };
       setMessages(prev => [...prev, errMsg]);
     }
   };
