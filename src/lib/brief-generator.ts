@@ -1,4 +1,5 @@
 import type { Article, DailyBrief } from '@/types';
+import { prioritizeArticlesByTier, classifyGeographicTier } from './geographic-tiering';
 
 /**
  * Builds a rich, dynamic Daily Executive Briefing from actual scanned articles.
@@ -114,7 +115,11 @@ export function synthesizeDailyBriefFromArticles(articles: Article[]): DailyBrie
     return {
       title: art.headline,
       category: formatCategoryTitle(art.article_type),
-      badge: art.relevance_score ? `${Math.round(art.relevance_score * 100)}% Relevance` : 'Sector Priority',
+      badge: (() => {
+        const tier = classifyGeographicTier(art);
+        const rel = art.relevance_score ? `${Math.round(art.relevance_score > 1 ? art.relevance_score : art.relevance_score * 100)}%` : '';
+        return tier.tier === 'zimbabwe' ? `Zimbabwe Domestic ${rel}`.trim() : tier.tier === 'regional' ? `SADC Regional ${rel}`.trim() : `Continental ${rel}`.trim();
+      })(),
       impact: limitWords(art.ai_summary || art.summary || art.raw_content || art.headline, 250),
       takeaway: normalizeCommercialImpact(art.ai_impact_note || art.relevance_to_hermit || ''),
       related_article_id: art.id,

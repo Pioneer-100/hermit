@@ -6,6 +6,7 @@ import { checkRateLimit } from '@/lib/rate-limiter';
 import { getOrSetCache, invalidateCache } from '@/lib/cache';
 import { GenerateReportSchema } from '@/lib/schemas';
 import { filterArticlesForDailyWindow, getDailyWindowStart } from '@/lib/daily-article-window';
+import { prioritizeArticlesByTier, classifyGeographicTier } from '@/lib/geographic-tiering';
 
 export async function GET() {
   const reports = await getOrSetCache<Report[]>('hermit_reports_list', 120, async () => {
@@ -42,9 +43,19 @@ export async function POST(req: NextRequest) {
     const reportType = parsed.data.report_type;
     
     const allFetchedArticles = await fetchArticles();
-    const articles = reportType === 'daily' 
+    const windowedArticles = reportType === 'daily' 
       ? filterArticlesForDailyWindow(allFetchedArticles)
       : allFetchedArticles;
+
+    // Prioritize articles by geographic tier: Zimbabwe (core, highest slots) > Regional (SADC/SAPP) > Continental (Africa)
+    const tierAllocation = prioritizeArticlesByTier(windowedArticles, {
+      totalSlots: 20,
+      zimbabweRatio: 0.60,  // 60% reserved for Zimbabwe domestic
+      regionalRatio: 0.25,  // 25% reserved for Regional SADC/SAPP
+      continentalRatio: 0.15 // 15% reserved for Continental Africa
+    });
+
+    const articles = tierAllocation.prioritizedArticles.length > 0 ? tierAllocation.prioritizedArticles : windowedArticles;
     const highArticles = articles.filter(a => a.relevance_level === 'high');
 
     const reportGeneratedAt = new Date();
@@ -75,9 +86,10 @@ export async function POST(req: NextRequest) {
 
     if (apiKey && apiKey.length > 10 && articles.length > 0) {
       try {
-        const articleSummaries = articles.slice(0, 15).map(a =>
-          `- [ID: ${a.id}] [${a.source_name}] (${a.article_type}, Relevance: ${a.relevance_level}): ${a.headline} | Database Link: ${a.source_link || '#'}${a.summary ? ` — ${a.summary.slice(0, 150)}` : ''}`
-        ).join('\n');
+        const articleSummaries = articles.map(a => {
+          const tier = classifyGeographicTier(a);
+          return `- [ID: ${a.id}] [TIER: ${tier.label.toUpperCase()}] [${a.source_name}] (${a.article_type}, Relevance: ${a.relevance_level}): ${a.headline} | Database Link: ${a.source_link || '#'}${a.summary ? ` — ${a.summary.slice(0, 150)}` : ''}`;
+        }).join('\n');
 
         const periodLabel = reportType === 'daily' ? "today's or yesterday's" : reportType === 'weekly' ? "this week's" : reportType === 'monthly' ? "this month's" : "the current";
         const isWeekly = reportType === 'weekly';
@@ -89,6 +101,10 @@ export async function POST(req: NextRequest) {
         const prompt = isWeekly
           ? `You are the Lead Intelligence Analyst at Hermit Sustainability Advisory (Hermit Investments).
 You are compiling the official "Hermit Web Crawling Weekly Update" covering energy, food, water and waste to energy, including relevant funding, policy, technology and market developments.
+CRITICAL EDITORIAL GEOGRAPHIC ALLOCATION:
+1. Prioritize Zimbabwe Domestic developments first (allocate the majority of finding slots and top highlights to Zimbabwe).
+2. Follow with Regional SADC / SAPP developments (cross-border transmission, wheeling, bilateral interconnectors).
+3. Conclude with Continental / Africa-wide developments (DFI capital facilities, pan-African climate funding).
 
 Monitored Articles from the past week (${articles.length} total, ${highArticles.length} high-relevance):
 ${articleSummaries}
@@ -452,7 +468,11 @@ function buildDefaultWeeklyTemplate(articles: any[], highArticles: any[]) {
 
 
 function buildDefaultArticleSummaries(articles: any[]) {
-  return articles.slice(0, 15).map(a => {
+  const tiered = prioritizeArticlesByTier(articles, { totalSlots: 15, zimbabweRatio: 0.60, regionalRatio: 0.25, continentalRatio: 0.15 });
+  const selectedArticles = tiered.prioritizedArticles.length > 0 ? tiered.prioritizedArticles : articles.slice(0, 15);
+
+  return selectedArticles.map(a => {
+    const tier = classifyGeographicTier(a);
     const mainSummary = a.ai_summary || a.summary || a.headline;
     const impactNote = a.ai_impact_note || a.relevance_to_hermit || 'Affects local generation reliability and off-take structuring.';
     const stakeholders = Array.isArray(a.key_stakeholders) && a.key_stakeholders.length > 0 
