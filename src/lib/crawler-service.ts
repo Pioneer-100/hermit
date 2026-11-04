@@ -75,7 +75,7 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
     if (res.ok) {
       const xml = await res.text();
       const items = parseXmlFeed(xml, source.name);
-      rawItems.push(...items.slice(0, 3));
+      rawItems.push(...items.slice(0, 15));
     }
   } catch (e) {
     console.warn(`Primary feed fetch failed for ${source.name}:`, e);
@@ -95,7 +95,7 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
       if (fallbackRes.ok) {
         const xml = await fallbackRes.text();
         const items = parseXmlFeed(xml, source.name);
-        rawItems.push(...items.slice(0, 2));
+        rawItems.push(...items.slice(0, 10));
       }
     } catch (fbErr) {
       console.warn('Fallback search query failed, using offline heuristic capture:', fbErr);
@@ -112,9 +112,14 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
 
 const GOOGLE_NEWS_SEARCHES = [
   {
-    name: 'Google News — Renewables & IPPs',
+    name: 'Google News — Zimbabwe Clean Energy & Municipal Grid',
     category: 'renewables',
-    query: '(renewable energy OR solar OR hydropower OR wind OR battery OR "independent power producer" OR IPP OR IPPAZ) Africa'
+    query: '(solar OR renewable OR "clean energy" OR ZERA OR ZESA OR IPP OR Crowborough OR Kariba OR "power project" OR tariff) (Harare OR Zimbabwe)'
+  },
+  {
+    name: 'Google News — Renewables & IPPs (Regional)',
+    category: 'renewables',
+    query: '(renewable energy OR solar OR hydropower OR wind OR battery OR "independent power producer" OR IPP OR IPPAZ) (Zimbabwe OR SADC OR Africa)'
   },
   {
     name: 'Google News — Nexus & Circular Economy',
