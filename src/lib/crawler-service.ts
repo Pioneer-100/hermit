@@ -112,29 +112,28 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
 
 const GOOGLE_NEWS_SEARCHES = [
   {
-    name: 'Google News — Zimbabwe Clean Energy & Municipal Grid',
+    // Primary Core: Zimbabwe clean energy, utility IPPs, hybrid wind/solar/BESS, and mining offtakers
+    name: 'Google News — Zimbabwe Utility Solar, Hybrids & Mining Offtake',
     category: 'renewables',
-    query: '(solar OR renewable OR "clean energy" OR ZERA OR ZESA OR IPP OR Crowborough OR Kariba OR "power project" OR tariff) (Harare OR Zimbabwe)'
+    query: '(solar OR "hybrid wind" OR BESS OR "battery storage" OR ZERA OR ZESA OR IPP OR Tatanga OR GreenCo OR MMCZ OR Crowborough OR Kariba) (Zimbabwe OR Harare)'
   },
   {
-    name: 'Google News — Renewables & IPPs (Regional)',
+    // Regional SADC & Trading: SAPP merchant trade, cross-border transmission, hydro, and grid outlook
+    name: 'Google News — SADC Power Trading, Hydro & SAPP Grid',
     category: 'renewables',
-    query: '(renewable energy OR solar OR hydropower OR wind OR battery OR "independent power producer" OR IPP OR IPPAZ) (Zimbabwe OR SADC OR Africa)'
+    query: '(SAPP OR "Africa GreenCo" OR "cross-border power" OR wheeling OR "Ngonye" OR Eskom OR NTCSA OR "transmission") (Zambia OR Mozambique OR "South Africa" OR SADC)'
   },
   {
-    name: 'Google News — Nexus & Circular Economy',
+    // Climate Finance & Deal Structuring: DFI facilities, carbon credits, and decentralized solar funds
+    name: 'Google News — African Climate Finance, DFI Facilities & Carbon Credits',
+    category: 'tenders_events',
+    query: '("Africa Solar Facility" OR "Africa Energy Bank" OR "carbon credits" OR "blended finance" OR "concessional debt" OR "private capital" OR SEFA OR AfDB) (energy OR solar OR climate)'
+  },
+  {
+    // Nexus & Circular Economy: Water telemetry, irrigation, waste-to-energy, circular economy
+    name: 'Google News — Food-Water Nexus, Dam Levels & Circular Economy',
     category: 'nexus_waste',
-    query: '("circular economy" OR "waste-to-energy" OR biogas OR "anaerobic digestion" OR "e-waste" OR "electronic waste" OR "resource recovery" OR "food-water-energy nexus" OR "water-energy nexus" OR "solar irrigation") Africa'
-  },
-  {
-    name: 'Google News — Energy Events & Conferences',
-    category: 'tenders_events',
-    query: '(renewable energy OR clean energy OR solar OR hydropower OR wind power OR battery storage OR "independent power producer" OR climate) (conference OR summit OR workshop OR webinar OR expo OR exhibition OR forum) (Zimbabwe OR Zambia OR Malawi OR Mozambique OR Botswana OR Namibia OR South Africa OR SADC OR Africa OR regional OR global OR international)'
-  },
-  {
-    name: 'Google News — Clean Energy Funding & Tenders',
-    category: 'tenders_events',
-    query: '(renewable energy OR clean energy OR solar OR hydropower OR wind power OR battery storage OR climate finance) (funding OR grants OR "call for proposals" OR "call for applications" OR "request for proposals" OR RFP OR EOI OR tender OR tenders OR "funding opportunity" OR "financing opportunity") (Zimbabwe OR Zambia OR Malawi OR Mozambique OR Botswana OR Namibia OR South Africa OR SADC OR Africa OR regional OR global OR international)'
+    query: '("circular economy" OR "waste-to-energy" OR "dam levels" OR "solar irrigation" OR ZINWA OR "water-energy nexus") (Zimbabwe OR Africa)'
   }
 ] as const;
 

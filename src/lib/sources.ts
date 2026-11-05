@@ -753,7 +753,40 @@ export const MONITORED_SOURCES: SourceDefinition[] = [
     sourceType: 'rss',
     priority: 'medium',
     description: 'Public rural off-grid solar mini-grids, institutional installations, and rural electrification tenders.',
-  }
+  },
+  {
+    id: 79,
+    name: 'Moneyweb Energy & Policy Opinion',
+    url: 'https://www.moneyweb.co.za',
+    feedUrl: 'https://www.moneyweb.co.za/category/moneyweb-opinion/feed/',
+    category: 'intl_media',
+    categoryLabel: 'International Energy Media',
+    sourceType: 'rss',
+    priority: 'high',
+    description: 'In-depth South African & SADC energy risk analysis, Eskom/NTCSA transmission outlooks, and utility reform.',
+  },
+  {
+    id: 80,
+    name: 'MMCZ & Mining Energy Offtake Tracker',
+    url: 'https://www.mmcz.co.zw',
+    feedUrl: 'https://news.google.com/rss/search?q=%22MMCZ%22+OR+%22Minerals+Marketing+Corporation%22+OR+%22Chamber+of+Mines%22+Zimbabwe+energy+OR+solar+OR+credit&hl=en-ZW&gl=ZW&ceid=ZW:en',
+    category: 'government',
+    categoryLabel: 'Zimbabwe Regulatory & Ministries',
+    sourceType: 'rss',
+    priority: 'high',
+    description: 'Minerals Marketing Corporation of Zimbabwe credit facilities, mining captive solar projects, and industrial off-take.',
+  },
+  {
+    id: 81,
+    name: 'Africa GreenCo (SAPP Renewable Energy Aggregator)',
+    url: 'https://africagreenco.com',
+    feedUrl: 'https://news.google.com/rss/search?q=%22Africa+GreenCo%22+OR+%22ZimGreenCo%22+SAPP+solar+OR+wind+OR+trading+Zimbabwe&hl=en-ZW&gl=ZW&ceid=ZW:en',
+    category: 'renewables',
+    categoryLabel: 'Renewable Energy Organisations',
+    sourceType: 'rss',
+    priority: 'high',
+    description: 'Regional renewable aggregator purchasing merchant solar/wind/BESS power on SAPP and in Zimbabwe.',
+  },
 ];
 
 export const CATEGORY_LABELS: Record<string, string> = {

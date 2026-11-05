@@ -12,7 +12,10 @@ const ENERGY_STRONG_ENTITIES = [
   'batoka', 'zambezi river authority', 'zra', 'ministry of energy', 'power purchase agreement',
   'ppa', 'independent power producer', 'ipp', 'ippaz', 'wheeling', 'bess', 'net metering',
   'feed-in tariff', 'refit', 'photovoltaic', 'solar park', 'solar plant', 'mini-grid',
-  'concession', 'transmission line', 'step-up transformer', 'substation', 'inverter'
+  'concession', 'transmission line', 'step-up transformer', 'substation', 'inverter',
+  'tatanga', 'modaso', 'greenco', 'zimgreenco', 'western power company', 'ngonye', 'mmcz',
+  'africa energy bank', 'international solar alliance', 'infraco', 'pidg', 'ntcsa',
+  'bess', 'battery energy storage', 'hybrid renewable', 'captive solar', 'carbon credits'
 ];
 
 // Commercial / energy generation metric units
@@ -42,7 +45,10 @@ const ENERGY_CONTEXTUAL_TERMS = [
   'anaerobic digestion', 'food-water-energy', 'solar irrigation',
   'food-water-energy nexus', 'water-energy nexus', 'e-waste',
   'electronic waste', 'resource recovery', 'climate finance',
-  'clean energy finance', 'renewable energy funding'
+  'clean energy finance', 'renewable energy funding',
+  'battery energy storage system', 'bess', 'hybrid plant', 'wind farm', 'run-of-river',
+  'carbon credit', 'carbon credits', 'sovereign carbon', 'africa solar facility',
+  'global gateway', 'circular economy', 'mining offtake', 'off-taker guarantee', 'feed-in'
 ];
 
 // High-frequency political metaphor phrases that cause false positives
