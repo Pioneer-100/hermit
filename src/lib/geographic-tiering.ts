@@ -90,24 +90,24 @@ export function classifyGeographicTier(article: Partial<Article>): TierClassific
 
 export interface TierAllocationConfig {
   totalSlots: number;
-  zimbabweRatio?: number; // e.g. 0.60 (60% of slots)
-  regionalRatio?: number; // e.g. 0.25 (25% of slots)
-  continentalRatio?: number; // e.g. 0.15 (15% of slots)
+  zimbabweRatio?: number; // Default 0.75 (75% Zimbabwe)
+  regionalRatio?: number; // Default 0.15 (15% SADC Regional highest priority)
+  continentalRatio?: number; // Default 0.10 (10% African Continent)
 }
 
 /**
  * Prioritizes and allocates article slots for executive briefings and reports.
  * Default allocation:
- * - Zimbabwe: ~60% of slots
- * - Regional (SADC/SAPP): ~25% of slots
- * - Continental (Africa): ~15% of slots
+ * - Zimbabwe: 75% of slots (Domestic core)
+ * - Regional (SADC/SAPP): 15% of slots (Highest priority cross-border & regional trades)
+ * - Continental (Africa): 10% of slots (Multilateral / DFI pan-African)
  *
  * If a tier has fewer articles than its quota, slots automatically overflow
  * into the next highest priority tier.
  */
 export function prioritizeArticlesByTier(
   articles: Article[],
-  config: TierAllocationConfig = { totalSlots: 15, zimbabweRatio: 0.60, regionalRatio: 0.25, continentalRatio: 0.15 }
+  config: TierAllocationConfig = { totalSlots: 20, zimbabweRatio: 0.75, regionalRatio: 0.15, continentalRatio: 0.10 }
 ): {
   prioritizedArticles: Article[];
   tierCounts: { zimbabwe: number; regional: number; continental: number };
@@ -148,7 +148,7 @@ export function prioritizeArticlesByTier(
   const sortedReg = sortPool(regionalPool);
   const sortedCont = sortPool(continentalPool);
 
-  const { totalSlots, zimbabweRatio = 0.6, regionalRatio = 0.25, continentalRatio = 0.15 } = config;
+  const { totalSlots, zimbabweRatio = 0.75, regionalRatio = 0.15, continentalRatio = 0.10 } = config;
 
   let zimTarget = Math.max(1, Math.round(totalSlots * zimbabweRatio));
   let regTarget = Math.max(1, Math.round(totalSlots * regionalRatio));

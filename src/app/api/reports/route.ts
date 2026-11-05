@@ -468,7 +468,7 @@ function buildDefaultWeeklyTemplate(articles: any[], highArticles: any[]) {
 
 
 function buildDefaultArticleSummaries(articles: any[]) {
-  const tiered = prioritizeArticlesByTier(articles, { totalSlots: 15, zimbabweRatio: 0.60, regionalRatio: 0.25, continentalRatio: 0.15 });
+  const tiered = prioritizeArticlesByTier(articles, { totalSlots: 20, zimbabweRatio: 0.75, regionalRatio: 0.15, continentalRatio: 0.10 });
   const selectedArticles = tiered.prioritizedArticles.length > 0 ? tiered.prioritizedArticles : articles.slice(0, 15);
 
   return selectedArticles.map(a => {

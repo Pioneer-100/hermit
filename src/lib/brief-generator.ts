@@ -105,8 +105,16 @@ export function synthesizeDailyBriefFromArticles(articles: Article[]): DailyBrie
   else if (tariffCount > 4) market_sentiment = 'cautious';
   else market_sentiment = 'neutral';
 
-  // 4. Strategic Pillars (Top 4 critical items with takeaways)
-  const candidateArticles = [...highArticles, ...mediumArticles, ...articles].slice(0, 4);
+  // 4. Strategic Pillars (Top 4 critical items with takeaways prioritized by Geographic Tier: 75% Zimbabwe, 15% SADC, 10% Continental)
+  const tieredPillars = prioritizeArticlesByTier(articles, {
+    totalSlots: 4,
+    zimbabweRatio: 0.75, // 3 slots for Zimbabwe domestic
+    regionalRatio: 0.15, // 1 slot for highest-priority SADC regional
+    continentalRatio: 0.10 // 0-1 slot for Continental Africa
+  });
+  const candidateArticles = tieredPillars.prioritizedArticles.length > 0
+    ? tieredPillars.prioritizedArticles
+    : [...highArticles, ...mediumArticles, ...articles].slice(0, 4);
   const strategic_pillars = candidateArticles.map((art, idx) => {
     const timeFormatted = art.captured_at
       ? new Date(art.captured_at).toLocaleTimeString('en-GB', { timeZone: 'Africa/Harare', hour: '2-digit', minute: '2-digit' }) + ' CAT'
