@@ -42,7 +42,7 @@ export default function RootLayout({
             {/* Unified Full-Bleed Background: Kariba Dam Wall with Floating Solar Array */}
             <div 
               className="fixed inset-0 pointer-events-none z-0 bg-cover bg-center bg-no-repeat transition-all duration-700 opacity-95 brightness-115 contrast-105"
-              style={{ backgroundImage: "url('/kariba_dam_solar.jpg')" }}
+              style={{ backgroundImage: "url('/earth_hands_bg.jpg')" }}
             />
             {/* Lighter, translucent, sunlit emerald atmosphere */}
             <div className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-b from-slate-950/40 via-[#07152b]/55 to-[#040d1a]/70 backdrop-contrast-105" />

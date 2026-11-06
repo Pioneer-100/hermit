@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
           return `- [ID: ${a.id}] [TIER: ${tier.label.toUpperCase()}] [${a.source_name}] (${a.article_type}, Relevance: ${a.relevance_level}): ${a.headline} | Database Link: ${a.source_link || '#'}${a.summary ? ` — ${a.summary.slice(0, 150)}` : ''}`;
         }).join('\n');
 
-        const periodLabel = reportType === 'daily' ? "today's or yesterday's" : reportType === 'weekly' ? "this week's" : reportType === 'monthly' ? "this month's" : "the current";
+        const periodLabel = reportType === 'daily' ? "today's" : reportType === 'weekly' ? "this week's" : reportType === 'monthly' ? "this month's" : "the current";
         const isWeekly = reportType === 'weekly';
         const currentYear = new Date().getFullYear();
         const currentWeekNum = getWeekNumber(new Date());

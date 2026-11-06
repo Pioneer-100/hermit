@@ -7,7 +7,7 @@ const harareDateFormatter = new Intl.DateTimeFormat('en-CA', {
   day: '2-digit'
 });
 
-function getHarareDateKey(date: Date): string {
+export function getHarareDateKey(date: Date): string {
   const parts = harareDateFormatter.formatToParts(date);
   const year = parts.find(part => part.type === 'year')?.value;
   const month = parts.find(part => part.type === 'month')?.value;
@@ -20,24 +20,34 @@ function getHarareDateKey(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
+/**
+ * Filters articles strictly for the current day's crawl window (Africa/Harare time zone).
+ * 
+ * Requirements:
+ * - Only includes articles crawled on THAT SPECIFIC DAY (`captured_at` on today's date in Africa/Harare).
+ * - Excludes articles crawled yesterday or earlier.
+ * - Falls back to `processed_at` or `publication_date` only if `captured_at` is missing.
+ */
 export function filterArticlesForDailyWindow(articles: Article[], now = new Date()): Article[] {
-  const today = getHarareDateKey(now);
-  const yesterdayDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-  const yesterday = getHarareDateKey(yesterdayDate);
-  const acceptedDates = new Set([today, yesterday]);
+  const todayKey = getHarareDateKey(now);
 
   return articles.filter(article => {
-    const articleDate = article.publication_date || article.captured_at;
-    if (!articleDate) return false;
+    // Primary criteria: when the article was crawled into HERMIT
+    const crawlDate = article.captured_at || article.processed_at || article.publication_date;
+    if (!crawlDate) return false;
 
-    const parsedDate = new Date(articleDate);
+    const parsedDate = new Date(crawlDate);
     if (Number.isNaN(parsedDate.getTime())) return false;
 
-    return acceptedDates.has(getHarareDateKey(parsedDate));
+    // Strict same-day match (Africa/Harare calendar day)
+    return getHarareDateKey(parsedDate) === todayKey;
   });
 }
 
+/**
+ * Returns the exact start of today in Africa/Harare timezone (00:00:00.000).
+ */
 export function getDailyWindowStart(now = new Date()): Date {
-  const yesterdayDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-  return new Date(`${getHarareDateKey(yesterdayDate)}T00:00:00+02:00`);
+  const todayKey = getHarareDateKey(now);
+  return new Date(`${todayKey}T00:00:00+02:00`);
 }

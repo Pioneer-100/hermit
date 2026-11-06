@@ -101,7 +101,7 @@ export default function LoginPage() {
         {/* Custom Cyber Network Artwork Background */}
         <div 
           className="absolute inset-0 pointer-events-none z-0 bg-cover bg-center bg-no-repeat opacity-45 mix-blend-screen contrast-125 brightness-110"
-          style={{ backgroundImage: "url('/login_bg.jpg')" }}
+          style={{ backgroundImage: "url('/earth_hands_bg.jpg')" }}
         />
         {/* Protective deep emerald atmospheric gradient for crisp typography and input contrast */}
         <div className="absolute inset-0 pointer-events-none z-0 bg-gradient-to-b from-[#040d1a]/75 via-[#021810]/60 to-[#040d1a]/85" />

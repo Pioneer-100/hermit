@@ -17,8 +17,8 @@ export function synthesizeDailyBriefFromArticles(articles: Article[]): DailyBrie
         month: 'long',
         year: 'numeric'
       }),
-      headline: 'No new energy updates today or yesterday',
-      executive_summary: 'No monitored energy updates published today or yesterday are currently available for the executive briefing.',
+      headline: 'No new energy updates crawled today',
+      executive_summary: 'No monitored energy updates crawled today are currently available for the executive briefing.',
       market_sentiment: 'neutral',
       risk_index: 0,
       risk_label: 'No recent updates',
@@ -82,7 +82,7 @@ export function synthesizeDailyBriefFromArticles(articles: Article[]): DailyBrie
   // Executive summary synthesis
   const tariffCount = articles.filter(a => a.article_type === 'tariff_change' || a.article_type === 'new_regulation').length;
   const fundingCount = articles.filter(a => a.article_type === 'funding_announcement').length;
-  const executive_summary = `Across ${total} energy sector updates published today or yesterday, ${
+  const executive_summary = `Across ${total} energy sector updates crawled today, ${
     tariffCount > 0 ? `${tariffCount} regulatory/tariff adjustments were identified` : 'no regulatory/tariff adjustments were identified'
   }${fundingCount > 0 ? `, alongside ${fundingCount} major capital and facility developments` : ''}. ${
     topArticle?.ai_summary || topArticle?.summary || 'No additional summary is available for the leading update.'
