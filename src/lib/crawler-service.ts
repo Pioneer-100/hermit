@@ -115,7 +115,7 @@ const GOOGLE_NEWS_SEARCHES = [
     // Primary Core: Zimbabwe clean energy, utility IPPs, hybrid wind/solar/BESS, and mining offtakers
     name: 'Google News — Zimbabwe Utility Solar, Hybrids & Mining Offtake',
     category: 'renewables',
-    query: '(solar OR "hybrid wind" OR BESS OR "battery storage" OR ZERA OR ZESA OR IPP OR Tatanga OR GreenCo OR MMCZ OR Crowborough OR Kariba) (Zimbabwe OR Harare)'
+    query: '(solar OR renewable OR "clean energy" OR "hybrid wind" OR BESS OR "battery storage" OR ZERA OR ZESA OR IPP OR Tatanga OR GreenCo OR MMCZ OR Kariba) (Zimbabwe OR Harare)'
   },
   {
     // Regional SADC & Trading: SAPP merchant trade, cross-border transmission, hydro, and grid outlook
