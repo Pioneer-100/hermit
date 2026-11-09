@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "set PORT=3009 && next dev ",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
     "test": "node --test scripts/test-*.cjs"

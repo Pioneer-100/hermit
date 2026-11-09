@@ -105,12 +105,6 @@ export default function Sidebar() {
                   <span className="truncate block font-medium tracking-tight text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">{item.label}</span>
                 </div>
               </div>
-
-              {item.badge && (
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold border shrink-0 ${item.badgeColor}`}>
-                  {item.badge}
-                </span>
-              )}
             </Link>
           );
         })}
