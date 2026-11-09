@@ -24,12 +24,20 @@ import {
 import { useAuth } from '@/components/AuthContext';
 import { useDrawer } from '@/components/DrawerContext';
 
-const PRIMARY_NAV = [
+interface MobileNavItem {
+  href: string;
+  icon: any;
+  label: string;
+  badge?: string;
+}
+
+const PRIMARY_NAV: MobileNavItem[] = [
   { href: '/', icon: LayoutDashboard, label: 'Briefing' },
   { href: '/feed', icon: Radio, label: 'Feed' },
   { href: '/nexus', icon: Droplets, label: 'Nexus' },
   { href: '/events', icon: Calendar, label: 'Events' },
-  { href: '/alerts', icon: Bell, label: 'Alerts', badge: '4' },
+  // Temporarily commented out for rework:
+  // { href: '/alerts', icon: Bell, label: 'Alerts', badge: '4' },
 ];
 
 export default function MobileNav() {
@@ -42,7 +50,7 @@ export default function MobileNav() {
     return null;
   }
 
-  const isMoreActive = ['/reports', '/trends', '/sources', '/settings'].includes(pathname) || isMenuOpen;
+  const isMoreActive = ['/reports', '/sources', '/settings'].includes(pathname) || isMenuOpen;
 
   const handleOpenChat = () => {
     setIsMenuOpen(false);
@@ -128,25 +136,6 @@ export default function MobileNav() {
               </div>
               <ChevronRight className="w-4 h-4 text-blue-400/70" />
             </Link>
-            <Link
-              href="/trends"
-              prefetch={true}
-              onClick={() => setIsMenuOpen(false)}
-              className={`flex items-center justify-between p-3 rounded-xl text-xs font-semibold border transition-all ${
-                pathname === '/trends'
-                  ? 'bg-blue-600/30 text-cyan-200 border-blue-500/40'
-                  : 'bg-[#06162a]/80 text-slate-200 border-blue-900/50 hover:bg-[#072418]'
-              }`}
-            >
-              <div className="flex items-center gap-2.5">
-                <TrendingUp className="w-4 h-4 text-blue-400" />
-                <div>
-                  <div className="font-bold">Trends & Velocity Signals</div>
-                  <div className="text-[10px] text-cyan-300/70">Early-warning statistical indices</div>
-                </div>
-              </div>
-              <ChevronRight className="w-4 h-4 text-blue-400/70" />
-            </Link>
 
             {/*<Link
               href="/sources"
@@ -188,19 +177,19 @@ export default function MobileNav() {
               <ChevronRight className="w-4 h-4 text-blue-400/70" />
             </Link>*/}
 
-            {/* AI Advisor Shortcut */}
+            {/* AI Chatbot Shortcut */}
             <button
               onClick={handleOpenChat}
-              className="w-full flex items-center justify-between p-3 rounded-xl text-xs font-semibold bg-gradient-to-r from-blue-900/60 to-blue-800/60 text-slate-200 border border-blue-500/40 shadow-md active:scale-98 transition-all"
+              className="w-full flex items-center justify-between p-3 rounded-xl text-xs font-semibold bg-gradient-to-r from-blue-900/70 via-blue-800/70 to-cyan-900/60 text-slate-100 border border-cyan-500/40 shadow-lg active:scale-98 transition-all"
             >
               <div className="flex items-center gap-2.5">
                 <MessageSquare className="w-4 h-4 text-cyan-300" />
                 <div className="text-left">
                   <div className="font-bold flex items-center gap-1.5">
-                    <span>Ask Hermit AI Advisor</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+                    <span>AI Chatbot</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
                   </div>
-                  <div className="text-[10px] text-cyan-200/80">Contextual IPP & tariff queries</div>
+                  <div className="text-[10px] text-cyan-200/80">Launch AI Assistant for IPP & tariff queries</div>
                 </div>
               </div>
               <ChevronRight className="w-4 h-4 text-cyan-300" />

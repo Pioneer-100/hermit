@@ -37,7 +37,7 @@ export default function Header({
       <div className="flex items-center gap-3 min-w-0 mr-2 flex-1">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h1 className="font-display text-xs sm:text-base lg:text-lg font-black text-white tracking-tight leading-snug break-words">
+            <h1 className="font-display text-xs sm:text-xs lg:text-sm font-bold text-white tracking-tight leading-snug break-words">
               {title}
             </h1>
           </div>
@@ -50,7 +50,8 @@ export default function Header({
 
       {/* Action Controls */}
       <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-        {/* Alerts Shortcut */}
+        {/* Alerts Shortcut (temporarily commented out for rework) */}
+        {/*
         <Link
           href="/alerts"
           className="relative p-2 text-slate-300 hover:text-white hover:bg-blue-900/40 rounded-xl transition-colors border border-blue-800/40 flex items-center justify-center active:scale-95"
@@ -64,6 +65,7 @@ export default function Header({
             </span>
           )}
         </Link>
+        */}
 
         {/* Manual Refresh */}
         {onRefresh && (

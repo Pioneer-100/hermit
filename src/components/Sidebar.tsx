@@ -19,22 +19,27 @@ import {
   Zap,
   ShieldCheck,
   ChevronDown,
-  LogOut
+  LogOut,
+  Bot,
+  Sparkles
 } from 'lucide-react';
 import { useAuth } from '@/components/AuthContext';
+import { useDrawer } from '@/components/DrawerContext';
 
 const NAV_ITEMS = [
   { href: '/', label: 'Executive Briefing', icon: LayoutDashboard },
   { href: '/feed', label: 'Intelligence Feed', icon: Radio, subtext: 'Continuous stream' },
-  { href: '/nexus', label: 'Nexus & Circular Economy', icon: Droplets, subtext: 'Water-Energy-Waste', badge: 'SoW', badgeColor: 'bg-blue-600/20 text-cyan-300 border-blue-500/30' },
-  { href: '/events', label: 'Events & Funding Calls', icon: Calendar, subtext: 'RFPs, EOIs, Expos', badge: 'Active', badgeColor: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
-  { href: '/alerts', label: 'Priority Alerts', icon: Bell, badge: '4', badgeColor: 'bg-rose-500/20 text-rose-300 border-rose-500/30' },
+  { href: '/nexus', label: 'Nexus & Circular Economy', icon: Droplets, subtext: 'Water-Energy-Waste' },
+  { href: '/events', label: 'Events & Funding Calls', icon: Calendar, subtext: 'RFPs, EOIs, Expos' },
+  // Temporarily commented out for rework:
+  // { href: '/alerts', label: 'Priority Alerts', icon: Bell, badge: '4', badgeColor: 'bg-rose-500/20 text-rose-300 border-rose-500/30' },
   { href: '/reports', label: 'Executive Reports', icon: FileText, subtext: 'Daily & Weekly' },
-  { href: '/trends', label: 'Trends & Signals', icon: TrendingUp, subtext: 'Early warnings' },
+  // { href: '/trends', label: 'Trends & Signals', icon: TrendingUp, subtext: 'Early warnings' },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { isChatOpen, openChat } = useDrawer();
 
   if (pathname === '/login') {
     return null;
@@ -109,6 +114,28 @@ export default function Sidebar() {
             </Link>
           );
         })}
+
+        {/* AI Chatbot Navigation Item */}
+        <button
+          type="button"
+          onClick={openChat}
+          className={`w-full group flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-150 backdrop-blur-md ${
+            isChatOpen
+              ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold shadow-lg shadow-blue-950/80 border border-cyan-400/60'
+              : 'text-slate-100 bg-[#040d1a]/70 border border-cyan-500/25 hover:bg-[#081b38]/85 hover:text-white hover:border-cyan-400/50 shadow-sm'
+          }`}
+        >
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className={`p-1 rounded-lg transition-colors ${
+              isChatOpen ? 'bg-white/20 text-white' : 'text-cyan-300 group-hover:text-cyan-200 bg-cyan-950/60 border border-cyan-500/30'
+            }`}>
+              <Bot className="w-4 h-4" />
+            </div>
+            <div className="truncate text-left">
+              <span className="truncate block font-semibold tracking-tight text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">AI Chatbot</span>
+            </div>
+          </div>
+        </button>
       </nav>
 
       {/* User Profile */}
