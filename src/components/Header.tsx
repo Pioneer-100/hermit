@@ -34,19 +34,15 @@ export default function Header({
   return (
     <header className="bg-[#0b2144]/55 backdrop-blur-2xl border-b border-blue-400/25 px-3.5 sm:px-8 py-2.5 sm:py-3.5 flex items-center justify-between sticky top-0 z-20 shadow-md shadow-blue-950/20">
       {/* Title & Context */}
-      <div className="flex items-center gap-3 min-w-0 mr-2">
-        <div className="min-w-0">
+      <div className="flex items-center gap-3 min-w-0 mr-2 flex-1">
+        <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h1 className="font-display text-sm sm:text-lg lg:text-xl font-black text-white tracking-tight truncate">
+            <h1 className="font-display text-xs sm:text-base lg:text-lg font-black text-white tracking-tight leading-snug break-words">
               {title}
             </h1>
-            <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-600/15 text-cyan-300 border border-blue-500/30 shrink-0">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-              Live Feed
-            </span>
           </div>
 
-          <p className="text-xs sm:text-xs text-cyan-300/70 mt-0.5 truncate flex items-center gap-2">
+          <p className="text-[11px] sm:text-xs text-cyan-300/70 mt-0.5 break-words line-clamp-1 sm:line-clamp-none flex items-center gap-2">
             <span>{subtitle || `${currentDate} · 55 Clean Portals Tracked`}</span>
           </p>
         </div>

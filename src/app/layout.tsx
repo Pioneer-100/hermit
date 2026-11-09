@@ -39,14 +39,14 @@ export default function RootLayout({
         <AuthProvider>
           <AuthGuard>
             <DrawerProvider>
-            {/* Unified Full-Bleed Background: Kariba Dam Wall with Floating Solar Array */}
+            {/* Unified Full-Bleed Background: Wind Turbine Clean Energy Aesthetic */}
             <div 
-              className="fixed inset-0 pointer-events-none z-0 bg-cover bg-center bg-no-repeat transition-all duration-700 opacity-95 brightness-115 contrast-105"
-              style={{ backgroundImage: "url('/earth_hands_bg.jpg')" }}
+              className="fixed inset-0 pointer-events-none z-0 bg-cover bg-center bg-no-repeat transition-all duration-700 opacity-90 brightness-105 contrast-105"
+              style={{ backgroundImage: "url('/wind_turbine_bg.jpg')" }}
             />
-            {/* Lighter, translucent, sunlit emerald atmosphere */}
-            <div className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-b from-slate-950/40 via-[#07152b]/55 to-[#040d1a]/70 backdrop-contrast-105" />
-            <div className="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(ellipse_100%_75%_at_50%_0%,rgba(59,130,246,0.18),transparent_75%)]" />
+            {/* Soft dark tinted overlay ensuring high readability for dashboard cards and text across all tabs */}
+            <div className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-b from-[#07152b]/70 via-[#07152b]/60 to-[#040d1a]/80 backdrop-contrast-105" />
+            <div className="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(ellipse_100%_75%_at_50%_0%,rgba(59,130,246,0.15),transparent_75%)]" />
             
             {/* Left-edge vignette softened so background shines clearly through glassy sidebar */}
             <div className="hidden md:block fixed inset-y-0 left-0 w-80 pointer-events-none z-0 bg-gradient-to-r from-blue-950/15 via-transparent to-transparent" />

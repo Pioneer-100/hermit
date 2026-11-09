@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 import { 
   LayoutDashboard, 
   Radio, 
@@ -40,32 +41,39 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="w-64 bg-[#040d1a]/70 backdrop-blur-xl text-slate-200 flex flex-col shrink-0 min-h-screen border-r border-blue-500/20 shadow-2xl z-30 select-none">
+    <aside className="w-64 relative text-slate-200 flex flex-col shrink-0 min-h-screen border-r border-blue-500/25 shadow-2xl z-30 select-none overflow-hidden">
+      {/* Lightbulb Eco Background Image */}
+      <div 
+        className="absolute inset-0 pointer-events-none z-0 bg-cover bg-center bg-no-repeat opacity-75 brightness-105 contrast-105"
+        style={{ backgroundImage: "url('/navigation_bg.jpg')" }}
+      />
+      {/* Dark frosted glass atmospheric overlay ensuring all navigation items remain crisp and legible */}
+      <div className="absolute inset-0 pointer-events-none z-0 bg-gradient-to-b from-[#040d1a]/55 via-[#021326]/40 to-[#020a16]/65" />
+
       {/* Brand Header */}
-      <div className="p-5 border-b border-blue-500/20 bg-gradient-to-b from-[#0a1d36]/80 to-[#040d1a]/60 backdrop-blur-md">
-        <div className="flex items-center gap-3">
-          <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-800 p-0.5 shadow-lg shadow-blue-950/40 flex items-center justify-center">
-            <div className="w-full h-full bg-[#091f3a] rounded-[10px] flex items-center justify-center">
-              <Zap className="w-5 h-5 text-blue-400 fill-blue-400/80" />
-            </div>
-            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-blue-400 rounded-full ring-2 ring-[#051810] animate-pulse" />
+      <div className="relative z-10 p-4 border-b border-blue-500/25 bg-[#071933]/75 backdrop-blur-md">
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="relative w-11 h-11 rounded-full overflow-hidden bg-white/95 p-0.5 shadow-lg shadow-blue-950/50 shrink-0 border border-blue-300/40 group-hover:scale-105 transition-transform duration-200">
+            <Image 
+              src="/hermit_sustainability_advisory_logo.jpg" 
+              alt="Hermit Sustainability Advisory" 
+              width={44}
+              height={44}
+              className="w-full h-full object-cover rounded-full"
+              priority
+            />
           </div>
 
           <div className="min-w-0">
-            <div className="flex items-center gap-1.5">
-              <h1 className="font-display font-bold text-sm tracking-wider text-white">HERMIT</h1>
-              <span className="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider bg-blue-600/20 text-cyan-300 border border-blue-500/30">
-                PRO
-              </span>
-            </div>
-            <p className="text-xs text-blue-400/90 font-medium truncate">Energy Sector Monitor</p>
+            <h1 className="font-display font-bold text-sm tracking-wider text-white group-hover:text-cyan-300 transition-colors">HERMIT</h1>
+            <p className="text-[11px] text-blue-200 font-medium truncate">Sustainability Advisory</p>
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        <div className="px-3 pb-2 text-[10px] font-display font-bold uppercase tracking-wider text-blue-500/60">
+      <nav className="relative z-10 flex-1 px-3 py-4 space-y-1.5 overflow-y-auto">
+        <div className="px-3 pb-2 text-[10px] font-display font-bold uppercase tracking-wider text-cyan-300/80 drop-shadow-sm">
           Navigation
         </div>
 
@@ -76,20 +84,20 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`group flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-150 ${
+              className={`group flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-150 backdrop-blur-md ${
                 isActive
-                  ? 'bg-blue-600/20 text-white font-semibold shadow-inner border border-blue-400/40 backdrop-blur-sm'
-                  : 'text-slate-300 hover:bg-blue-950/40 hover:text-white hover:border hover:border-blue-500/20'
+                  ? 'bg-blue-600/95 text-white font-semibold shadow-lg shadow-blue-950/80 border border-blue-400/60'
+                  : 'text-slate-100 bg-[#040d1a]/70 border border-white/10 hover:bg-[#081b38]/85 hover:text-white hover:border-blue-400/40 shadow-sm'
               }`}
             >
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className={`p-1 rounded-lg transition-colors ${
-                  isActive ? 'bg-blue-600/20 text-cyan-300' : 'text-slate-400 group-hover:text-blue-400'
+                  isActive ? 'bg-blue-500/30 text-white' : 'text-cyan-300 group-hover:text-cyan-200 bg-blue-950/60'
                 }`}>
                   <Icon className="w-4 h-4" />
                 </div>
                 <div className="truncate">
-                  <span className="truncate block">{item.label}</span>
+                  <span className="truncate block font-medium tracking-tight text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">{item.label}</span>
                 </div>
               </div>
 
@@ -104,9 +112,9 @@ export default function Sidebar() {
       </nav>
 
       {/* User Profile */}
-      <UserProfileBar />
-
-      
+      <div className="relative z-10">
+        <UserProfileBar />
+      </div>
     </aside>
   );
 }
@@ -117,10 +125,10 @@ function UserProfileBar() {
 
   if (!currentUser) {
     return (
-      <div className="px-3 py-2 border-t border-blue-500/20">
+      <div className="px-3 py-2 border-t border-blue-500/25 bg-[#071933]/75 backdrop-blur-md">
         <Link
           href="/login"
-          className="w-full flex items-center justify-center gap-2 p-2 rounded-xl bg-blue-600 hover:bg-blue-600 text-white font-bold text-xs shadow-md transition-all"
+          className="w-full flex items-center justify-center gap-2 p-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md transition-all"
         >
           <span>Sign In to Hermit</span>
         </Link>
@@ -129,10 +137,10 @@ function UserProfileBar() {
   }
 
   return (
-    <div className="px-3 py-2 border-t border-blue-500/20 relative">
+    <div className="px-3 py-2 border-t border-blue-500/25 bg-[#071933]/75 backdrop-blur-md relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-2 rounded-xl bg-[#06162a]/70 hover:bg-[#062417]/90 border border-blue-500/25 backdrop-blur-md transition-all text-left group"
+        className="w-full flex items-center justify-between p-2 rounded-xl bg-[#06162a]/80 hover:bg-[#0c2445]/90 border border-blue-500/30 backdrop-blur-md transition-all text-left group shadow-sm"
       >
         <div className="flex items-center gap-2.5 min-w-0">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-800 text-white font-black text-xs flex items-center justify-center shrink-0 border border-blue-400/40 shadow-sm">

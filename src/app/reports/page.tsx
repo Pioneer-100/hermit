@@ -547,6 +547,204 @@ export default function ReportsPage() {
                       <span>Approved by: {selectedReport.content.structured_weekly.sign_off?.approved_by || 'Managing Director'}</span>
                     </div>
                   </div>
+                ) : selectedReport.report_type === 'daily' && selectedReport.content?.structured_daily ? (
+                  /* Hermit Sustainability Advisory Daily Template View */
+                  <div className="space-y-6 text-slate-100">
+                    {/* Header banner with brand and date */}
+                    <div className="text-center pb-4 border-b border-blue-500/20 space-y-1">
+                      <div className="font-extrabold text-sm sm:text-base tracking-wider text-white uppercase">
+                        Hermit Sustainability Advisory
+                      </div>
+                      <div className="text-xs text-cyan-300 font-medium">
+                        {selectedReport.content.structured_daily.date_formatted || `${new Date(selectedReport.generated_at).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} Updates`}
+                      </div>
+                      {selectedReport.content.structured_daily.subheading && (
+                        <div className="text-[11px] text-amber-300/90 italic pt-1">
+                          {selectedReport.content.structured_daily.subheading}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* What matters today? */}
+                    <div className="space-y-3">
+                      <h3 className="text-base sm:text-lg font-bold text-white">What matters today?</h3>
+                      <div className="space-y-4">
+                        {selectedReport.content.structured_daily.what_matters_today?.map((item, idx) => (
+                          <div key={idx} className="bg-[#0a1e38]/70 border border-blue-500/20 rounded-xl p-3.5 sm:p-4 space-y-2">
+                            <div className="font-bold text-sm text-slate-100">
+                              {item.item_number || idx + 1}. {item.headline}
+                            </div>
+                            <div className="flex flex-wrap items-center gap-2 text-xs">
+                              <span className={`font-bold ${item.priority === 'High' ? 'text-rose-400' : 'text-amber-400'}`}>
+                                {item.priority}
+                              </span>
+                              <span className="text-cyan-200/70">
+                                {item.category}. {item.region}. {item.published_date_time}
+                              </span>
+                            </div>
+                            {item.source_link && item.source_link !== '#' && (
+                              <div className="text-xs">
+                                <span className="text-slate-300">Link: </span>
+                                <a
+                                  href={item.source_link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-400 hover:text-cyan-300 underline font-medium"
+                                >
+                                  {item.headline} – {item.source_name}
+                                </a>
+                              </div>
+                            )}
+                            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                              {item.summary}
+                            </p>
+                            <div className="text-xs sm:text-sm text-teal-300/95 leading-relaxed pt-1">
+                              <span className="font-bold text-teal-400">Why it matters: </span>
+                              <span>{item.why_it_matters}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* All stories by category */}
+                    {selectedReport.content.structured_daily.categories && selectedReport.content.structured_daily.categories.length > 0 && (
+                      <div className="space-y-4 pt-2">
+                        <h3 className="text-center text-sm sm:text-base font-bold text-white uppercase tracking-wider pb-2 border-b border-blue-500/20">
+                          All stories by category
+                        </h3>
+                        {selectedReport.content.structured_daily.categories.map((cat, cIdx) => (
+                          <div key={cIdx} className="space-y-2">
+                            <h4 className="text-xs uppercase font-extrabold text-cyan-300 tracking-wider">
+                              {cat.category_name}
+                            </h4>
+                            <div className="space-y-3">
+                              {cat.stories.map((story, sIdx) => (
+                                <div key={sIdx} className="bg-[#0a1e38]/50 border border-blue-500/15 rounded-xl p-3 space-y-1.5 text-xs">
+                                  <div className="font-bold text-slate-200">
+                                    {story.item_number || sIdx + 1}. {story.headline}
+                                  </div>
+                                  <div className="flex flex-wrap items-center gap-2 text-[11px]">
+                                    <span className={`font-bold ${story.priority === 'High' ? 'text-rose-400' : 'text-amber-400'}`}>
+                                      {story.priority}
+                                    </span>
+                                    <span className="text-cyan-200/70">
+                                      {story.region}. {story.published_date_time}
+                                    </span>
+                                  </div>
+                                  {story.source_link && story.source_link !== '#' && (
+                                    <div className="text-[11px]">
+                                      <span className="text-slate-300">Link: </span>
+                                      <a
+                                        href={story.source_link}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-400 hover:text-cyan-300 underline font-medium"
+                                      >
+                                        {story.headline} – {story.source_name}
+                                      </a>
+                                    </div>
+                                  )}
+                                  <p className="text-slate-300 leading-relaxed text-[11px] sm:text-xs">
+                                    {story.detail}
+                                  </p>
+                                  {story.also_reported_by && story.also_reported_by.length > 0 && (
+                                    <div className="text-[10px] text-cyan-400/70 italic pt-0.5">
+                                      Also reported by: {story.also_reported_by.join(', ')}
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Local watch: Zimbabwe */}
+                    {selectedReport.content.structured_daily.local_watch && (
+                      <div className="space-y-2 pt-2">
+                        <h4 className="text-xs uppercase font-extrabold text-cyan-300 tracking-wider">
+                          Local watch: {selectedReport.content.structured_daily.local_watch.location || 'Zimbabwe'}
+                        </h4>
+                        <div className="space-y-3">
+                          {selectedReport.content.structured_daily.local_watch.stories?.map((story, sIdx) => (
+                            <div key={sIdx} className="bg-[#0a1e38]/50 border border-blue-500/15 rounded-xl p-3 space-y-1.5 text-xs">
+                              <div className="font-bold text-slate-200">
+                                {story.item_number || sIdx + 1}. {story.headline}
+                              </div>
+                              <div className="flex flex-wrap items-center gap-2 text-[11px]">
+                                <span className={`font-bold ${story.priority === 'High' ? 'text-rose-400' : 'text-amber-400'}`}>
+                                  {story.priority}
+                                </span>
+                                <span className="text-cyan-200/70">
+                                  {story.region}. {story.published_date_time}
+                                </span>
+                              </div>
+                              {story.source_link && story.source_link !== '#' && (
+                                <div className="text-[11px]">
+                                  <span className="text-slate-300">Link: </span>
+                                  <a
+                                    href={story.source_link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-400 hover:text-cyan-300 underline font-medium"
+                                  >
+                                    {story.headline} – {story.source_name}
+                                  </a>
+                                </div>
+                              )}
+                              <p className="text-slate-300 leading-relaxed text-[11px] sm:text-xs">
+                                {story.detail}
+                              </p>
+                              {story.also_reported_by && story.also_reported_by.length > 0 && (
+                                <div className="text-[10px] text-cyan-400/70 italic pt-0.5">
+                                  Also reported by: {story.also_reported_by.join(', ')}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        {selectedReport.content.structured_daily.local_watch.watch_notes && (
+                          <div className="text-xs text-slate-400 italic pt-1">
+                            {selectedReport.content.structured_daily.local_watch.watch_notes}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Crawl status */}
+                    {selectedReport.content.structured_daily.crawl_status && (
+                      <div className="p-3 bg-blue-950/30 rounded-xl border border-blue-500/20 text-xs text-slate-300 space-y-1">
+                        <div>
+                          <span className="font-bold text-cyan-300">Crawl status: </span>
+                          <span>
+                            {selectedReport.content.structured_daily.crawl_status.collected_count} of {selectedReport.content.structured_daily.crawl_status.total_sources} sources collected.
+                          </span>
+                          {selectedReport.content.structured_daily.crawl_status.unavailable_sources && selectedReport.content.structured_daily.crawl_status.unavailable_sources.length > 0 && (
+                            <span className="text-amber-300/80 ml-1">
+                              ({selectedReport.content.structured_daily.crawl_status.unavailable_sources.join(', ')} unavailable).
+                            </span>
+                          )}
+                        </div>
+                        {selectedReport.content.structured_daily.crawl_status.notes && (
+                          <div className="text-[11px] text-slate-400">
+                            {selectedReport.content.structured_daily.crawl_status.notes}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Disclaimer & Feedback Footer */}
+                    <div className="pt-2 border-t border-blue-500/20 text-[11px] text-slate-400 space-y-1">
+                      <div>
+                        Summaries are generated automatically from the linked articles. Open the original source before quoting or acting on an item.
+                      </div>
+                      <div className="text-cyan-300/80">
+                        Feedback: was this brief useful? Yes / No. Full archive and preferences are available on the platform.
+                      </div>
+                    </div>
+                  </div>
                 ) : (
                   /* Standard / Daily View */
                   <>

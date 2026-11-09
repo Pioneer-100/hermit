@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthContext';
 import { UserRole } from '@/types';
+import Image from 'next/image';
 import { 
   Zap, 
   Lock, 
@@ -98,10 +99,10 @@ export default function LoginPage() {
       {/* Container Box with Frosted Glass styling & Cyber-Mesh Background */}
       <div className="w-full max-w-md bg-[#040d1a]/90 backdrop-blur-2xl border border-blue-500/35 rounded-2xl shadow-2xl p-4 sm:p-8 relative overflow-hidden">
         
-        {/* Custom Cyber Network Artwork Background */}
+        {/* Custom Wind Turbine Clean Energy Background */}
         <div 
           className="absolute inset-0 pointer-events-none z-0 bg-cover bg-center bg-no-repeat opacity-45 mix-blend-screen contrast-125 brightness-110"
-          style={{ backgroundImage: "url('/earth_hands_bg.jpg')" }}
+          style={{ backgroundImage: "url('/wind_turbine_bg.jpg')" }}
         />
         {/* Protective deep emerald atmospheric gradient for crisp typography and input contrast */}
         <div className="absolute inset-0 pointer-events-none z-0 bg-gradient-to-b from-[#040d1a]/75 via-[#021810]/60 to-[#040d1a]/85" />
@@ -112,22 +113,23 @@ export default function LoginPage() {
 
         {/* Brand Header */}
         <div className="flex flex-col items-center text-center mb-5 sm:mb-6 relative z-10">
-          <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-800 p-0.5 shadow-xl shadow-blue-950/70 flex items-center justify-center mb-2.5">
-            <div className="w-full h-full bg-[#0a1d36] rounded-[14px] flex items-center justify-center">
-              <Zap className="w-6 h-6 sm:w-7 sm:h-7 text-blue-400 fill-blue-400/90" />
-            </div>
-            <span className="absolute -top-1 -right-1 w-3 h-3 bg-blue-400 rounded-full ring-2 ring-[#040d1a] animate-pulse" />
+          <div className="relative w-16 h-16 rounded-full overflow-hidden bg-white/95 p-0.5 shadow-xl shadow-blue-950/70 shrink-0 border border-blue-300/40 mb-2.5">
+            <Image 
+              src="/hermit_sustainability_advisory_logo.jpg" 
+              alt="Hermit Sustainability Advisory Logo" 
+              width={64}
+              height={64}
+              className="w-full h-full object-cover rounded-full"
+              priority
+            />
           </div>
 
-          <div className="flex items-center gap-2">
-            <h1 className="font-display text-lg sm:text-xl font-black tracking-wider text-white">HERMIT INVESTMENTS</h1>
-            <span className="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase bg-blue-600/20 text-cyan-300 border border-blue-500/30">
-              PRO
-            </span>
+          <div className="flex items-center justify-center">
+            <h1 className="font-display text-lg sm:text-xl font-black tracking-wider text-white">HERMIT SUSTAINABILITY ADVISORY</h1>
           </div>
           
           <p className="text-xs text-cyan-300/80 font-medium mt-0.5">
-            Energy Sector Surveillance & Strategic Intelligence
+            Clean Energy Surveillance & Strategic Intelligence
           </p>
 
           <div className="mt-2 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-950/60 border border-blue-500/20 text-[10px] text-cyan-300">

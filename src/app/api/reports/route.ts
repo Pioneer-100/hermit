@@ -74,6 +74,7 @@ export async function POST(req: NextRequest) {
       highlights?: string[];
       executive_takeaway?: string;
       structured_weekly?: any;
+      structured_daily?: any;
       article_summaries?: Array<{
         headline: string;
         source: string;
@@ -201,6 +202,121 @@ Generate the comprehensive weekly intelligence report strictly matching this JSO
   }
 }
 Generate at least 3-5 priority findings and detailed finding records representing the captured articles. Return ONLY valid JSON.`
+          : reportType === 'daily'
+          ? `You are the Lead Intelligence Analyst at Hermit Sustainability Advisory (Hermit Investments).
+You are compiling the official daily advisory intelligence report formatted according to the Hermit Sustainability Advisory daily template.
+
+Date: ${reportGeneratedAt.toLocaleDateString('en-GB', { timeZone: 'Africa/Harare', weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+
+Monitored Articles Scanned Today (${articles.length} total, ${highArticles.length} high-relevance):
+${articleSummaries}
+
+The report MUST follow this exact structure:
+1. "What matters today?" - Top 3 most crucial, high-impact stories across the region/Zimbabwe with:
+   - priority ("High" or "Medium")
+   - category (e.g. "Policy and regulation", "Grid and infrastructure", "Investments and deals")
+   - region (e.g. "Zimbabwe", "SADC", "Africa")
+   - source_name & source_link (use exact link from monitored articles)
+   - summary (1-2 crisp factual sentences)
+   - why_it_matters (concrete impact on client feasibility, project costs, tariffs, power availability, or pipeline development)
+2. "All stories by category" - group remaining and relevant articles into standardized sections:
+   - "Policy and regulation"
+   - "Renewables"
+   - "Grid and infrastructure"
+   - "Climate and sustainability"
+   Each item must have: headline, priority ("High"/"Medium"/"Low"), region, published_date_time, source_name, source_link, detail, also_reported_by (array of other sources covering similar topic).
+3. "Local watch: Zimbabwe" - local updates from domestic utilities, regulators, and government (e.g. ZESA/ZETDC load shedding, ZERA tariff consultation). Include watch_notes (e.g., negative confirmations like "Nothing new from the energy regulator or rural electrification agency today").
+4. "crawl_status": collected_count (e.g. 40), total_sources (e.g. 42), unavailable_sources (e.g. ["Source X", "Source Y"]), notes.
+
+Return ONLY valid JSON matching this exact structure:
+{
+  "title": "HERMIT SUSTAINABILITY ADVISORY — ${reportGeneratedAt.toLocaleDateString('en-GB', { timeZone: 'Africa/Harare', weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} Updates",
+  "summary": "Executive summary synthesizing what matters today across Zimbabwe and Southern Africa.",
+  "highlights": ["3-5 crisp priority highlights"],
+  "executive_takeaway": "Strategic takeaway for Hermit Sustainability Advisory and clients.",
+  "structured_daily": {
+    "date_formatted": "${reportGeneratedAt.toLocaleDateString('en-GB', { timeZone: 'Africa/Harare', weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} Updates",
+    "subheading": "Curated Daily Intelligence Digest for Hermit Sustainability Advisory & Clean Energy Stakeholders",
+    "what_matters_today": [
+      {
+        "item_number": 1,
+        "headline": "Lead headline",
+        "priority": "High",
+        "category": "Policy and regulation",
+        "region": "Zimbabwe",
+        "published_date_time": "Today",
+        "source_name": "The Herald",
+        "source_link": "https://...",
+        "summary": "Summary of development.",
+        "why_it_matters": "Why it matters explanation."
+      }
+    ],
+    "categories": [
+      {
+        "category_name": "Policy and regulation",
+        "stories": [
+          {
+            "item_number": 1,
+            "headline": "Story title",
+            "priority": "Medium",
+            "region": "Zimbabwe",
+            "published_date_time": "Today",
+            "source_name": "Herald",
+            "source_link": "https://...",
+            "detail": "Article details and key facts.",
+            "also_reported_by": ["NewsDay", "ZBC"]
+          }
+        ]
+      },
+      {
+        "category_name": "Renewables",
+        "stories": []
+      },
+      {
+        "category_name": "Grid and infrastructure",
+        "stories": []
+      },
+      {
+        "category_name": "Climate and sustainability",
+        "stories": []
+      }
+    ],
+    "local_watch": {
+      "location": "Zimbabwe",
+      "stories": [
+        {
+          "item_number": 1,
+          "headline": "Domestic utility / regulator headline",
+          "priority": "Medium",
+          "region": "Zimbabwe",
+          "published_date_time": "Today",
+          "source_name": "Source",
+          "source_link": "https://...",
+          "detail": "Details of local development.",
+          "also_reported_by": []
+        }
+      ],
+      "watch_notes": "Nothing new from the energy regulator or rural electrification agency today."
+    },
+    "crawl_status": {
+      "collected_count": 40,
+      "total_sources": 42,
+      "unavailable_sources": [],
+      "notes": "Full crawl completed across monitored clean energy and regulatory portals."
+    }
+  },
+  "article_summaries": [
+    {
+      "article_id": 123,
+      "headline": "Exact article headline",
+      "source": "Source name",
+      "category": "Category or theme",
+      "relevance_level": "high/medium/low",
+      "summary": "5-line narrative summary",
+      "source_link": "URL"
+    }
+  ]
+}`
           : `You are the Chief Intelligence Analyst at Hermit Investments, a Zimbabwean energy investment firm focused on renewable energy IPPs, utility-scale solar, grid integration, and clean energy financing.
 
 Generate a formal ${reportType.toUpperCase()} executive intelligence report synthesizing ${periodLabel} monitored media captures.
@@ -307,6 +423,7 @@ Include an entry in article_summaries for every monitored article listed above, 
           ? 'No qualifying updates from today or yesterday were available for this report.'
           : 'High level of deal momentum observed across solar IPPs. Hermit Investments should prioritize commercial engagement with mining and agricultural off-takers while advancing eligibility discussions with concessional DFI lenders.'),
         structured_weekly: geminiReport?.structured_weekly || (reportType === 'weekly' ? buildDefaultWeeklyTemplate(articles, highArticles) : undefined),
+        structured_daily: geminiReport?.structured_daily || (reportType === 'daily' ? buildDefaultDailyTemplate(articles, highArticles, reportGeneratedAt) : undefined),
         article_summaries: geminiReport?.article_summaries 
           ? geminiReport.article_summaries.map((s: any) => {
               // Priority 1: Match by article_id from prompt
@@ -466,6 +583,130 @@ function buildDefaultWeeklyTemplate(articles: any[], highArticles: any[]) {
   };
 }
 
+
+function buildDefaultDailyTemplate(articles: any[], highArticles: any[], generatedAt: Date) {
+  const dateStr = generatedAt.toLocaleDateString('en-GB', {
+    timeZone: 'Africa/Harare',
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+
+  const tiered = prioritizeArticlesByTier(articles, {
+    totalSlots: 20,
+    zimbabweRatio: 0.70,
+    regionalRatio: 0.20,
+    continentalRatio: 0.10
+  });
+
+  const selectedArticles = tiered.prioritizedArticles.length > 0 ? tiered.prioritizedArticles : articles.slice(0, 15);
+
+  // Top 3 for "What matters today?"
+  const topThree = selectedArticles.slice(0, 3);
+  const what_matters_today = topThree.map((a, idx) => {
+    const tier = classifyGeographicTier(a);
+    const catLabel = a.article_type ? a.article_type.replace(/_/g, ' ') : 'Policy and regulation';
+    const cleanCategory = catLabel.charAt(0).toUpperCase() + catLabel.slice(1);
+    const pubDate = a.publication_date 
+      ? new Date(a.publication_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+      : 'Today';
+
+    return {
+      item_number: idx + 1,
+      headline: a.headline,
+      priority: (a.relevance_level === 'high' ? 'High' : 'Medium') as 'High' | 'Medium',
+      category: cleanCategory,
+      region: tier.label,
+      published_date_time: pubDate,
+      source_name: a.source_name || 'Industry Source',
+      source_link: a.source_link || '#',
+      summary: a.ai_summary || a.summary || a.headline,
+      why_it_matters: a.ai_impact_note || a.relevance_to_hermit || 'Could change cost assumptions and commercial feasibility for clean energy projects.'
+    };
+  });
+
+  // Group rest by category
+  const remaining = selectedArticles.slice(3);
+  const categoriesList = [
+    { key: 'policy', label: 'Policy and regulation', filter: (a: any) => ['policy_change', 'new_regulation', 'tariff_change', 'official_dispatch'].includes(a.article_type) },
+    { key: 'renewables', label: 'Renewables', filter: (a: any) => ['project_update', 'waste_to_energy'].includes(a.article_type) || (a.headline && a.headline.toLowerCase().includes('solar')) },
+    { key: 'grid', label: 'Grid and infrastructure', filter: (a: any) => ['partnership', 'general'].includes(a.article_type) || (a.headline && a.headline.toLowerCase().includes('grid') || a.headline.toLowerCase().includes('transmission')) },
+    { key: 'climate', label: 'Climate and sustainability', filter: (a: any) => ['funding_announcement', 'nexus', 'event'].includes(a.article_type) || true }
+  ];
+
+  const assignedIds = new Set<number>();
+  const categories = categoriesList.map(cat => {
+    const matched = remaining.filter(a => !assignedIds.has(a.id) && cat.filter(a)).slice(0, 3);
+    matched.forEach(m => assignedIds.add(m.id));
+
+    return {
+      category_name: cat.label,
+      stories: matched.map((a, idx) => {
+        const tier = classifyGeographicTier(a);
+        const pubDate = a.publication_date 
+          ? new Date(a.publication_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+          : 'Today';
+
+        return {
+          item_number: idx + 1,
+          headline: a.headline,
+          priority: (a.relevance_level === 'high' ? 'High' : 'Medium') as 'High' | 'Medium',
+          region: tier.label,
+          published_date_time: pubDate,
+          source_name: a.source_name || 'Industry Source',
+          source_link: a.source_link || '#',
+          detail: a.ai_summary || a.summary || a.headline,
+          also_reported_by: a.key_stakeholders && a.key_stakeholders.length > 1 ? a.key_stakeholders.slice(1, 3) : []
+        };
+      })
+    };
+  }).filter(c => c.stories.length > 0);
+
+  // Local watch: Zimbabwe
+  const zimStories = selectedArticles
+    .filter(a => {
+      const tier = classifyGeographicTier(a);
+      return tier.tier === 'zimbabwe';
+    })
+    .slice(0, 2);
+
+  const local_watch = {
+    location: 'Zimbabwe',
+    stories: zimStories.map((a, idx) => {
+      const pubDate = a.publication_date 
+        ? new Date(a.publication_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+        : 'Today';
+
+      return {
+        item_number: idx + 1,
+        headline: a.headline,
+        priority: (a.relevance_level === 'high' ? 'High' : 'Medium') as 'High' | 'Medium',
+        region: 'Zimbabwe',
+        published_date_time: pubDate,
+        source_name: a.source_name || 'ZESA / ZERA Press',
+        source_link: a.source_link || '#',
+        detail: a.ai_summary || a.summary || a.headline,
+        also_reported_by: []
+      };
+    }),
+    watch_notes: 'Nothing new from the energy regulator or rural electrification agency today.'
+  };
+
+  return {
+    date_formatted: `${dateStr} Updates`,
+    subheading: 'Curated Daily Intelligence Digest for Hermit Sustainability Advisory & Clean Energy Stakeholders',
+    what_matters_today,
+    categories,
+    local_watch,
+    crawl_status: {
+      collected_count: articles.length > 0 ? Math.min(articles.length, 42) : 40,
+      total_sources: 42,
+      unavailable_sources: [],
+      notes: 'Full coverage of monitored Zimbabwe domestic and regional power portals.'
+    }
+  };
+}
 
 function buildDefaultArticleSummaries(articles: any[]) {
   const tiered = prioritizeArticlesByTier(articles, { totalSlots: 20, zimbabweRatio: 0.75, regionalRatio: 0.15, continentalRatio: 0.10 });

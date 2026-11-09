@@ -6,7 +6,7 @@ import {
   buildHumanTypewriterSequence,
   TypewriterAction 
 } from '@/lib/greeting-service';
-import { Sparkles, Sun } from 'lucide-react';
+import { Sun } from 'lucide-react';
 
 interface ExecutiveGreetingBannerProps {
   userName?: string | null;
@@ -14,14 +14,12 @@ interface ExecutiveGreetingBannerProps {
 
 export default function ExecutiveGreetingBanner({ userName }: ExecutiveGreetingBannerProps) {
   const [displayText, setDisplayText] = useState('');
-  const [isTypingDone, setIsTypingDone] = useState(false);
   const [weatherHint, setWeatherHint] = useState<string>('Harare · Live Weather Syncing...');
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Play human typewriter sequence on text change
   const playTypewriterSequence = (phrase: string) => {
     if (timerRef.current) clearTimeout(timerRef.current);
-    setIsTypingDone(false);
     setDisplayText('');
 
     const sequence: TypewriterAction[] = buildHumanTypewriterSequence(phrase);
@@ -29,7 +27,6 @@ export default function ExecutiveGreetingBanner({ userName }: ExecutiveGreetingB
 
     const runNextStep = () => {
       if (stepIndex >= sequence.length) {
-        setIsTypingDone(true);
         return;
       }
 
@@ -111,14 +108,6 @@ export default function ExecutiveGreetingBanner({ userName }: ExecutiveGreetingB
               {/* Pulsing blinking typewriter cursor with realistic cyan glow */}
               <span className="inline-block w-[2.5px] sm:w-[3px] h-3.5 sm:h-5 ml-1 bg-cyan-400 rounded-sm shadow-[0_0_8px_#38bdf8] animate-pulse align-middle" />
             </h2>
-          </div>
-        </div>
-
-        {/* Live intelligence indicator - Visible & responsive on both mobile and desktop */}
-        <div className="flex items-center gap-2 shrink-0 self-start md:self-center pt-1 md:pt-0 border-t border-blue-500/20 md:border-t-0 w-full md:w-auto justify-between md:justify-end">
-          <div className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg sm:rounded-xl bg-blue-950/70 border border-blue-400/25 flex items-center gap-1.5 text-[10px] sm:text-[11px] text-cyan-300 font-mono">
-            <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-cyan-400 shrink-0" />
-            <span>{isTypingDone ? 'Radar Active' : 'AI Typing...'}</span>
           </div>
         </div>
       </div>

@@ -174,6 +174,58 @@ export interface WeeklyReportStructuredContent {
   };
 }
 
+export interface DailyReportStructuredContent {
+  date_formatted?: string;
+  subheading?: string;
+  what_matters_today: Array<{
+    item_number?: number;
+    headline: string;
+    priority: 'High' | 'Medium' | 'Low' | string;
+    category: string;
+    region: string;
+    published_date_time?: string;
+    source_name: string;
+    source_link: string;
+    summary: string;
+    why_it_matters: string;
+  }>;
+  categories: Array<{
+    category_name: string;
+    stories: Array<{
+      item_number?: number;
+      headline: string;
+      priority: 'High' | 'Medium' | 'Low' | string;
+      region: string;
+      published_date_time?: string;
+      source_name: string;
+      source_link: string;
+      detail: string;
+      also_reported_by?: string[];
+    }>;
+  }>;
+  local_watch?: {
+    location: string;
+    stories: Array<{
+      item_number?: number;
+      headline: string;
+      priority: 'High' | 'Medium' | 'Low' | string;
+      region: string;
+      published_date_time?: string;
+      source_name: string;
+      source_link: string;
+      detail: string;
+      also_reported_by?: string[];
+    }>;
+    watch_notes?: string;
+  };
+  crawl_status?: {
+    collected_count: number;
+    total_sources: number;
+    unavailable_sources?: string[];
+    notes?: string;
+  };
+}
+
 export interface Report {
   id: number;
   report_type: 'daily' | 'weekly' | 'monthly' | 'special';
@@ -185,6 +237,7 @@ export interface Report {
     articles?: Article[];
     executive_takeaway?: string;
     structured_weekly?: WeeklyReportStructuredContent;
+    structured_daily?: DailyReportStructuredContent;
     article_summaries?: Array<{
       headline: string;
       source: string;
