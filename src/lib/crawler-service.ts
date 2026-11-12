@@ -110,7 +110,19 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
   return processRawItems(source.name, source.id, source.category, rawItems);
 }
 
+// Active SerpApi queries (temporarily focusing strictly on ZBC and Herald energy updates)
 const GOOGLE_NEWS_SEARCHES = [
+  {
+    name: 'Google News — ZBC Energy Updates',
+    category: 'newspapers',
+    query: 'site:zbcnews.co.zw (energy OR power OR electricity OR solar OR ZESA OR ZERA OR Kariba)'
+  },
+  {
+    name: 'Google News — Herald Zimbabwe Energy Updates',
+    category: 'newspapers',
+    query: 'site:herald.co.zw (energy OR power OR electricity OR solar OR ZESA OR ZERA OR Kariba)'
+  }
+  /* PAUSED FOR NOW:
   {
     // Primary Core: Zimbabwe clean energy, utility IPPs, hybrid wind/solar/BESS, and mining offtakers
     name: 'Google News — Zimbabwe Utility Solar, Hybrids & Mining Offtake',
@@ -135,6 +147,7 @@ const GOOGLE_NEWS_SEARCHES = [
     category: 'nexus_waste',
     query: '("circular economy" OR "waste-to-energy" OR "dam levels" OR "solar irrigation" OR ZINWA OR "water-energy nexus") (Zimbabwe OR Africa)'
   }
+  */
 ] as const;
 
 export async function crawlGoogleEnergyUpdates(): Promise<{ results: CrawlResult[]; warnings: string[] }> {
