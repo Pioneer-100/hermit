@@ -32,24 +32,27 @@ export default function Header({
   });
 
   return (
-    <header className="bg-[#0b2144]/55 backdrop-blur-2xl border-b border-blue-400/25 px-3.5 sm:px-8 py-2.5 sm:py-3.5 flex items-center justify-between sticky top-0 z-20 shadow-md shadow-blue-950/20">
-      {/* Title & Context */}
-      <div className="flex items-center gap-3 min-w-0 mr-2 flex-1">
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <h1 className="font-display text-xs sm:text-xs lg:text-sm font-bold text-white tracking-tight leading-snug break-words">
-              {title}
-            </h1>
-          </div>
-
-          <p className="text-[11px] sm:text-xs text-cyan-300/70 mt-0.5 break-words line-clamp-1 sm:line-clamp-none flex items-center gap-2">
-            <span>{subtitle || `${currentDate} · 55 Clean Portals Tracked`}</span>
+    <header className="bg-[#0b2144]/55 backdrop-blur-2xl border-b border-blue-400/25 px-3.5 sm:px-8 py-2.5 sm:py-3 flex flex-col gap-2 sticky top-0 z-20 shadow-md shadow-blue-950/20">
+      {/* Title & Context - Stretches full width across the top */}
+      <div className="w-full min-w-0">
+        <h1 className="font-display text-xs sm:text-sm lg:text-base font-bold text-white tracking-tight leading-snug break-words">
+          {title}
+        </h1>
+        {subtitle && (
+          <p className="text-[11px] sm:text-xs text-cyan-300/70 mt-0.5 break-words line-clamp-1 sm:line-clamp-none">
+            {subtitle}
           </p>
-        </div>
+        )}
       </div>
 
-      {/* Action Controls */}
-      <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+      {/* Sub-bar: Metadata on left, Action Controls on right (below the heading) */}
+      <div className="flex items-center justify-between gap-3 w-full border-t border-blue-400/15 pt-2">
+        <div className="text-[11px] sm:text-xs text-cyan-300/70 min-w-0 truncate">
+          <span>{currentDate} · 55 Clean Portals Tracked</span>
+        </div>
+
+        {/* Action Controls */}
+        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0 ml-auto">
         {/* Alerts Shortcut (temporarily commented out for rework) */}
         {/*
         <Link
@@ -119,6 +122,7 @@ export default function Header({
             </div>
           </div>
         )}
+        </div>
       </div>
     </header>
   );
