@@ -7,7 +7,8 @@
 
 // Core Zimbabwe energy entities and regulatory bodies
 const ENERGY_STRONG_ENTITIES = [
-  'zesa', 'zetdc', 'zpc', 'zera', 'sapp', 'reaz', 'southern african power pool',
+  'zesa', 'zetdc', 'zpc', 'zera', 'sapp', 'rea', 'reaz', 'rural electrification agency',
+  'rural electrification fund', 'southern african power pool',
   'kariba', 'hwange', 'munyati', 'bulawayo power station', 'harare power station',
   'batoka', 'zambezi river authority', 'zra', 'ministry of energy', 'power purchase agreement',
   'ppa', 'independent power producer', 'ipp', 'ippaz', 'wheeling', 'bess', 'net metering',
@@ -15,7 +16,7 @@ const ENERGY_STRONG_ENTITIES = [
   'concession', 'transmission line', 'step-up transformer', 'substation', 'inverter',
   'tatanga', 'modaso', 'greenco', 'zimgreenco', 'western power company', 'ngonye', 'mmcz',
   'africa energy bank', 'international solar alliance', 'infraco', 'pidg', 'ntcsa',
-  'bess', 'battery energy storage', 'hybrid renewable', 'captive solar', 'carbon credits'
+  'battery energy storage', 'hybrid renewable', 'captive solar', 'carbon credits'
 ];
 
 // Commercial / energy generation metric units

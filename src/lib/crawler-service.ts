@@ -110,44 +110,26 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
   return processRawItems(source.name, source.id, source.category, rawItems);
 }
 
-// Active SerpApi queries (temporarily focusing strictly on ZBC and Herald energy updates)
+// Active SerpApi queries prioritizing Zimbabwe national press, green energy, and utility grid developments
 const GOOGLE_NEWS_SEARCHES = [
   {
-    name: 'Google News — Herald Zimbabwe Energy Updates',
+    // National press & major broadcasters covering official utility, tariff, and ministry announcements
+    name: 'Google News — Zimbabwe National Press Energy',
     category: 'newspapers',
-    query: 'Herald Zimbabwe (energy OR power OR electricity OR solar OR ZESA OR ZERA OR Kariba)'
+    query: '(site:herald.co.zw OR site:zbcnews.co.zw OR site:chronicle.co.zw OR site:newsday.co.zw OR site:theindependent.co.zw) (energy OR solar OR ZESA OR ZERA OR Kariba OR loadshedding OR "power cuts" OR electricity OR REA OR "power generation")'
   },
   {
-    name: 'Google News — ZBC Energy Updates',
-    category: 'newspapers',
-    query: 'ZBC Zimbabwe (energy OR power OR electricity OR solar OR ZESA OR ZERA OR Kariba)'
-  }
-  /* PAUSED FOR NOW:
-  {
-    // Primary Core: Zimbabwe clean energy, utility IPPs, hybrid wind/solar/BESS, and mining offtakers
-    name: 'Google News — Zimbabwe Utility Solar, Hybrids & Mining Offtake',
+    // Green energy, IPPs, mini-grids, captive commercial/mining solar, and BESS
+    name: 'Google News — Zimbabwe Green Energy, Solar & IPPs',
     category: 'renewables',
-    query: '(solar OR renewable OR "clean energy" OR "hybrid wind" OR BESS OR "battery storage" OR ZERA OR ZESA OR IPP OR Tatanga OR GreenCo OR MMCZ OR Kariba) (Zimbabwe OR Harare)'
+    query: 'Zimbabwe ("renewable energy" OR "solar energy" OR "solar farm" OR "mini-grid" OR "clean energy" OR "independent power producer" OR IPP OR "net metering" OR "ZERA license" OR BESS OR "battery storage" OR "green energy")'
   },
   {
-    // Regional SADC & Trading: SAPP merchant trade, cross-border transmission, hydro, and grid outlook
-    name: 'Google News — SADC Power Trading, Hydro & SAPP Grid',
+    // Hydro, dam levels, transmission infrastructure, and regional power trade affecting Zimbabwe
+    name: 'Google News — Zimbabwe Hydro, Dam Levels & Grid Stability',
     category: 'renewables',
-    query: '(SAPP OR "Africa GreenCo" OR "cross-border power" OR wheeling OR "Ngonye" OR Eskom OR NTCSA OR "transmission") (Zambia OR Mozambique OR "South Africa" OR SADC)'
-  },
-  {
-    // Climate Finance & Deal Structuring: DFI facilities, carbon credits, and decentralized solar funds
-    name: 'Google News — African Climate Finance, DFI Facilities & Carbon Credits',
-    category: 'tenders_events',
-    query: '("Africa Solar Facility" OR "Africa Energy Bank" OR "carbon credits" OR "blended finance" OR "concessional debt" OR "private capital" OR SEFA OR AfDB) (energy OR solar OR climate)'
-  },
-  {
-    // Nexus & Circular Economy: Water telemetry, irrigation, waste-to-energy, circular economy
-    name: 'Google News — Food-Water Nexus, Dam Levels & Circular Economy',
-    category: 'nexus_waste',
-    query: '("circular economy" OR "waste-to-energy" OR "dam levels" OR "solar irrigation" OR ZINWA OR "water-energy nexus") (Zimbabwe OR Africa)'
+    query: 'Zimbabwe (Kariba OR "Zambezi River Authority" OR ZRA OR "Hwange Unit" OR "power generation" OR "grid stability" OR SAPP OR "ZETDC" OR "rural electrification")'
   }
-  */
 ] as const;
 
 export async function crawlGoogleEnergyUpdates(): Promise<{ results: CrawlResult[]; warnings: string[] }> {
@@ -167,7 +149,7 @@ export async function crawlGoogleEnergyUpdates(): Promise<{ results: CrawlResult
         tbm: 'nws',
         hl: 'en',
         gl: 'zw',
-        num: '10',
+        num: '20',
         tbs: 'qdr:d',
         api_key: apiKey
       });
@@ -212,13 +194,14 @@ export async function crawlGoogleEnergyUpdates(): Promise<{ results: CrawlResult
           pubDate: parseSearchResultDate(result.date),
           author: result.source || 'Google News'
         }];
-      }).slice(0, 5);
+      });
 
       logger.info('SerpApi Google News search completed', {
         search: search.name,
         resultCount: rawItems.length
       });
-      results.push(await processRawItems(search.name, null, search.category, rawItems));
+      // Process items through disambiguation and deduplication, limiting max per-search insertions to 10
+      results.push(await processRawItems(search.name, null, search.category, rawItems, 10));
     } catch (error) {
       const message = `${search.name} failed: ${error instanceof Error ? error.message : String(error)}`;
       logger.warn('SerpApi Google News search failed', { search: search.name, error: message });
@@ -260,7 +243,8 @@ async function processRawItems(
   sourceName: string,
   sourceId: number | null,
   category: string,
-  rawItems: Array<{ headline: string; link: string; summary: string; pubDate?: string; author?: string }>
+  rawItems: Array<{ headline: string; link: string; summary: string; pubDate?: string; author?: string }>,
+  maxProcessed: number = 10
 ): Promise<CrawlResult> {
   // Fetch recent articles once to perform semantic deduplication before LLM analysis
   let recentArticles: Article[] = [];
@@ -413,6 +397,10 @@ async function processRawItems(
 
       // Dispatch email (sends via Resend or logs locally in dev)
       await sendEmailAlert(savedArticle);
+    }
+
+    if (processedArticles.length >= maxProcessed) {
+      break;
     }
   }
 
