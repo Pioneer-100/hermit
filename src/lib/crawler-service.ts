@@ -113,14 +113,14 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
 // Active SerpApi queries (temporarily focusing strictly on ZBC and Herald energy updates)
 const GOOGLE_NEWS_SEARCHES = [
   {
-    name: 'Google News — ZBC Energy Updates',
-    category: 'newspapers',
-    query: 'site:zbcnews.co.zw (energy OR power OR electricity OR solar OR ZESA OR ZERA OR Kariba)'
-  },
-  {
     name: 'Google News — Herald Zimbabwe Energy Updates',
     category: 'newspapers',
-    query: 'site:herald.co.zw (energy OR power OR electricity OR solar OR ZESA OR ZERA OR Kariba)'
+    query: 'Herald Zimbabwe (energy OR power OR electricity OR solar OR ZESA OR ZERA OR Kariba)'
+  },
+  {
+    name: 'Google News — ZBC Energy Updates',
+    category: 'newspapers',
+    query: 'ZBC Zimbabwe (energy OR power OR electricity OR solar OR ZESA OR ZERA OR Kariba)'
   }
   /* PAUSED FOR NOW:
   {
@@ -166,6 +166,7 @@ export async function crawlGoogleEnergyUpdates(): Promise<{ results: CrawlResult
         q: search.query,
         tbm: 'nws',
         hl: 'en',
+        gl: 'zw',
         num: '10',
         tbs: 'qdr:d',
         api_key: apiKey
