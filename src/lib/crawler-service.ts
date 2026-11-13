@@ -111,11 +111,25 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
 }
 
 // Active SerpApi queries prioritizing Zimbabwe national press, green energy, and utility grid developments
-const GOOGLE_NEWS_SEARCHES = [
+//
+// NOTE on engine choice:
+//   - engine:'google' + tbm:'nws'  → Google News tab; does NOT support site: operator (causes HTTP 400)
+//   - engine:'google' (no tbm)     → Standard web search; supports site: operator fine
+//   - engine:'google_news'         → Dedicated Google News engine; different JSON schema (stories[])
+//
+// The national-press query uses site: operators so it must use the standard web engine (no tbm).
+// The other two are keyword-only and use tbm:'nws' for dedicated news results.
+const GOOGLE_NEWS_SEARCHES: Array<{
+  name: string;
+  category: string;
+  query: string;
+  useSiteSearch?: boolean; // when true: standard web search (supports site:), skips tbm:'nws'
+}> = [
   {
-    // National press & major broadcasters covering official utility, tariff, and ministry announcements
-    name: 'Google News — Zimbabwe National Press Energy',
+    // National press & major broadcasters — uses site: operators, must NOT use tbm:'nws'
+    name: 'Google Search — Zimbabwe National Press Energy',
     category: 'newspapers',
+    useSiteSearch: true,
     query: '(site:herald.co.zw OR site:zbcnews.co.zw OR site:chronicle.co.zw OR site:newsday.co.zw OR site:theindependent.co.zw) (energy OR solar OR ZESA OR ZERA OR Kariba OR loadshedding OR "power cuts" OR electricity OR REA OR "power generation")'
   },
   {
@@ -130,7 +144,7 @@ const GOOGLE_NEWS_SEARCHES = [
     category: 'renewables',
     query: 'Zimbabwe (Kariba OR "Zambezi River Authority" OR ZRA OR "Hwange Unit" OR "power generation" OR "grid stability" OR SAPP OR "ZETDC" OR "rural electrification")'
   }
-] as const;
+];
 
 export async function crawlGoogleEnergyUpdates(): Promise<{ results: CrawlResult[]; warnings: string[] }> {
   const apiKey = process.env.SERPAPI_API_KEY;
@@ -143,16 +157,21 @@ export async function crawlGoogleEnergyUpdates(): Promise<{ results: CrawlResult
 
   for (const search of GOOGLE_NEWS_SEARCHES) {
     try {
-      const params = new URLSearchParams({
+      // site: operator queries must use the standard web engine (no tbm:'nws')
+      // keyword-only queries use tbm:'nws' to stay in the Google News tab
+      const baseParams: Record<string, string> = {
         engine: 'google',
         q: search.query,
-        tbm: 'nws',
         hl: 'en',
         gl: 'zw',
         num: '20',
         tbs: 'qdr:d',
         api_key: apiKey
-      });
+      };
+      if (!search.useSiteSearch) {
+        baseParams.tbm = 'nws';
+      }
+      const params = new URLSearchParams(baseParams);
       const response = await fetch(`https://serpapi.com/search.json?${params}`, {
         signal: AbortSignal.timeout(15000)
       });
@@ -170,13 +189,31 @@ export async function crawlGoogleEnergyUpdates(): Promise<{ results: CrawlResult
           date?: string;
           source?: string;
         }>;
+        organic_results?: Array<{
+          title?: string;
+          link?: string;
+          snippet?: string;
+          date?: string;
+          displayed_link?: string;
+        }>;
       };
 
       if (data.error && !data.error.includes("hasn't returned any results")) {
         throw new Error(`SerpApi search failed: ${data.error}`);
       }
 
-      const rawItems = (data.news_results || []).flatMap(result => {
+      // Standard web search (useSiteSearch) returns organic_results[]; Google News returns news_results[]
+      const rawResults = search.useSiteSearch
+        ? (data.organic_results || []).map(r => ({
+            title: r.title,
+            link: r.link,
+            snippet: r.snippet,
+            date: r.date,
+            source: r.displayed_link
+          }))
+        : (data.news_results || []);
+
+      const rawItems = rawResults.flatMap(result => {
         if (!result.title || !result.link || !result.snippet) return [];
 
         let resultUrl: URL;
