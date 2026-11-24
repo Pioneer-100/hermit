@@ -228,6 +228,47 @@ function buildEmailHtml(brief: DailyBrief, dateFormatted: string): string {
           </table>
         </td></tr>
 
+        <!-- Power Generation & Water Resources (ZPC · ZRA · ZINWA) -->
+        ${brief.hydrology_and_generation ? `
+        <tr><td style="padding:12px 32px 16px;">
+          <p style="margin:0 0 10px;font-size:11px;color:#64748B;text-transform:uppercase;letter-spacing:1px;">⚡ Power Generation & Water Resources (ZPC · ZRA · ZINWA)</p>
+          <div style="background:#F8FAFC;border:1px solid #BAE6FD;border-radius:8px;padding:16px 20px;">
+            <!-- ZPC Generation -->
+            <div style="margin-bottom:12px;">
+              <strong style="color:#0F234B;font-size:13px;">Zimbabwe Power Company (ZPC) — Daily Generation Stats</strong>
+              <div style="margin-top:4px;font-size:12px;color:#334155;">
+                Total National Output: <strong style="color:#0EA5E9;">${brief.hydrology_and_generation.zpc_generation?.total_output_mw} MW</strong> 
+                (Peak Demand: ~${brief.hydrology_and_generation.zpc_generation?.national_grid_demand_mw} MW | Deficit: ${brief.hydrology_and_generation.zpc_generation?.deficit_or_surplus_mw} MW)
+              </div>
+              <div style="font-size:11px;color:#64748B;margin-top:2px;">
+                ${brief.hydrology_and_generation.zpc_generation?.summary}
+              </div>
+            </div>
+            <!-- ZRA Hydrology -->
+            <div style="margin-bottom:12px;padding-top:10px;border-top:1px dashed #CBD5E1;">
+              <strong style="color:#0F234B;font-size:13px;">Zambezi River Authority (ZRA) — Kariba Water Levels & Flows</strong>
+              <div style="margin-top:4px;font-size:12px;color:#334155;">
+                Lake Level: <strong style="color:#0EA5E9;">${brief.hydrology_and_generation.zra_hydrology?.kariba_dam_level_masl}</strong> 
+                (Live Usable Storage: ${brief.hydrology_and_generation.zra_hydrology?.live_storage_usable_pct} | Trend: ${brief.hydrology_and_generation.zra_hydrology?.lake_level_trend})
+              </div>
+              <div style="font-size:11px;color:#64748B;margin-top:2px;">
+                Vic Falls Flow: ${brief.hydrology_and_generation.zra_hydrology?.zambezi_river_flows?.victoria_falls_flow_m3s} • Kariba Inflow: ${brief.hydrology_and_generation.zra_hydrology?.zambezi_river_flows?.kariba_inflow_m3s}
+              </div>
+            </div>
+            <!-- ZINWA Catchment -->
+            <div style="padding-top:10px;border-top:1px dashed #CBD5E1;">
+              <strong style="color:#0F234B;font-size:13px;">ZINWA — National Dam Levels & River Catchment Report</strong>
+              <div style="margin-top:4px;font-size:12px;color:#334155;">
+                National Dam Storage: <strong style="color:#0D9488;">${brief.hydrology_and_generation.zinwa_reports?.national_dam_storage_pct}</strong> average across major river basins.
+              </div>
+              <div style="font-size:11px;color:#64748B;margin-top:2px;">
+                ${brief.hydrology_and_generation.zinwa_reports?.summary}
+              </div>
+            </div>
+          </div>
+        </td></tr>
+        ` : ''}
+
         <!-- Actions -->
         <tr><td style="padding:20px 32px 24px;">
           <p style="margin:0 0 12px;font-size:11px;color:#64748B;text-transform:uppercase;letter-spacing:1px;">Recommended Actions</p>

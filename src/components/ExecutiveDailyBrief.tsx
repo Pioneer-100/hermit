@@ -18,7 +18,9 @@ import {
   Users, 
   Check,
   Download,
-  Loader2
+  Loader2,
+  Activity,
+  Droplets
 } from 'lucide-react';
 import { generateDailyBriefPdf } from '@/lib/pdfGenerator';
 
@@ -532,6 +534,125 @@ export default function ExecutiveDailyBrief({
             ))}
           </div>
         </div>
+
+        {/* Power Generation & Water Resources (ZPC · ZRA · ZINWA) */}
+        {brief.hydrology_and_generation && (
+          <div className="order-3 p-4 sm:p-6 lg:p-8 space-y-3.5 sm:space-y-4 bg-transparent border-t border-blue-900/40">
+            <div>
+              <h3 className="text-xs sm:text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
+                <Activity className="w-4 h-4 text-blue-400" />
+                Power Generation & Water Resources (ZPC · ZRA · ZINWA)
+              </h3>
+              <p className="text-[11px] sm:text-xs text-cyan-200/75 mt-0.5">
+                Surveillance of daily generation dispatches, Kariba lake levels & river catchment inflows
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-3.5 sm:gap-4">
+              {/* Card 1: ZPC Generation */}
+              {brief.hydrology_and_generation.zpc_generation && (
+                <div className="bg-[#0c2242]/90 backdrop-blur-xl rounded-2xl p-4 sm:p-5 border border-blue-500/20 shadow-md flex flex-col justify-between space-y-3">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                        <Zap className="w-3.5 h-3.5 text-amber-400" />
+                        ZPC Daily Generation
+                      </span>
+                      <span className="text-[10px] font-bold text-cyan-300 bg-blue-950/80 px-2 py-0.5 rounded border border-blue-500/30">
+                        {brief.hydrology_and_generation.zpc_generation.total_output_mw} MW
+                      </span>
+                    </div>
+
+                    <div className="space-y-1.5 pt-1">
+                      {brief.hydrology_and_generation.zpc_generation.stations.map((st, sIdx) => (
+                        <div key={sIdx} className="flex items-center justify-between p-1.5 px-2 rounded-xl bg-[#040d09]/70 border border-blue-500/15 text-xs">
+                          <span className="text-[11px] text-slate-200 font-medium truncate">{st.station}</span>
+                          <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
+                            st.status === 'normal' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'
+                          }`}>
+                            {st.output_mw} MW
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-blue-900/40 text-[10.5px] text-cyan-300/80">
+                    Deficit: <strong className="text-rose-400">{brief.hydrology_and_generation.zpc_generation.deficit_or_surplus_mw} MW</strong> vs ~{brief.hydrology_and_generation.zpc_generation.national_grid_demand_mw} MW peak.
+                  </div>
+                </div>
+              )}
+
+              {/* Card 2: ZRA Hydrology */}
+              {brief.hydrology_and_generation.zra_hydrology && (
+                <div className="bg-[#0c2242]/90 backdrop-blur-xl rounded-2xl p-4 sm:p-5 border border-blue-500/20 shadow-md flex flex-col justify-between space-y-3">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                        <Droplets className="w-3.5 h-3.5 text-cyan-400" />
+                        ZRA Kariba Water Levels
+                      </span>
+                      <span className="text-[10px] font-bold text-cyan-300 bg-blue-950/80 px-2 py-0.5 rounded border border-blue-500/30">
+                        {brief.hydrology_and_generation.zra_hydrology.kariba_dam_level_masl}
+                      </span>
+                    </div>
+
+                    <div className="p-2.5 rounded-xl bg-[#040d09]/70 border border-blue-500/15 text-xs space-y-1.5">
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="text-slate-300">Live Usable Storage:</span>
+                        <span className="font-bold text-amber-300 font-mono">{brief.hydrology_and_generation.zra_hydrology.live_storage_usable_pct}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="text-slate-300">Level Trend:</span>
+                        <span className="font-bold text-cyan-300 capitalize">{brief.hydrology_and_generation.zra_hydrology.lake_level_trend}</span>
+                      </div>
+                      {brief.hydrology_and_generation.zra_hydrology.zambezi_river_flows && (
+                        <div className="pt-1 border-t border-blue-900/40 text-[10px] text-cyan-200/80 grid grid-cols-2 gap-1">
+                          <span>Vic Falls: <strong>{brief.hydrology_and_generation.zra_hydrology.zambezi_river_flows.victoria_falls_flow_m3s}</strong></span>
+                          <span>Inflow: <strong>{brief.hydrology_and_generation.zra_hydrology.zambezi_river_flows.kariba_inflow_m3s}</strong></span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-blue-900/40 text-[10.5px] text-cyan-300/80 leading-snug">
+                    {brief.hydrology_and_generation.zra_hydrology.allocation_status}
+                  </div>
+                </div>
+              )}
+
+              {/* Card 3: ZINWA Catchment & Dam Reports */}
+              {brief.hydrology_and_generation.zinwa_reports && (
+                <div className="bg-[#0c2242]/90 backdrop-blur-xl rounded-2xl p-4 sm:p-5 border border-blue-500/20 shadow-md flex flex-col justify-between space-y-3">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                        <Droplets className="w-3.5 h-3.5 text-teal-400" />
+                        ZINWA Catchment Flows
+                      </span>
+                      <span className="text-[10px] font-bold text-teal-300 bg-teal-950/80 px-2 py-0.5 rounded border border-teal-500/30">
+                        Avg: {brief.hydrology_and_generation.zinwa_reports.national_dam_storage_pct}
+                      </span>
+                    </div>
+
+                    <div className="space-y-1.5 pt-1">
+                      {brief.hydrology_and_generation.zinwa_reports.catchments?.slice(0, 4).map((c, cIdx) => (
+                        <div key={cIdx} className="flex items-center justify-between p-1.5 px-2 rounded-xl bg-[#040d09]/70 border border-blue-500/15 text-xs">
+                          <span className="text-[11px] text-slate-200 font-medium">{c.name}</span>
+                          <span className="text-[10px] font-mono text-cyan-300 font-bold">{c.storage_pct}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-blue-900/40 text-[10.5px] text-slate-300 italic leading-snug">
+                    {brief.hydrology_and_generation.zinwa_reports.summary}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Immediate Executive Action Plan */}
         <div className="order-4 p-4 sm:p-6 bg-gradient-to-br from-[#0a1d36]/90 to-[#02130c]/90 border-t border-blue-900/50 space-y-3">

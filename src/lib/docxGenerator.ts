@@ -319,6 +319,77 @@ export async function generateDailyBriefDocxBuffer(brief: DailyBrief): Promise<B
     spacer(80),
   ];
 
+  // ── Power Generation & Hydrology (ZPC, ZRA, ZINWA) ────────────────────────
+  const hydro = brief.hydrology_and_generation;
+  const hydrologySection: Paragraph[] = hydro ? [
+    sectionHeading('Power Generation & Water Resources (ZPC · ZRA · ZINWA)'),
+    // ZPC Power Generation Stats
+    new Paragraph({
+      children: [
+        new TextRun({ text: '1. Zimbabwe Power Company (ZPC) — Daily Generation Stats', bold: true, color: NAVY, size: 22, font: 'Calibri' }),
+      ],
+      spacing: { before: 120, after: 60 },
+    }),
+    ...(hydro.zpc_generation ? [
+      labelValue('Total National Output', `${hydro.zpc_generation.total_output_mw} MW (Peak Demand: ~${hydro.zpc_generation.national_grid_demand_mw} MW | Deficit: ${hydro.zpc_generation.deficit_or_surplus_mw} MW)`, CYAN),
+      ...hydro.zpc_generation.stations.map(st => 
+        bullet(`${st.station}: ${st.output_mw} MW (Status: ${st.status.toUpperCase()}) — ${st.notes || ''}`)
+      ),
+      new Paragraph({
+        children: [
+          new TextRun({ text: 'ZPC Dispatch Status: ', bold: true, color: SLATE, size: 20, font: 'Calibri' }),
+          new TextRun({ text: hydro.zpc_generation.summary, color: SLATE, size: 20, font: 'Calibri' })
+        ],
+        indent: { left: 240 },
+        spacing: { after: 100 }
+      })
+    ] : []),
+    // ZRA Zambezi River Authority Water Levels
+    new Paragraph({
+      children: [
+        new TextRun({ text: '2. Zambezi River Authority (ZRA) — Kariba Water Levels & River Flows', bold: true, color: NAVY, size: 22, font: 'Calibri' }),
+      ],
+      spacing: { before: 120, after: 60 },
+    }),
+    ...(hydro.zra_hydrology ? [
+      labelValue('Kariba Lake Level', `${hydro.zra_hydrology.kariba_dam_level_masl} (Live Usable Storage: ${hydro.zra_hydrology.live_storage_usable_pct} | Trend: ${hydro.zra_hydrology.lake_level_trend})`, CYAN),
+      ...(hydro.zra_hydrology.zambezi_river_flows ? [
+        bullet(`Zambezi River Gauges: Victoria Falls Flow: ${hydro.zra_hydrology.zambezi_river_flows.victoria_falls_flow_m3s} • Chavuma Flow: ${hydro.zra_hydrology.zambezi_river_flows.chavuma_flow_m3s}`),
+        bullet(`Kariba Hydro Balance: Inflow: ${hydro.zra_hydrology.zambezi_river_flows.kariba_inflow_m3s} • Turbined Outflow: ${hydro.zra_hydrology.zambezi_river_flows.kariba_outflow_m3s}`),
+      ] : []),
+      new Paragraph({
+        children: [
+          new TextRun({ text: 'ZRA Hydrological Directive: ', bold: true, color: SLATE, size: 20, font: 'Calibri' }),
+          new TextRun({ text: `${hydro.zra_hydrology.allocation_status} ${hydro.zra_hydrology.summary}`, color: SLATE, size: 20, font: 'Calibri' })
+        ],
+        indent: { left: 240 },
+        spacing: { after: 100 }
+      })
+    ] : []),
+    // ZINWA National River & Dam Reports
+    new Paragraph({
+      children: [
+        new TextRun({ text: '3. ZINWA National Hydrological & Catchment River Flow Reports', bold: true, color: NAVY, size: 22, font: 'Calibri' }),
+      ],
+      spacing: { before: 120, after: 60 },
+    }),
+    ...(hydro.zinwa_reports ? [
+      labelValue('National Dam Storage Average', `${hydro.zinwa_reports.national_dam_storage_pct}`, CYAN),
+      ...(hydro.zinwa_reports.catchments ? [
+        bullet(`Catchment River Flows & Storage: ${hydro.zinwa_reports.catchments.slice(0, 4).map(c => `${c.name}: ${c.storage_pct} (${c.river_flow_condition})`).join(' • ')}`)
+      ] : []),
+      new Paragraph({
+        children: [
+          new TextRun({ text: 'ZINWA Catchment Assessment: ', bold: true, color: SLATE, size: 20, font: 'Calibri' }),
+          new TextRun({ text: `${hydro.zinwa_reports.irrigation_and_hydro_bulletin || ''} ${hydro.zinwa_reports.summary}`, color: SLATE, size: 20, font: 'Calibri' })
+        ],
+        indent: { left: 240 },
+        spacing: { after: 100 }
+      })
+    ] : []),
+    spacer(80),
+  ] : [];
+
   // ── Footer note ───────────────────────────────────────────────────────────
   const footerSection: Paragraph[] = [
     hr(),
@@ -385,6 +456,7 @@ export async function generateDailyBriefDocxBuffer(brief: DailyBrief): Promise<B
           ...indicatorsSection,
           ...sectorSection,
           ...pillarsSection,
+          ...hydrologySection,
           ...stakeholderSection,
           ...actionsSection,
           ...footerSection,

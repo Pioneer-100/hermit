@@ -7,6 +7,7 @@ import { getOrSetCache, invalidateCache } from '@/lib/cache';
 import { GenerateReportSchema } from '@/lib/schemas';
 import { filterArticlesForDailyWindow, getDailyWindowStart } from '@/lib/daily-article-window';
 import { prioritizeArticlesByTier, classifyGeographicTier } from '@/lib/geographic-tiering';
+import { synthesizeHydrologyAndGenerationSnapshot } from '@/lib/brief-generator';
 
 export async function GET() {
   const reports = await getOrSetCache<Report[]>('hermit_reports_list', 120, async () => {
@@ -226,7 +227,11 @@ The report MUST follow this exact structure:
    - "Climate and sustainability"
    Each item must have: headline, priority ("High"/"Medium"/"Low"), region, published_date_time, source_name, source_link, detail, also_reported_by (array of other sources covering similar topic).
 3. "Local watch: Zimbabwe" - local updates from domestic utilities, regulators, and government (e.g. ZESA/ZETDC load shedding, ZERA tariff consultation). Include watch_notes (e.g., negative confirmations like "Nothing new from the energy regulator or rural electrification agency today").
-4. "crawl_status": collected_count (e.g. 40), total_sources (e.g. 42), unavailable_sources (e.g. ["Source X", "Source Y"]), notes.
+4. "Power Generation & Water Resources" - check and incorporate updates from:
+   - Zimbabwe Power Company (ZPC) daily power generation statistics (Hwange, Kariba, Thermals, IPPs, total MW output vs national demand).
+   - Zambezi River Authority (ZRA) Kariba water levels, live usable storage %, lake level trend, and Zambezi river flows (Chavuma, Victoria Falls, Kariba inflows/outflows).
+   - ZINWA national hydrological reports (dam levels, catchment river flows, and water permits).
+5. "crawl_status": collected_count (e.g. 40), total_sources (e.g. 42), unavailable_sources (e.g. ["Source X", "Source Y"]), notes.
 
 Return ONLY valid JSON matching this exact structure:
 {
@@ -303,6 +308,43 @@ Return ONLY valid JSON matching this exact structure:
       "total_sources": 42,
       "unavailable_sources": [],
       "notes": "Full crawl completed across monitored clean energy and regulatory portals."
+    },
+    "hydrology_and_generation": {
+      "zpc_generation": {
+        "stations": [
+          { "station": "Hwange Thermal (Units 1-8)", "output_mw": 920, "status": "normal", "notes": "Units 7 & 8 base-load" },
+          { "station": "Kariba South Hydro", "output_mw": 250, "status": "constrained", "notes": "Water quota rationing" },
+          { "station": "Small Thermals", "output_mw": 35, "status": "constrained", "notes": "Peaking" },
+          { "station": "Grid-Tied IPPs", "output_mw": 135, "status": "normal", "notes": "Daytime solar contribution" }
+        ],
+        "total_output_mw": 1340,
+        "national_grid_demand_mw": 1850,
+        "deficit_or_surplus_mw": -510,
+        "summary": "Summary of ZPC daily power generation dispatch."
+      },
+      "zra_hydrology": {
+        "kariba_dam_level_masl": "476.42 masl",
+        "live_storage_usable_pct": "9.2%",
+        "lake_level_trend": "stable",
+        "zambezi_river_flows": {
+          "chavuma_flow_m3s": "125 m³/s",
+          "victoria_falls_flow_m3s": "310 m³/s",
+          "kariba_inflow_m3s": "340 m³/s",
+          "kariba_outflow_m3s": "260 m³/s"
+        },
+        "allocation_status": "ZRA hydrological water quota enforced.",
+        "summary": "Summary of ZRA Kariba water levels and Zambezi river flows."
+      },
+      "zinwa_reports": {
+        "national_dam_storage_pct": "56.4%",
+        "catchments": [
+          { "name": "Manyame Catchment", "storage_pct": "64.2%", "river_flow_condition": "moderate" },
+          { "name": "Mazowe Catchment", "storage_pct": "58.1%", "river_flow_condition": "moderate" },
+          { "name": "Save Catchment", "storage_pct": "53.7%", "river_flow_condition": "moderate" }
+        ],
+        "irrigation_and_hydro_bulletin": "Irrigation and run-of-river hydro permits monitored.",
+        "summary": "Summary of ZINWA catchment river flows and dam storage levels."
+      }
     }
   },
   "article_summaries": [
@@ -423,7 +465,14 @@ Include an entry in article_summaries for every monitored article listed above, 
           ? 'No qualifying updates from today or yesterday were available for this report.'
           : 'High level of deal momentum observed across solar IPPs. Hermit Investments should prioritize commercial engagement with mining and agricultural off-takers while advancing eligibility discussions with concessional DFI lenders.'),
         structured_weekly: geminiReport?.structured_weekly || (reportType === 'weekly' ? buildDefaultWeeklyTemplate(articles, highArticles) : undefined),
-        structured_daily: geminiReport?.structured_daily || (reportType === 'daily' ? buildDefaultDailyTemplate(articles, highArticles, reportGeneratedAt) : undefined),
+        structured_daily: (() => {
+          if (reportType !== 'daily') return undefined;
+          const daily = geminiReport?.structured_daily || buildDefaultDailyTemplate(articles, highArticles, reportGeneratedAt);
+          if (daily && !daily.hydrology_and_generation) {
+            daily.hydrology_and_generation = synthesizeHydrologyAndGenerationSnapshot(articles);
+          }
+          return daily;
+        })(),
         article_summaries: geminiReport?.article_summaries 
           ? geminiReport.article_summaries.map((s: any) => {
               // Priority 1: Match by article_id from prompt
@@ -704,7 +753,8 @@ function buildDefaultDailyTemplate(articles: any[], highArticles: any[], generat
       total_sources: 42,
       unavailable_sources: [],
       notes: 'Full coverage of monitored Zimbabwe domestic and regional power portals.'
-    }
+    },
+    hydrology_and_generation: synthesizeHydrologyAndGenerationSnapshot(articles)
   };
 }
 

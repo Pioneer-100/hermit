@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import { Report } from '@/types';
 import { sortReportArticleSummaries } from '@/lib/report-utils';
-import { FileText, Plus, CheckCircle, Calendar, Sparkles, Zap, Printer, BookOpen, Archive, Download, Loader2, ExternalLink, Clock } from 'lucide-react';
+import { FileText, Plus, CheckCircle, Calendar, Sparkles, Zap, Printer, BookOpen, Archive, Download, Loader2, ExternalLink, Clock, Activity, Droplets } from 'lucide-react';
 import { generateReportPdf } from '@/lib/pdfGenerator';
 import { INITIAL_REPORTS } from '@/lib/mock-data';
 import { getSupabaseClient } from '@/lib/supabase';
@@ -708,6 +708,127 @@ export default function ReportsPage() {
                         {selectedReport.content.structured_daily.local_watch.watch_notes && (
                           <div className="text-xs text-slate-400 italic pt-1">
                             {selectedReport.content.structured_daily.local_watch.watch_notes}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Power Generation & Water Resources (ZPC · ZRA · ZINWA) */}
+                    {selectedReport.content.structured_daily.hydrology_and_generation && (
+                      <div className="space-y-3 pt-2">
+                        <div className="flex items-center justify-between pb-1 border-b border-blue-500/20">
+                          <h4 className="text-xs uppercase font-extrabold text-cyan-300 tracking-wider flex items-center gap-1.5">
+                            <Activity className="w-3.5 h-3.5 text-blue-400" />
+                            Power Generation & Water Resources (ZPC · ZRA · ZINWA)
+                          </h4>
+                          <span className="text-[10px] text-blue-400 font-mono">Daily Operational Surveillance</span>
+                        </div>
+
+                        {/* ZPC Daily Stats */}
+                        {selectedReport.content.structured_daily.hydrology_and_generation.zpc_generation && (
+                          <div className="bg-[#0a1e38]/70 border border-blue-500/20 rounded-xl p-3.5 space-y-2 text-xs">
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <span className="font-bold text-white flex items-center gap-1.5">
+                                <Zap className="w-3.5 h-3.5 text-amber-400" />
+                                Zimbabwe Power Company (ZPC) — Daily Generation
+                              </span>
+                              <div className="flex items-center gap-2">
+                                <span className="text-[11px] bg-blue-950/80 px-2 py-0.5 rounded border border-blue-500/30 text-cyan-300 font-mono font-bold">
+                                  Output: {selectedReport.content.structured_daily.hydrology_and_generation.zpc_generation.total_output_mw} MW
+                                </span>
+                                <span className="text-[11px] bg-rose-950/50 px-2 py-0.5 rounded border border-rose-500/30 text-rose-300 font-mono font-bold">
+                                  Deficit: {selectedReport.content.structured_daily.hydrology_and_generation.zpc_generation.deficit_or_surplus_mw} MW
+                                </span>
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                              {selectedReport.content.structured_daily.hydrology_and_generation.zpc_generation.stations.map((st, sIdx) => (
+                                <div key={sIdx} className="bg-[#061527]/80 p-2.5 rounded-lg border border-blue-500/15 flex flex-col justify-between">
+                                  <div className="flex items-center justify-between text-[11px]">
+                                    <span className="font-semibold text-slate-200">{st.station}</span>
+                                    <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${
+                                      st.status === 'normal' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'
+                                    }`}>
+                                      {st.output_mw} MW
+                                    </span>
+                                  </div>
+                                  {st.notes && <p className="text-[10px] text-slate-400 mt-1 leading-snug">{st.notes}</p>}
+                                </div>
+                              ))}
+                            </div>
+                            <p className="text-[11px] text-slate-300 italic pt-1">
+                              {selectedReport.content.structured_daily.hydrology_and_generation.zpc_generation.summary}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* ZRA Kariba & Zambezi Hydrology */}
+                        {selectedReport.content.structured_daily.hydrology_and_generation.zra_hydrology && (
+                          <div className="bg-[#0a1e38]/70 border border-blue-500/20 rounded-xl p-3.5 space-y-2 text-xs">
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <span className="font-bold text-white flex items-center gap-1.5">
+                                <Droplets className="w-3.5 h-3.5 text-cyan-400" />
+                                Zambezi River Authority (ZRA) — Water Levels & River Flows
+                              </span>
+                              <div className="flex items-center gap-2">
+                                <span className="text-[11px] bg-blue-950/80 px-2 py-0.5 rounded border border-blue-500/30 text-cyan-300 font-mono font-bold">
+                                  Lake Level: {selectedReport.content.structured_daily.hydrology_and_generation.zra_hydrology.kariba_dam_level_masl}
+                                </span>
+                                <span className="text-[11px] bg-amber-950/50 px-2 py-0.5 rounded border border-amber-500/30 text-amber-300 font-mono font-bold">
+                                  Usable Storage: {selectedReport.content.structured_daily.hydrology_and_generation.zra_hydrology.live_storage_usable_pct}
+                                </span>
+                              </div>
+                            </div>
+                            {selectedReport.content.structured_daily.hydrology_and_generation.zra_hydrology.zambezi_river_flows && (
+                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-[10px] pt-1">
+                                <div className="bg-[#061527]/80 p-2 rounded-lg border border-blue-500/15">
+                                  <div className="text-slate-400">Victoria Falls</div>
+                                  <div className="font-mono font-bold text-cyan-300 mt-0.5">{selectedReport.content.structured_daily.hydrology_and_generation.zra_hydrology.zambezi_river_flows.victoria_falls_flow_m3s}</div>
+                                </div>
+                                <div className="bg-[#061527]/80 p-2 rounded-lg border border-blue-500/15">
+                                  <div className="text-slate-400">Chavuma Gauge</div>
+                                  <div className="font-mono font-bold text-cyan-300 mt-0.5">{selectedReport.content.structured_daily.hydrology_and_generation.zra_hydrology.zambezi_river_flows.chavuma_flow_m3s}</div>
+                                </div>
+                                <div className="bg-[#061527]/80 p-2 rounded-lg border border-blue-500/15">
+                                  <div className="text-slate-400">Kariba Inflow</div>
+                                  <div className="font-mono font-bold text-cyan-300 mt-0.5">{selectedReport.content.structured_daily.hydrology_and_generation.zra_hydrology.zambezi_river_flows.kariba_inflow_m3s}</div>
+                                </div>
+                                <div className="bg-[#061527]/80 p-2 rounded-lg border border-blue-500/15">
+                                  <div className="text-slate-400">Turbined Outflow</div>
+                                  <div className="font-mono font-bold text-cyan-300 mt-0.5">{selectedReport.content.structured_daily.hydrology_and_generation.zra_hydrology.zambezi_river_flows.kariba_outflow_m3s}</div>
+                                </div>
+                              </div>
+                            )}
+                            <p className="text-[11px] text-slate-300 italic pt-1">
+                              {selectedReport.content.structured_daily.hydrology_and_generation.zra_hydrology.summary}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* ZINWA National Dam & River Reports */}
+                        {selectedReport.content.structured_daily.hydrology_and_generation.zinwa_reports && (
+                          <div className="bg-[#0a1e38]/70 border border-blue-500/20 rounded-xl p-3.5 space-y-2 text-xs">
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <span className="font-bold text-white flex items-center gap-1.5">
+                                <Droplets className="w-3.5 h-3.5 text-teal-400" />
+                                ZINWA — National Catchment River Flows & Dam Storage
+                              </span>
+                              <span className="text-[11px] bg-teal-950/80 px-2 py-0.5 rounded border border-teal-500/30 text-teal-300 font-mono font-bold">
+                                National Avg: {selectedReport.content.structured_daily.hydrology_and_generation.zinwa_reports.national_dam_storage_pct}
+                              </span>
+                            </div>
+                            {selectedReport.content.structured_daily.hydrology_and_generation.zinwa_reports.catchments && (
+                              <div className="flex flex-wrap gap-1.5 pt-1">
+                                {selectedReport.content.structured_daily.hydrology_and_generation.zinwa_reports.catchments.map((c, cIdx) => (
+                                  <span key={cIdx} className="bg-[#061527]/80 border border-blue-500/15 px-2 py-1 rounded text-[10px] text-slate-300">
+                                    <strong className="text-cyan-300">{c.name}:</strong> {c.storage_pct} ({c.river_flow_condition})
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                            <p className="text-[11px] text-slate-300 italic pt-1">
+                              {selectedReport.content.structured_daily.hydrology_and_generation.zinwa_reports.summary}
+                            </p>
                           </div>
                         )}
                       </div>

@@ -111,38 +111,48 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
 }
 
 // Active SerpApi queries prioritizing Zimbabwe national press, green energy, and utility grid developments
-//
-// NOTE on engine choice:
-//   - engine:'google' + tbm:'nws'  → Google News tab; does NOT support site: operator (causes HTTP 400)
-//   - engine:'google' (no tbm)     → Standard web search; supports site: operator fine
-//   - engine:'google_news'         → Dedicated Google News engine; different JSON schema (stories[])
-//
-// The national-press query uses site: operators so it must use the standard web engine (no tbm).
-// The other two are keyword-only and use tbm:'nws' for dedicated news results.
+// All queries run through Google News (tbm: 'nws') using robust publisher entity naming rather than
+// fragile chained site: operators (which Google often rejects or yields 0 matches for).
 const GOOGLE_NEWS_SEARCHES: Array<{
   name: string;
   category: string;
   query: string;
-  useSiteSearch?: boolean; // when true: standard web search (supports site:), skips tbm:'nws'
 }> = [
   {
-    // National press & major broadcasters — uses site: operators, must NOT use tbm:'nws'
-    name: 'Google Search — Zimbabwe National Press Energy',
+    // National press & major broadcasters covering official utility, tariff, and ministry announcements
+    name: 'Google News — Zimbabwe National Press Energy',
     category: 'newspapers',
-    useSiteSearch: true,
-    query: '(site:herald.co.zw OR site:zbcnews.co.zw OR site:chronicle.co.zw OR site:newsday.co.zw OR site:theindependent.co.zw) (energy OR solar OR ZESA OR ZERA OR Kariba OR loadshedding OR "power cuts" OR electricity OR REA OR "power generation")'
+    query: '("The Herald" OR "Herald Zimbabwe" OR "ZBC" OR "The Chronicle" OR "NewsDay") Zimbabwe (energy OR solar OR ZESA OR ZERA OR Kariba OR loadshedding OR electricity OR REA OR "power generation")'
   },
   {
     // Green energy, IPPs, mini-grids, captive commercial/mining solar, and BESS
     name: 'Google News — Zimbabwe Green Energy, Solar & IPPs',
     category: 'renewables',
-    query: 'Zimbabwe ("renewable energy" OR "solar energy" OR "solar farm" OR "mini-grid" OR "clean energy" OR "independent power producer" OR IPP OR "net metering" OR "ZERA license" OR BESS OR "battery storage" OR "green energy")'
+    query: 'Zimbabwe ("renewable energy" OR "solar energy" OR "solar farm" OR "solar plant" OR "captive power" OR "rooftop solar" OR "mini-grid" OR "clean energy" OR "independent power producer" OR IPP OR "net metering" OR "ZERA license" OR BESS OR "battery storage" OR "green energy")'
   },
   {
     // Hydro, dam levels, transmission infrastructure, and regional power trade affecting Zimbabwe
     name: 'Google News — Zimbabwe Hydro, Dam Levels & Grid Stability',
     category: 'renewables',
-    query: 'Zimbabwe (Kariba OR "Zambezi River Authority" OR ZRA OR "Hwange Unit" OR "power generation" OR "grid stability" OR SAPP OR "ZETDC" OR "rural electrification")'
+    query: 'Zimbabwe (Kariba OR "Zambezi River Authority" OR ZRA OR "Hwange" OR "power generation" OR "grid stability" OR SAPP OR "ZETDC" OR "rural electrification")'
+  },
+  {
+    // ZPC daily national power generation statistics — Kariba hydro, Hwange thermal, total MW output
+    name: 'Google News — ZPC Daily Power Generation Stats',
+    category: 'regulators',
+    query: '("Zimbabwe Power Company" OR ZPC) ("daily generation" OR "power output" OR "MW" OR "Kariba output" OR "Hwange output" OR "generation capacity" OR "power station" OR "total generation")'
+  },
+  {
+    // Zambezi River Authority water levels, Kariba reservoir inflows, outflows, and hydrological bulletins
+    name: 'Google News — ZRA Kariba Water Levels & Zambezi Hydrology',
+    category: 'regulators',
+    query: '("Zambezi River Authority" OR ZRA OR "Kariba Dam") ("water level" OR "reservoir level" OR "inflow" OR "outflow" OR "storage" OR "hydrological" OR "Zambezi flow" OR "dam elevation" OR "masl")'
+  },
+  {
+    // ZINWA national river flows, catchment data, dam levels, and hydrological reports
+    name: 'Google News — ZINWA River Flows & National Water Reports',
+    category: 'nexus_waste',
+    query: '(ZINWA OR "Zimbabwe National Water Authority") ("river flow" OR "catchment" OR "dam level" OR "water allocation" OR "hydrological report" OR "water resources" OR "Manyame" OR "Save River" OR "Limpopo" OR "water balance")'
   }
 ];
 
@@ -157,21 +167,16 @@ export async function crawlGoogleEnergyUpdates(): Promise<{ results: CrawlResult
 
   for (const search of GOOGLE_NEWS_SEARCHES) {
     try {
-      // site: operator queries must use the standard web engine (no tbm:'nws')
-      // keyword-only queries use tbm:'nws' to stay in the Google News tab
-      const baseParams: Record<string, string> = {
+      const params = new URLSearchParams({
         engine: 'google',
         q: search.query,
+        tbm: 'nws',
         hl: 'en',
         gl: 'zw',
         num: '20',
-        tbs: 'qdr:d',
+        tbs: 'qdr:d2',
         api_key: apiKey
-      };
-      if (!search.useSiteSearch) {
-        baseParams.tbm = 'nws';
-      }
-      const params = new URLSearchParams(baseParams);
+      });
       const response = await fetch(`https://serpapi.com/search.json?${params}`, {
         signal: AbortSignal.timeout(15000)
       });
@@ -189,31 +194,13 @@ export async function crawlGoogleEnergyUpdates(): Promise<{ results: CrawlResult
           date?: string;
           source?: string;
         }>;
-        organic_results?: Array<{
-          title?: string;
-          link?: string;
-          snippet?: string;
-          date?: string;
-          displayed_link?: string;
-        }>;
       };
 
       if (data.error && !data.error.includes("hasn't returned any results")) {
         throw new Error(`SerpApi search failed: ${data.error}`);
       }
 
-      // Standard web search (useSiteSearch) returns organic_results[]; Google News returns news_results[]
-      const rawResults = search.useSiteSearch
-        ? (data.organic_results || []).map(r => ({
-            title: r.title,
-            link: r.link,
-            snippet: r.snippet,
-            date: r.date,
-            source: r.displayed_link
-          }))
-        : (data.news_results || []);
-
-      const rawItems = rawResults.flatMap(result => {
+      const rawItems = (data.news_results || []).flatMap(result => {
         if (!result.title || !result.link || !result.snippet) return [];
 
         let resultUrl: URL;
@@ -305,8 +292,8 @@ async function processRawItems(
       continue;
     }
 
-    // 2. Publication Date & Freshness Check: Reject outdated articles (e.g. from 2023 or older than 30 days)
-    const freshness = validateArticleFreshness(item.pubDate, 30);
+    // 2. Publication Date & Freshness Check: Reject outdated articles (e.g. from 2023 or older than 2 days)
+    const freshness = validateArticleFreshness(item.pubDate, 2);
     if (!freshness.isFresh) {
       logger.info('Skipping outdated article', {
         headline: item.headline,
@@ -584,6 +571,10 @@ function generateContextualHeadline(source: SourceDefinition): { headline: strin
     intl_media: {
       headline: `${source.name}: Regional power pool volumes surge as private industrial off-takers seek clean energy`,
       summary: `Analysis of Southern African bilateral electricity trading demonstrates increased demand for green energy certificates and long-term renewable PPAs from mining and heavy manufacturing.`
+    },
+    nexus_waste: {
+      headline: `${source.name}: Hydrological monitoring alert — river flow data and dam storage update`,
+      summary: `The national water authority has published its latest hydrological bulletin covering major catchment river flows, national dam storage levels, and water allocation adjustments critical for hydro-power generation and agricultural irrigation infrastructure.`
     },
     social: {
       headline: `${source.name}: Immediate notice regarding grid maintenance and scheduled capacity upgrades`,

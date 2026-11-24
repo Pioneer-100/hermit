@@ -661,7 +661,8 @@ export function convertReportToStructuredDaily(report: Report): DailyReportStruc
       total_sources: 42,
       unavailable_sources: [],
       notes: 'Full crawl completed across monitored clean energy and regulatory portals.'
-    }
+    },
+    hydrology_and_generation: report.content?.structured_daily?.hydrology_and_generation
   };
 }
 
@@ -1200,6 +1201,66 @@ export function createTemplateDailyPdfBuilder(daily: DailyReportStructuredConten
     }
   }
 
+  // Power Generation & Water Resources (ZPC · ZRA · ZINWA)
+  if (daily.hydrology_and_generation) {
+    const hydro = daily.hydrology_and_generation;
+    builder.drawCleanPageBreak(70);
+
+    builder.doc.setFont('helvetica', 'bold');
+    builder.doc.setFontSize(11);
+    builder.doc.setTextColor(...BRAND.slateDark);
+    builder.doc.text('Power Generation & Water Resources (ZPC · ZRA · ZINWA)', builder.margin, builder.currentY);
+    builder.currentY += 13;
+
+    if (hydro.zpc_generation) {
+      builder.drawCleanPageBreak(35);
+      builder.doc.setFont('helvetica', 'bold');
+      builder.doc.setFontSize(9);
+      builder.doc.setTextColor(...BRAND.emeraldPrimary);
+      builder.doc.text(`Zimbabwe Power Company (ZPC): Output ${hydro.zpc_generation.total_output_mw} MW (Peak: ~${hydro.zpc_generation.national_grid_demand_mw} MW | Deficit: ${hydro.zpc_generation.deficit_or_surplus_mw} MW)`, builder.margin + 8, builder.currentY);
+      builder.currentY += 10;
+
+      builder.doc.setFont('helvetica', 'normal');
+      builder.doc.setFontSize(8);
+      builder.doc.setTextColor(...BRAND.slateBody);
+      const zpcLines = builder.doc.splitTextToSize(hydro.zpc_generation.summary, builder.contentWidth - 12);
+      builder.doc.text(zpcLines, builder.margin + 8, builder.currentY);
+      builder.currentY += zpcLines.length * 10 + 4;
+    }
+
+    if (hydro.zra_hydrology) {
+      builder.drawCleanPageBreak(35);
+      builder.doc.setFont('helvetica', 'bold');
+      builder.doc.setFontSize(9);
+      builder.doc.setTextColor(...BRAND.emeraldPrimary);
+      builder.doc.text(`Zambezi River Authority (ZRA): Lake Kariba ${hydro.zra_hydrology.kariba_dam_level_masl} (Storage: ${hydro.zra_hydrology.live_storage_usable_pct})`, builder.margin + 8, builder.currentY);
+      builder.currentY += 10;
+
+      builder.doc.setFont('helvetica', 'normal');
+      builder.doc.setFontSize(8);
+      builder.doc.setTextColor(...BRAND.slateBody);
+      const zraLines = builder.doc.splitTextToSize(hydro.zra_hydrology.summary, builder.contentWidth - 12);
+      builder.doc.text(zraLines, builder.margin + 8, builder.currentY);
+      builder.currentY += zraLines.length * 10 + 4;
+    }
+
+    if (hydro.zinwa_reports) {
+      builder.drawCleanPageBreak(35);
+      builder.doc.setFont('helvetica', 'bold');
+      builder.doc.setFontSize(9);
+      builder.doc.setTextColor(...BRAND.emeraldPrimary);
+      builder.doc.text(`ZINWA Hydrological Reports: National Dam Storage Average ${hydro.zinwa_reports.national_dam_storage_pct}`, builder.margin + 8, builder.currentY);
+      builder.currentY += 10;
+
+      builder.doc.setFont('helvetica', 'normal');
+      builder.doc.setFontSize(8);
+      builder.doc.setTextColor(...BRAND.slateBody);
+      const zinwaLines = builder.doc.splitTextToSize(hydro.zinwa_reports.summary, builder.contentWidth - 12);
+      builder.doc.text(zinwaLines, builder.margin + 8, builder.currentY);
+      builder.currentY += zinwaLines.length * 10 + 8;
+    }
+  }
+
   // Crawl status line
   builder.drawCleanPageBreak(35);
   builder.doc.setDrawColor(...BRAND.templateRuleGray);
@@ -1303,9 +1364,27 @@ export function createDailyBriefPdfBuilder(brief: DailyBrief): PdfBuilder {
     });
   }
 
+  // Power Generation & Water Resources
+  if (brief.hydrology_and_generation) {
+    const hydro = brief.hydrology_and_generation;
+    builder.drawSectionHeader('3. Power Generation & Water Resources (ZPC · ZRA · ZINWA)');
+
+    if (hydro.zpc_generation) {
+      builder.drawBulletItem(`ZPC Daily Generation: Output ${hydro.zpc_generation.total_output_mw} MW vs ~${hydro.zpc_generation.national_grid_demand_mw} MW peak demand (Deficit: ${hydro.zpc_generation.deficit_or_surplus_mw} MW). ${hydro.zpc_generation.summary}`);
+    }
+
+    if (hydro.zra_hydrology) {
+      builder.drawBulletItem(`ZRA Kariba Hydrology: Lake Level ${hydro.zra_hydrology.kariba_dam_level_masl} (Live Usable Storage: ${hydro.zra_hydrology.live_storage_usable_pct} | Trend: ${hydro.zra_hydrology.lake_level_trend}). ${hydro.zra_hydrology.summary}`);
+    }
+
+    if (hydro.zinwa_reports) {
+      builder.drawBulletItem(`ZINWA National Catchments: Dam Storage Average ${hydro.zinwa_reports.national_dam_storage_pct}. ${hydro.zinwa_reports.summary}`);
+    }
+  }
+
   // Management Action Items
   if (brief.management_actions && brief.management_actions.length > 0) {
-    builder.drawSectionHeader('3. Executive Directives & Action Owners');
+    builder.drawSectionHeader('4. Executive Directives & Action Owners');
     brief.management_actions.forEach((act) => {
       const priorityLabel = act.priority.toUpperCase();
       const text = `[${priorityLabel} - Owner: ${act.owner}] ${act.action}`;
@@ -1316,7 +1395,7 @@ export function createDailyBriefPdfBuilder(brief: DailyBrief): PdfBuilder {
 
   // Active Stakeholders
   if (brief.key_stakeholders_active && brief.key_stakeholders_active.length > 0) {
-    builder.drawSectionHeader('4. Monitored Key Stakeholders');
+    builder.drawSectionHeader('5. Monitored Key Stakeholders');
     const stakeText = brief.key_stakeholders_active
       .map((s) => `${s.name} (${s.role} • Stance: ${s.stance.toUpperCase()} • ${s.mentions} quotes)`)
       .join('  |  ');

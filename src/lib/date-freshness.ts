@@ -12,12 +12,12 @@ export interface FreshnessCheckResult {
 
 /**
  * Validates whether an article's publication date falls within acceptable freshness bounds.
- * Default maximum age: 30 days.
+ * Default maximum age: 2 days.
  * Rejects articles published in previous years unless explicitly flagged.
  */
 export function validateArticleFreshness(
   rawDateString?: string,
-  maxAgeDays: number = 30
+  maxAgeDays: number = 2
 ): FreshnessCheckResult {
   const now = new Date();
   

@@ -67,6 +67,51 @@ export interface Article {
   processed_at: string | null;
 }
 
+export interface PowerStationOutput {
+  station: string;
+  output_mw: number | string;
+  capacity_mw?: number | string;
+  status: 'normal' | 'constrained' | 'maintenance' | 'offline';
+  notes?: string;
+}
+
+export interface HydrologyAndGenerationSnapshot {
+  timestamp?: string;
+  // Zimbabwe Power Company (ZPC) Daily Stats
+  zpc_generation?: {
+    stations: PowerStationOutput[];
+    total_output_mw: number | string;
+    national_grid_demand_mw?: number | string;
+    deficit_or_surplus_mw?: number | string;
+    summary: string;
+  };
+  // Zambezi River Authority (ZRA) Kariba & Zambezi basin
+  zra_hydrology?: {
+    kariba_dam_level_masl?: string | number;
+    live_storage_usable_pct?: string | number;
+    lake_level_trend?: 'rising' | 'falling' | 'stable';
+    zambezi_river_flows?: {
+      chavuma_flow_m3s?: string | number;
+      victoria_falls_flow_m3s?: string | number;
+      kariba_inflow_m3s?: string | number;
+      kariba_outflow_m3s?: string | number;
+    };
+    allocation_status?: string;
+    summary: string;
+  };
+  // ZINWA National River Flows & Dam Storage
+  zinwa_reports?: {
+    national_dam_storage_pct?: string | number;
+    catchments?: Array<{
+      name: string;
+      storage_pct: string | number;
+      river_flow_condition: 'low' | 'moderate' | 'high' | 'flooding';
+    }>;
+    irrigation_and_hydro_bulletin?: string;
+    summary: string;
+  };
+}
+
 export interface DailyBrief {
   id: string;
   date: string;
@@ -104,6 +149,7 @@ export interface DailyBrief {
   }[];
   total_articles_scanned: number;
   high_relevance_count: number;
+  hydrology_and_generation?: HydrologyAndGenerationSnapshot;
 }
 
 export interface WeeklyReportStructuredContent {
@@ -224,6 +270,7 @@ export interface DailyReportStructuredContent {
     unavailable_sources?: string[];
     notes?: string;
   };
+  hydrology_and_generation?: HydrologyAndGenerationSnapshot;
 }
 
 export interface Report {
