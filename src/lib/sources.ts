@@ -11,12 +11,15 @@ export interface SourceDefinition {
     | 'intl_media'
     | 'social'
     | 'nexus_waste'
-    | 'tenders_events';
+    | 'tenders_events'
+    | 'linkedin';
   categoryLabel: string;
-  sourceType: 'web' | 'rss' | 'social';
+  sourceType: 'web' | 'rss' | 'social' | 'linkedin_rss';
   feedUrl?: string;
   priority: 'high' | 'medium' | 'normal';
   description: string;
+  /** LinkedIn-specific: the company page slug used to build the profile URL */
+  linkedinSlug?: string;
 }
 
 export const MONITORED_SOURCES: SourceDefinition[] = [
@@ -822,6 +825,60 @@ export const MONITORED_SOURCES: SourceDefinition[] = [
     priority: 'high',
     description: 'ZINWA hydrological monitoring — national river flow data, catchment reports, dam storage levels, and water allocation bulletins affecting hydro-power generation and irrigation.',
   },
+
+  // ── LinkedIn Funding & Investment Signal Sources ──────────────────────────────
+  // These use Google News RSS (site:linkedin.com) as the feed mechanism — no direct
+  // LinkedIn scraping, no ToS violation. When an RSS.app or similar bridge is
+  // configured for a company page, the feedUrl can be swapped to that bridge URL.
+  // Marked sourceType 'linkedin_rss' so the UI can render a LinkedIn badge.
+  {
+    id: 85,
+    name: 'LinkedIn — AfDB Funding & Energy Announcements',
+    url: 'https://www.linkedin.com/company/african-development-bank',
+    feedUrl: 'https://news.google.com/rss/search?q=site:linkedin.com+%22African+Development+Bank%22+%22AfDB%22+(funding+OR+grant+OR+%22call+for+proposals%22+OR+%22expression+of+interest%22+OR+investment)+%22renewable+energy%22+OR+%22clean+energy%22+OR+%22climate+finance%22&hl=en&gl=ZW&ceid=ZW:en',
+    category: 'linkedin',
+    categoryLabel: 'LinkedIn Funding Signals',
+    sourceType: 'linkedin_rss',
+    linkedinSlug: 'african-development-bank',
+    priority: 'high',
+    description: 'African Development Bank LinkedIn posts announcing open funding windows, calls for proposals, blended finance facilities, and clean energy grants relevant to Zimbabwe and SADC.',
+  },
+  {
+    id: 86,
+    name: 'LinkedIn — IFC & World Bank Energy Finance',
+    url: 'https://www.linkedin.com/company/ifc-international-finance-corporation',
+    feedUrl: 'https://news.google.com/rss/search?q=site:linkedin.com+%22IFC%22+OR+%22International+Finance+Corporation%22+(funding+OR+%22Scaling+Solar%22+OR+%22call+for+proposals%22+OR+%22project+preparation%22+OR+%22blended+finance%22)+(renewable+OR+solar+OR+%22clean+energy%22)+(Zimbabwe+OR+%22Southern+Africa%22+OR+SADC)&hl=en&gl=ZW&ceid=ZW:en',
+    category: 'linkedin',
+    categoryLabel: 'LinkedIn Funding Signals',
+    sourceType: 'linkedin_rss',
+    linkedinSlug: 'ifc-international-finance-corporation',
+    priority: 'high',
+    description: 'IFC and World Bank Group LinkedIn posts on Scaling Solar, blended finance instruments, and project preparation grants for clean energy in sub-Saharan Africa.',
+  },
+  {
+    id: 87,
+    name: 'LinkedIn — Green Climate Fund & Climate Finance Calls',
+    url: 'https://www.linkedin.com/company/green-climate-fund',
+    feedUrl: 'https://news.google.com/rss/search?q=site:linkedin.com+%22Green+Climate+Fund%22+OR+%22GCF%22+(funding+OR+%22readiness%22+OR+%22accreditation%22+OR+%22call+for+proposals%22+OR+%22request+for+proposals%22)+(energy+OR+solar+OR+%22climate+adaptation%22+OR+%22mitigation%22)+(Zimbabwe+OR+%22Southern+Africa%22+OR+Africa)&hl=en&gl=ZW&ceid=ZW:en',
+    category: 'linkedin',
+    categoryLabel: 'LinkedIn Funding Signals',
+    sourceType: 'linkedin_rss',
+    linkedinSlug: 'green-climate-fund',
+    priority: 'high',
+    description: 'Green Climate Fund LinkedIn announcements for readiness grants, accreditation calls, and project finance windows for African clean energy and climate resilience.',
+  },
+  {
+    id: 88,
+    name: 'LinkedIn — SEFA, SACREEE & SADC Energy Facility Calls',
+    url: 'https://www.linkedin.com/company/sacreee',
+    feedUrl: 'https://news.google.com/rss/search?q=site:linkedin.com+(SEFA+OR+SACREEE+OR+%22Sustainable+Energy+Fund+for+Africa%22+OR+%22Africa+GreenCo%22+OR+%22TDB+Group%22+OR+Afreximbank)+(funding+OR+grant+OR+%22call+for+proposals%22+OR+%22expression+of+interest%22+OR+facility+OR+%22project+preparation%22)+(renewable+OR+solar+OR+energy)&hl=en&gl=ZW&ceid=ZW:en',
+    category: 'linkedin',
+    categoryLabel: 'LinkedIn Funding Signals',
+    sourceType: 'linkedin_rss',
+    linkedinSlug: 'sacreee',
+    priority: 'high',
+    description: 'SEFA, SACREEE, Africa GreenCo, TDB, and Afreximbank LinkedIn posts announcing regional clean energy facility calls, expressions of interest, and project preparation grants.',
+  },
 ];
 
 export const CATEGORY_LABELS: Record<string, string> = {
@@ -834,4 +891,6 @@ export const CATEGORY_LABELS: Record<string, string> = {
   social: 'Official Utility Dispatches',
   nexus_waste: 'Food-Water-Energy & Waste',
   tenders_events: 'Funding Calls & Industry Events',
+  linkedin: 'LinkedIn Funding Signals',
 };
+

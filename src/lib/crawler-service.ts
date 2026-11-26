@@ -110,13 +110,16 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
   return processRawItems(source.name, source.id, source.category, rawItems);
 }
 
-// Active SerpApi queries prioritizing Zimbabwe national press, green energy, and utility grid developments
-// All queries run through Google News (tbm: 'nws') using robust publisher entity naming rather than
-// fragile chained site: operators (which Google often rejects or yields 0 matches for).
+// Active SerpApi queries prioritizing Zimbabwe national press, green energy, and utility grid developments.
+// searchMode:
+//   'news' (default) — Google News tab (tbm=nws), results in data.news_results[]
+//   'web'            — standard Google Web search, results in data.organic_results[]
+//                      Required for site:linkedin.com queries — Google News rejects them (HTTP 400).
 const GOOGLE_NEWS_SEARCHES: Array<{
   name: string;
   category: string;
   query: string;
+  searchMode?: 'news' | 'web';
 }> = [
   {
     // National press & major broadcasters covering official utility, tariff, and ministry announcements
@@ -153,6 +156,29 @@ const GOOGLE_NEWS_SEARCHES: Array<{
     name: 'Google News — ZINWA River Flows & National Water Reports',
     category: 'nexus_waste',
     query: '(ZINWA OR "Zimbabwe National Water Authority") ("river flow" OR "catchment" OR "dam level" OR "water allocation" OR "hydrological report" OR "water resources" OR "Manyame" OR "Save River" OR "Limpopo" OR "water balance")'
+  },
+
+  // ── LinkedIn Funding Signal Queries ──────────────────────────────────────────
+  // Uses Google Web search (searchMode: 'web') with site:linkedin.com.
+  // Google News tab (tbm=nws) rejects site: operators with HTTP 400 — web search
+  // surfaces LinkedIn public posts and company updates instead.
+  {
+    name: 'LinkedIn — DFI & Multilateral Funding Calls (Zimbabwe / SADC)',
+    category: 'dfi',
+    searchMode: 'web',
+    query: 'site:linkedin.com ("call for proposals" OR "funding opportunity" OR "grant window" OR "open for applications" OR "applications now open" OR "request for proposals" OR "expression of interest") (Zimbabwe OR "Southern Africa" OR SADC OR "sub-Saharan Africa") (renewable energy OR solar OR "clean energy" OR "climate finance" OR "green energy" OR "energy transition" OR IPP OR "mini-grid")'
+  },
+  {
+    name: 'LinkedIn — AfDB, IFC, GCF & SEFA Funding Announcements',
+    category: 'dfi',
+    searchMode: 'web',
+    query: 'site:linkedin.com (AfDB OR "African Development Bank" OR IFC OR "International Finance Corporation" OR "Green Climate Fund" OR GCF OR SEFA OR "Sustainable Energy Fund for Africa" OR "Africa GreenCo" OR SACREEE OR TDB OR Afreximbank) (funding OR grant OR "co-financing" OR investment OR facility OR "project preparation") (energy OR solar OR renewable OR climate) (Zimbabwe OR "Southern Africa")'
+  },
+  {
+    name: 'LinkedIn — Zimbabwe Energy Investors & IPP Funding News',
+    category: 'tenders_events',
+    searchMode: 'web',
+    query: 'site:linkedin.com (Zimbabwe OR Harare OR ZERA OR "Zimbabwe Energy" OR "Centragrid" OR SolGas OR "Africa GreenCo") (investment OR funding OR financing OR "power purchase agreement" OR PPA OR solar OR "renewable energy" OR tender OR "call for bids") (2025 OR 2026)'
   }
 ];
 
@@ -167,16 +193,27 @@ export async function crawlGoogleEnergyUpdates(): Promise<{ results: CrawlResult
 
   for (const search of GOOGLE_NEWS_SEARCHES) {
     try {
-      const params = new URLSearchParams({
+      const isWebSearch = search.searchMode === 'web';
+
+      // Build params — web mode omits tbm=nws so Google returns organic results
+      const paramObj: Record<string, string> = {
         engine: 'google',
         q: search.query,
-        tbm: 'nws',
         hl: 'en',
         gl: 'zw',
         num: '20',
-        tbs: 'qdr:d2',
         api_key: apiKey
-      });
+      };
+      if (isWebSearch) {
+        // Web search: last 30 days gives enough LinkedIn post coverage
+        paramObj.tbs = 'qdr:m';
+      } else {
+        // News search: last 2 days keeps results fresh
+        paramObj.tbm = 'nws';
+        paramObj.tbs = 'qdr:d2';
+      }
+
+      const params = new URLSearchParams(paramObj);
       const response = await fetch(`https://serpapi.com/search.json?${params}`, {
         signal: AbortSignal.timeout(15000)
       });
@@ -194,13 +231,26 @@ export async function crawlGoogleEnergyUpdates(): Promise<{ results: CrawlResult
           date?: string;
           source?: string;
         }>;
+        organic_results?: Array<{
+          title?: string;
+          link?: string;
+          snippet?: string;
+          date?: string;
+          source?: string;
+          displayed_link?: string;
+        }>;
       };
 
       if (data.error && !data.error.includes("hasn't returned any results")) {
         throw new Error(`SerpApi search failed: ${data.error}`);
       }
 
-      const rawItems = (data.news_results || []).flatMap(result => {
+      // Pick the right results array depending on search mode
+      const rawList = isWebSearch
+        ? (data.organic_results || [])
+        : (data.news_results || []);
+
+      const rawItems = rawList.flatMap(result => {
         if (!result.title || !result.link || !result.snippet) return [];
 
         let resultUrl: URL;
@@ -216,12 +266,13 @@ export async function crawlGoogleEnergyUpdates(): Promise<{ results: CrawlResult
           link: resultUrl.toString(),
           summary: result.snippet,
           pubDate: parseSearchResultDate(result.date),
-          author: result.source || 'Google News'
+          author: result.source || (isWebSearch ? 'LinkedIn' : 'Google News')
         }];
       });
 
-      logger.info('SerpApi Google News search completed', {
+      logger.info('SerpApi search completed', {
         search: search.name,
+        mode: isWebSearch ? 'web' : 'news',
         resultCount: rawItems.length
       });
       // Process items through disambiguation and deduplication, limiting max per-search insertions to 10
