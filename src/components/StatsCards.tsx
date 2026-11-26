@@ -14,50 +14,46 @@ export default function StatsCards({ stats }: StatsCardsProps) {
       value: stats.capturedToday,
       subtext: stats.totalArticles ? `${stats.totalArticles} active in database` : 'Real-time sync',
       icon: Layers,
-      accentBorder: 'border-l-4 border-l-blue-400',
-      iconBg: 'bg-blue-600/20 text-cyan-300 border-blue-500/30',
-      badge: 'Today'
+      accentBorder: '',
+      iconBg: 'bg-[#1a3828] text-[#49b783] border-[#3d6852]',
     },
     {
       title: 'High-Relevance Flags',
       value: stats.highRelevanceFlags,
       subtext: 'Relevance score ≥ 75%',
       icon: AlertTriangle,
-      accentBorder: 'border-l-4 border-l-rose-500',
-      iconBg: 'bg-rose-500/20 text-rose-300 border-rose-500/30',
-      badge: 'Action Required'
+      accentBorder: '',
+      iconBg: 'bg-[#3a201b] text-[#f09a8d] border-[#70473f]',
     },
     {
       title: 'Pending Executive Review',
       value: stats.pendingReview,
       subtext: 'Awaiting Comms sign-off',
       icon: Clock,
-      accentBorder: 'border-l-4 border-l-amber-400',
-      iconBg: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
-      badge: 'Queue Active'
+      accentBorder: '',
+      iconBg: 'bg-[#392f19] text-[#e1bd68] border-[#67562e]',
     },
     {
       title: 'Monitored Portals',
       value: stats.sourcesMonitored || 55,
       subtext: 'Across 6 Clean Pillars',
       icon: Globe2,
-      accentBorder: 'border-l-4 border-l-blue-400',
-      iconBg: 'bg-blue-600/20 text-cyan-300 border-blue-500/30',
-      badge: '100% Operational'
+      accentBorder: '',
+      iconBg: 'bg-[#1a3828] text-[#49b783] border-[#3d6852]',
     }
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
       {cards.map((c, idx) => {
         const Icon = c.icon;
         return (
           <div
             key={idx}
-            className={`bg-[#0b2144]/45 backdrop-blur-xl rounded-2xl p-3 sm:p-4.5 shadow-lg border border-blue-400/25 hover:border-blue-300/40 hover:bg-[#0d4f34]/60 transition-all ${c.accentBorder} flex flex-col justify-between`}
+            className={`min-h-[128px] sm:min-h-[144px] bg-[#13231b] rounded-xl p-3 sm:p-5 border border-[#34483d] transition-colors hover:border-[#4d6658] ${c.accentBorder} flex flex-col justify-between`}
           >
             <div className="flex items-center justify-between gap-1.5 mb-1.5">
-              <span className="text-[10px] sm:text-xs font-bold text-cyan-300/80 uppercase tracking-wider truncate">
+              <span className="text-[12px] sm:text-xs font-semibold text-[#b5c5b9] leading-tight min-h-8 max-w-[9rem] sm:max-w-none">
                 {c.title}
               </span>
               <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-lg flex items-center justify-center shrink-0 border ${c.iconBg}`}>
@@ -66,16 +62,13 @@ export default function StatsCards({ stats }: StatsCardsProps) {
             </div>
 
             <div className="flex flex-col xs:flex-row items-start xs:items-baseline justify-between gap-1 mt-0.5">
-              <div className="font-display tabular text-xl sm:text-3xl font-black text-white tracking-tight">
+              <div className="font-display tabular text-2xl sm:text-3xl font-semibold text-[#f0f5f0] tracking-tight">
                 {c.value}
               </div>
-              <span className="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-blue-950/70 text-cyan-300 border border-blue-500/30 shrink-0">
-                {c.badge}
-              </span>
             </div>
 
-            <div className="text-[10px] sm:text-xs text-cyan-200/70 font-medium mt-2 pt-1.5 sm:pt-2 border-t border-blue-900/40 flex items-center justify-between">
-              <span className="truncate">{c.subtext}</span>
+            <div className="text-[11px] sm:text-xs text-[#b5c5b9] font-medium mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-[#34483d]">
+              <span className="leading-snug">{c.subtext}</span>
             </div>
           </div>
         );

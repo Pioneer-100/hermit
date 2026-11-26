@@ -106,12 +106,12 @@ export default function ExecutiveDailyBrief({
   };
 
   return (
-    <div className="space-y-5 sm:space-y-6">
+    <div className="executive-brief space-y-5 sm:space-y-6">
       {/* Main Executive Intelligence Document Container */}
-      <div className="flex flex-col bg-[#0c2242]/90 backdrop-blur-xl rounded-2xl border border-blue-500/20 shadow-2xl shadow-blue-950/40 overflow-hidden text-white">
+      <div className="flex flex-col bg-[#13231b] rounded-xl border border-[#34483d] overflow-hidden text-[#f0f5f0]">
         
         {/* Document Header Band */}
-        <div className="order-1 bg-gradient-to-r from-[#071932]/95 via-[#081c36]/95 to-[#071932]/95 text-white p-4 sm:p-6 border-b border-blue-500/20">
+        <div className="order-1 bg-[#13231b] text-[#f0f5f0] p-4 sm:p-6 border-b border-[#34483d]">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 pb-3.5 sm:pb-4 border-b border-blue-800/50">
             {/* Hermit Monogram & Document Title */}
             <div className="flex items-center gap-2.5 sm:gap-3">

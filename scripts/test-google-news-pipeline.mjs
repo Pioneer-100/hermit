@@ -94,6 +94,58 @@ function truncate(str, max = 90) {
   return str.length > max ? str.slice(0, max - 1) + '…' : str;
 }
 
+function extractDateFromLinkedInUrl(url) {
+  if (!url) return undefined;
+  const match =
+    url.match(/(?:activity|urn:li:activity|urn:li:share)[-_:]+(\d{18,20})/i) ||
+    url.match(/[-_](\d{18,20})(?:-[a-zA-Z0-9_-]+)?(?:\?|\/|$)/);
+
+  if (match) {
+    try {
+      const id = BigInt(match[1]);
+      const ms = Number(id >> BigInt(22));
+      const nowMs = Date.now();
+      if (ms > 1577836800000 && ms < nowMs + 86400000 * 2) {
+        return new Date(ms).toISOString();
+      }
+    } catch {}
+  }
+  return undefined;
+}
+
+function resolvePublicationDate(r) {
+  if (r.link && r.link.includes('linkedin.com')) {
+    const liDate = extractDateFromLinkedInUrl(r.link);
+    if (liDate) return { date: liDate, source: 'LinkedIn Snowflake ID' };
+  }
+  if (r.date) {
+    const parsed = parseDateString(r.date);
+    if (parsed) return { date: parsed, source: 'Search Result' };
+  }
+  return { date: undefined, source: 'None' };
+}
+
+function parseDateString(date) {
+  if (!date) return undefined;
+  const trimmed = date.trim();
+  const m = trimmed.match(/^(\d+)\s+(minute|hour|day|week|month|year)s?\s+ago$/i);
+  if (m) {
+    const amt = Number(m[1]);
+    const u = m[2].toLowerCase();
+    const map = { minute: 60000, hour: 3600000, day: 86400000, week: 604800000, month: 2592000000, year: 31536000000 };
+    return new Date(Date.now() - amt * (map[u] || 86400000)).toISOString();
+  }
+  const s = trimmed.match(/^a\s+(minute|hour|day|week|month|year)\s+ago$/i);
+  if (s) {
+    const u = s[1].toLowerCase();
+    const map = { minute: 60000, hour: 3600000, day: 86400000, week: 604800000, month: 2592000000, year: 31536000000 };
+    return new Date(Date.now() - (map[u] || 86400000)).toISOString();
+  }
+  if (/^yesterday$/i.test(trimmed)) return new Date(Date.now() - 86400000).toISOString();
+  const d = new Date(trimmed);
+  return isNaN(d.getTime()) ? undefined : d.toISOString();
+}
+
 function relativeDate(dateStr) {
   if (!dateStr) return 'unknown date';
   const d = new Date(dateStr);
@@ -102,7 +154,10 @@ function relativeDate(dateStr) {
   const diffH = Math.floor(diffMs / 3_600_000);
   if (diffH < 1) return 'just now';
   if (diffH < 24) return `${diffH}h ago`;
-  return `${Math.floor(diffH / 24)}d ago`;
+  const diffD = Math.floor(diffH / 24);
+  if (diffD < 30) return `${diffD}d ago`;
+  const diffM = Math.floor(diffD / 30);
+  return `${diffM}mo ago`;
 }
 
 const PASS = '\x1b[32m✔\x1b[0m';
@@ -163,12 +218,14 @@ async function testQuery(search, index, total) {
       console.log(`${PASS} ${BOLD}${hits} result${hits !== 1 ? 's' : ''}${RESET}`);
       // Print up to 3 sample headlines
       for (const r of results.slice(0, 3)) {
-        const age = relativeDate(r.date);
+        const resolved = resolvePublicationDate(r);
+        const age = relativeDate(resolved.date);
         const src = r.source || r.displayed_link || '';
+        const tag = resolved.source === 'LinkedIn Snowflake ID' ? '\x1b[32m[ID: ' + age + ']\x1b[0m' : `\x1b[36m[${age}]\x1b[0m`;
         console.log(
-          `    ${DIM}${truncate(r.title, 85)}${RESET}`,
-          `\x1b[36m[${age}]\x1b[0m`,
-          `${DIM}${src}${RESET}`
+          `    ${DIM}${truncate(r.title, 80)}${RESET}`,
+          tag,
+          `${DIM}(${resolved.source})${RESET}`
         );
       }
       if (hits > 3) {

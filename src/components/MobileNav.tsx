@@ -70,7 +70,7 @@ export default function MobileNav() {
 
       {/* Slide-Up Mobile Navigation Sheet */}
       {isMenuOpen && (
-        <div className="md:hidden fixed bottom-16 inset-x-0 z-50 bg-[#040d1a]/95 border-t border-blue-500/30 rounded-t-3xl shadow-2xl backdrop-blur-2xl p-4 sm:p-5 max-h-[80vh] overflow-y-auto animate-in slide-in-from-bottom duration-250 text-white">
+        <div className="md:hidden fixed bottom-16 inset-x-0 z-50 bg-[#13231b] border-t border-[#34483d] rounded-t-2xl shadow-2xl p-4 sm:p-5 max-h-[80vh] overflow-y-auto text-[#f0f5f0]">
           {/* Header handle & Close */}
           <div className="flex items-center justify-between pb-3 border-b border-blue-900/50">
             <div className="flex items-center gap-2">
@@ -222,7 +222,7 @@ export default function MobileNav() {
       {/* Primary Fixed Bottom Navigation Bar */}
       <nav 
         aria-label="Mobile Navigation"
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#06162a]/50 border-t border-blue-400/25 shadow-2xl flex items-center justify-around px-2 py-2 backdrop-blur-2xl pb-[max(0.5rem,env(safe-area-inset-bottom))]"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0f1d17] border-t border-[#34483d] shadow-[0_-4px_16px_rgba(0,0,0,0.22)] flex items-center justify-around px-2 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]"
       >
         {PRIMARY_NAV.map((item) => {
           const Icon = item.icon;
@@ -232,21 +232,21 @@ export default function MobileNav() {
               key={item.href}
               href={item.href}
               prefetch={true}
-              className={`relative flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all min-w-[56px] ${
+              className={`relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition-colors min-w-[56px] ${
                 isActive 
-                  ? 'text-white bg-gradient-to-r from-blue-600 to-blue-500 font-bold shadow-md shadow-blue-950/60 border border-blue-300/50' 
-                  : 'text-white/80 hover:text-white bg-[#07162c]/50 border border-blue-500/20'
+                  ? 'text-[#f0f5f0] bg-[#1a3828] font-semibold'
+                  : 'text-[#b5c5b9]'
               }`}
             >
               <div className="relative">
-                <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-cyan-300'}`} />
+                <Icon className={`w-5 h-5 ${isActive ? 'text-[#49b783]' : 'text-[#b5c5b9]'}`} />
                 {item.badge && (
                   <span className="absolute -top-1 -right-2 w-3.5 h-3.5 rounded-full bg-rose-500 text-white text-[8px] font-black flex items-center justify-center ring-1 ring-[#040d1a] shadow-sm">
                     {item.badge}
                   </span>
                 )}
               </div>
-              <span className="text-[10px] font-bold tracking-tight drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">{item.label}</span>
+              <span className="text-[11px] font-medium">{item.label}</span>
             </Link>
           );
         })}
@@ -256,18 +256,18 @@ export default function MobileNav() {
           onClick={() => {
             setIsMenuOpen(!isMenuOpen);
           }}
-          className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all min-w-[56px] relative ${
+          className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition-colors min-w-[56px] relative ${
             isMoreActive 
-              ? 'text-white bg-gradient-to-r from-blue-600 to-blue-500 font-bold shadow-md shadow-blue-950/60 border border-blue-300/50' 
-              : 'text-white/80 hover:text-white bg-[#07162c]/50 border border-blue-500/20'
+              ? 'text-[#f0f5f0] bg-[#1a3828] font-semibold'
+              : 'text-[#b5c5b9]'
           }`}
           aria-label="Open More Menu"
         >
           <div className="relative">
-            <Menu className={`w-5 h-5 ${isMoreActive ? 'text-white' : 'text-cyan-300'}`} />
+            <Menu className={`w-5 h-5 ${isMoreActive ? 'text-[#49b783]' : 'text-[#b5c5b9]'}`} />
             <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-blue-400" />
           </div>
-          <span className="text-[10px] font-bold tracking-tight drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">More</span>
+          <span className="text-[11px] font-medium">More</span>
         </button>
       </nav>
     </>

@@ -7,7 +7,10 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test scripts/test-*.cjs"
+    "test": "node --experimental-strip-types --experimental-transform-types --test scripts/test-*.cjs",
+    "brief": "node scripts/daily-brief-cron.mjs",
+    "brief:local": "node scripts/daily-brief-cron.mjs --target=local",
+    "brief:dry-run": "node scripts/daily-brief-cron.mjs --dry-run"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.2",

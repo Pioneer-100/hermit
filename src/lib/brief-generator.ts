@@ -1,5 +1,5 @@
-import type { Article, DailyBrief, HydrologyAndGenerationSnapshot } from '@/types';
-import { prioritizeArticlesByTier, classifyGeographicTier } from './geographic-tiering';
+import type { Article, DailyBrief, HydrologyAndGenerationSnapshot } from '../types';
+import { prioritizeArticlesByTier, classifyGeographicTier } from './geographic-tiering.ts';
 
 /**
  * Builds a rich, dynamic Daily Executive Briefing from actual scanned articles.

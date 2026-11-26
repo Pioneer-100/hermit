@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ecfdf5;
+  --background: #0b1712;
   --hermit-blue-dark: #064e3b;
   --hermit-blue-primary: #059669;
   --hermit-blue-accent: #10b981;
   --hermit-blue-light: #f0fdf4;
-  --foreground: #f8fafc;
+  --foreground: #f0f5f0;
   
   
   
@@ -35,7 +35,7 @@
 }
 
 body {
-  background-color: #071912;
+  background-color: #0b1712;
   color: var(--foreground);
   font-family: var(--font-body);
   font-size: var(--text-body);
@@ -95,6 +95,44 @@ h3 { font-size: var(--text-subhead); }
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(52, 211, 153, 0.7);
+}
+
+/* Executive workbench surfaces */
+.executive-brief {
+  color: #f0f5f0;
+}
+
+.executive-brief [class*="text-white"],
+.executive-brief [class*="text-slate-"] {
+  color: #f0f5f0 !important;
+}
+
+.executive-brief [class*="text-cyan-"],
+.executive-brief [class*="text-blue-"],
+.executive-brief [class*="text-emerald-"],
+.executive-brief [class*="text-teal-"] {
+  color: #b5c5b9 !important;
+}
+
+.executive-brief [class*="bg-[#"],
+.executive-brief [class*="bg-blue-"],
+.executive-brief [class*="bg-cyan-"],
+.executive-brief [class*="bg-emerald-"],
+.executive-brief [class*="bg-teal-"] {
+  background-color: #13231b !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+.executive-brief [class*="border-blue-"],
+.executive-brief [class*="border-cyan-"],
+.executive-brief [class*="border-emerald-"],
+.executive-brief [class*="border-teal-"] {
+  border-color: #34483d !important;
+}
+
+.executive-brief [class*="rounded-2xl"] {
+  border-radius: 0.75rem !important;
 }
 
 /* Translucent Green Glass Platform Components */

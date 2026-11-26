@@ -46,19 +46,12 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="w-64 relative text-slate-200 flex flex-col shrink-0 min-h-screen border-r border-blue-500/25 shadow-2xl z-30 select-none overflow-hidden">
-      {/* Lightbulb Eco Background Image */}
-      <div 
-        className="absolute inset-0 pointer-events-none z-0 bg-cover bg-center bg-no-repeat opacity-75 brightness-105 contrast-105"
-        style={{ backgroundImage: "url('/navigation_bg.jpg')" }}
-      />
-      {/* Dark frosted glass atmospheric overlay ensuring all navigation items remain crisp and legible */}
-      <div className="absolute inset-0 pointer-events-none z-0 bg-gradient-to-b from-[#040d1a]/55 via-[#021326]/40 to-[#020a16]/65" />
+    <aside className="w-64 relative text-slate-100 flex flex-col shrink-0 min-h-screen border-r border-[#34483d] bg-[#0f1d17] z-30 select-none overflow-hidden">
 
       {/* Brand Header */}
-      <div className="relative z-10 p-4 border-b border-blue-500/25 bg-[#071933]/75 backdrop-blur-md">
+      <div className="relative z-10 p-4 border-b border-white/10">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="relative w-11 h-11 rounded-full overflow-hidden bg-white/95 p-0.5 shadow-lg shadow-blue-950/50 shrink-0 border border-blue-300/40 group-hover:scale-105 transition-transform duration-200">
+          <div className="relative w-10 h-10 rounded-full overflow-hidden bg-white p-0.5 shrink-0 border border-white/60">
             <Image 
               src="/hermit_sustainability_advisory_logo.jpg" 
               alt="Hermit Sustainability Advisory" 
@@ -70,15 +63,15 @@ export default function Sidebar() {
           </div>
 
           <div className="min-w-0">
-            <h1 className="font-display font-bold text-sm tracking-wider text-white group-hover:text-cyan-300 transition-colors">HERMIT</h1>
-            <p className="text-[11px] text-blue-200 font-medium truncate">Sustainability Advisory</p>
+            <h1 className="font-display font-bold text-sm tracking-wider text-white">HERMIT</h1>
+            <p className="text-[11px] text-[#c5d6cc] font-medium truncate">Sustainability Advisory</p>
           </div>
         </Link>
       </div>
 
       {/* Navigation Links */}
       <nav className="relative z-10 flex-1 px-3 py-4 space-y-1.5 overflow-y-auto">
-        <div className="px-3 pb-2 text-[10px] font-display font-bold uppercase tracking-wider text-cyan-300/80 drop-shadow-sm">
+        <div className="px-3 pb-2 text-[11px] font-semibold text-[#b8cbbb]">
           Navigation
         </div>
 
@@ -89,10 +82,10 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`group flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-150 backdrop-blur-md ${
+              className={`group flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive
-                  ? 'bg-blue-600/95 text-white font-semibold shadow-lg shadow-blue-950/80 border border-blue-400/60'
-                  : 'text-slate-100 bg-[#040d1a]/70 border border-white/10 hover:bg-[#081b38]/85 hover:text-white hover:border-blue-400/40 shadow-sm'
+                  ? 'bg-[#2b6048] text-white font-semibold'
+                  : 'text-[#d9e4dd] hover:bg-white/7 hover:text-white'
               }`}
             >
               <div className="flex items-center gap-2.5 min-w-0">
@@ -102,7 +95,7 @@ export default function Sidebar() {
                   <Icon className="w-4 h-4" />
                 </div>
                 <div className="truncate">
-                  <span className="truncate block font-medium tracking-tight text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">{item.label}</span>
+                  <span className="truncate block font-medium tracking-tight">{item.label}</span>
                 </div>
               </div>
             </Link>
@@ -113,10 +106,10 @@ export default function Sidebar() {
         <button
           type="button"
           onClick={openChat}
-          className={`w-full group flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-150 backdrop-blur-md ${
+          className={`w-full group flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
             isChatOpen
-              ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold shadow-lg shadow-blue-950/80 border border-cyan-400/60'
-              : 'text-slate-100 bg-[#040d1a]/70 border border-cyan-500/25 hover:bg-[#081b38]/85 hover:text-white hover:border-cyan-400/50 shadow-sm'
+              ? 'bg-[#2b6048] text-white font-semibold'
+              : 'text-[#d9e4dd] hover:bg-white/7 hover:text-white'
           }`}
         >
           <div className="flex items-center gap-2.5 min-w-0">
@@ -146,7 +139,7 @@ function UserProfileBar() {
 
   if (!currentUser) {
     return (
-      <div className="px-3 py-2 border-t border-blue-500/25 bg-[#071933]/75 backdrop-blur-md">
+      <div className="px-3 py-3 border-t border-white/10">
         <Link
           href="/login"
           className="w-full flex items-center justify-center gap-2 p-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md transition-all"
@@ -158,13 +151,13 @@ function UserProfileBar() {
   }
 
   return (
-    <div className="px-3 py-2 border-t border-blue-500/25 bg-[#071933]/75 backdrop-blur-md relative">
+    <div className="px-3 py-3 border-t border-white/10 relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-2 rounded-xl bg-[#06162a]/80 hover:bg-[#0c2445]/90 border border-blue-500/30 backdrop-blur-md transition-all text-left group shadow-sm"
+        className="w-full flex items-center justify-between p-2 rounded-lg bg-white/6 hover:bg-white/10 border border-white/10 transition-colors text-left group"
       >
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-800 text-white font-black text-xs flex items-center justify-center shrink-0 border border-blue-400/40 shadow-sm">
+          <div className="w-8 h-8 rounded-lg bg-[#2b6048] text-white font-semibold text-xs flex items-center justify-center shrink-0 border border-white/10">
             {currentUser.full_name.charAt(0)}
           </div>
           <div className="min-w-0">
@@ -183,7 +176,7 @@ function UserProfileBar() {
 
       {/* Dropdown switch menu */}
       {isOpen && (
-        <div className="absolute bottom-full left-3 right-3 mb-2 bg-[#03170e]/95 border border-blue-500/35 rounded-xl shadow-2xl p-2 z-50 space-y-1 backdrop-blur-2xl">
+        <div className="absolute bottom-full left-3 right-3 mb-2 bg-[#17352b] border border-white/10 rounded-lg shadow-xl p-2 z-50 space-y-1">
           <button
             onClick={async () => {
               setIsOpen(false);

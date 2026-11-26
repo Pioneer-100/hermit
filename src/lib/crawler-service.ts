@@ -6,7 +6,7 @@ import { checkDuplicateArticle } from './deduplication';
 import { validateEnergyRelevance } from './energy-disambiguation';
 import { extractDeepArticleText, extractDeepArticlesBatch } from './deep-extractor';
 import { scrapeZeraPortal, scrapePrazPortal, BROWSER_HEADERS } from './direct-portal-scraper';
-import { validateArticleFreshness } from './date-freshness';
+import { validateArticleFreshness, resolvePublicationDate } from './date-freshness';
 import { evaluateSemanticFitness } from './semantic-gate';
 import { logger } from './logger';
 import { Article } from '@/types';
@@ -107,7 +107,9 @@ export async function crawlSource(sourceId: number): Promise<CrawlResult> {
     rawItems.push(generateContextualHeadline(source));
   }
 
-  return processRawItems(source.name, source.id, source.category, rawItems);
+  const isFundingCategory = source.category === 'tenders_events' || source.category === 'dfi' || source.category === 'linkedin';
+  const maxAgeDays = isFundingCategory ? 30 : 2;
+  return processRawItems(source.name, source.id, source.category, rawItems, 10, maxAgeDays);
 }
 
 // Active SerpApi queries prioritizing Zimbabwe national press, green energy, and utility grid developments.
@@ -261,11 +263,21 @@ export async function crawlGoogleEnergyUpdates(): Promise<{ results: CrawlResult
         }
         if (resultUrl.protocol !== 'https:' && resultUrl.protocol !== 'http:') return [];
 
+        const linkStr = resultUrl.toString();
+        // Extract true publication date:
+        // Decodes LinkedIn Snowflake ID first, then SerpApi date, then snippet prefix
+        const resolvedDate = resolvePublicationDate({
+          date: result.date,
+          link: linkStr,
+          snippet: result.snippet,
+          headline: result.title
+        });
+
         return [{
           headline: result.title,
-          link: resultUrl.toString(),
+          link: linkStr,
           summary: result.snippet,
-          pubDate: parseSearchResultDate(result.date),
+          pubDate: resolvedDate,
           author: result.source || (isWebSearch ? 'LinkedIn' : 'Google News')
         }];
       });
@@ -275,8 +287,13 @@ export async function crawlGoogleEnergyUpdates(): Promise<{ results: CrawlResult
         mode: isWebSearch ? 'web' : 'news',
         resultCount: rawItems.length
       });
+
+      // Freshness threshold: 30 days for funding calls, DFI grants, tenders, and LinkedIn posts; 2 days for daily news
+      const isFundingOrSocial = isWebSearch || search.category === 'dfi' || search.category === 'tenders_events';
+      const maxAgeDays = isFundingOrSocial ? 30 : 2;
+
       // Process items through disambiguation and deduplication, limiting max per-search insertions to 10
-      results.push(await processRawItems(search.name, null, search.category, rawItems, 10));
+      results.push(await processRawItems(search.name, null, search.category, rawItems, 10, maxAgeDays));
     } catch (error) {
       const message = `${search.name} failed: ${error instanceof Error ? error.message : String(error)}`;
       logger.warn('SerpApi Google News search failed', { search: search.name, error: message });
@@ -291,35 +308,13 @@ export async function crawlGoogleEnergyUpdates(): Promise<{ results: CrawlResult
   return { results, warnings };
 }
 
-function parseSearchResultDate(date?: string): string | undefined {
-  if (!date) return undefined;
-
-  const relativeDate = date.match(/^(\d+)\s+(minute|hour|day)s?\s+ago$/i);
-  if (relativeDate) {
-    const amount = Number(relativeDate[1]);
-    const unit = relativeDate[2].toLowerCase();
-    const millisecondsPerUnit = unit === 'minute'
-      ? 60_000
-      : unit === 'hour'
-        ? 3_600_000
-        : 86_400_000;
-    return new Date(Date.now() - amount * millisecondsPerUnit).toISOString();
-  }
-
-  if (/^yesterday$/i.test(date.trim())) {
-    return new Date(Date.now() - 86_400_000).toISOString();
-  }
-
-  const parsedDate = new Date(date);
-  return Number.isNaN(parsedDate.getTime()) ? undefined : parsedDate.toISOString();
-}
-
 async function processRawItems(
   sourceName: string,
   sourceId: number | null,
   category: string,
   rawItems: Array<{ headline: string; link: string; summary: string; pubDate?: string; author?: string }>,
-  maxProcessed: number = 10
+  maxProcessed: number = 10,
+  maxAgeDays: number = 2
 ): Promise<CrawlResult> {
   // Fetch recent articles once to perform semantic deduplication before LLM analysis
   let recentArticles: Article[] = [];
@@ -343,10 +338,13 @@ async function processRawItems(
       continue;
     }
 
-    // 2. Publication Date & Freshness Check: Reject outdated articles (e.g. from 2023 or older than 2 days)
-    const freshness = validateArticleFreshness(item.pubDate, 2);
+    // 2. Publication Date & Freshness Check:
+    // Decodes ground-truth post date and validates age against category threshold.
+    // For LinkedIn and web items, requireDate=true ensures unverified/dateless items are not falsely treated as today.
+    const isLinkedInOrWeb = item.link.toLowerCase().includes('linkedin.com') || sourceName.toLowerCase().includes('linkedin');
+    const freshness = validateArticleFreshness(item.pubDate, maxAgeDays, isLinkedInOrWeb);
     if (!freshness.isFresh) {
-      logger.info('Skipping outdated article', {
+      logger.info('Skipping outdated or unverified article', {
         headline: item.headline,
         pubDate: item.pubDate,
         reason: freshness.reason

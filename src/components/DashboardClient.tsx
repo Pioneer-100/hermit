@@ -170,8 +170,8 @@ export default function DashboardClient({
     <div className="flex-1 flex flex-col min-h-screen bg-transparent">
       {/* Header Bar - Completely Dynamic Daily Report Title */}
       <Header
-        title={`Daily Energy Intelligence Brief — ${dailyBrief.date}`}
-        subtitle={`What's Up Today • Synthesized across ${dailyBrief.total_articles_scanned} captures from 55 Clean Energy Portals (6 Pillars)`}
+        title="Daily Intelligence Brief"
+        subtitle={`${dailyBrief.date} · ${dailyBrief.total_articles_scanned} captures · 55 clean-energy portals`}
         onRefresh={loadData}
         onTriggerCrawl={() => setIsCrawlModalOpen(true)}
         alertCount={pendingCount}
@@ -182,49 +182,49 @@ export default function DashboardClient({
         <ExecutiveGreetingBanner userName={currentUser?.full_name} />
         
         {/* Executive Mode Selector & Status Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0c2242]/90 backdrop-blur-xl p-3 sm:p-4 rounded-2xl border border-blue-400/25 shadow-lg">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#13231b] p-2.5 sm:p-3 rounded-xl border border-[#34483d]">
           {/* View Mode Switcher Pills */}
-          <div className="flex items-center gap-1.5 sm:gap-2 bg-[#052618]/50 p-1 rounded-xl border border-blue-500/20 w-full sm:w-auto">
+          <div className="flex items-center gap-1 bg-[#0f1d17] p-1 rounded-lg w-full sm:w-auto">
             <button
               onClick={() => setViewMode('brief')}
-              className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs font-bold transition-all active:scale-95 ${
+              className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-md text-sm font-semibold transition-colors ${
                 viewMode === 'brief'
-                  ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md shadow-blue-950/40 border border-blue-400/30'
-                  : 'text-cyan-200/80 hover:text-white'
+                  ? 'bg-[#1a2c22] text-[#f0f5f0] border border-[#4d6658]'
+                  : 'text-[#b5c5b9] hover:text-[#f0f5f0]'
               }`}
             >
-              <BookOpen className="w-3.5 h-3.5 text-cyan-300 shrink-0" />
+              <BookOpen className="w-4 h-4 text-[#49b783] shrink-0" />
               <span className="hidden sm:inline">Daily Executive Briefing</span>
               <span className="sm:hidden">Executive Brief</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#49b783] shrink-0" />
             </button>
 
             <button
               onClick={() => setViewMode('feed')}
-              className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs font-bold transition-all active:scale-95 ${
+              className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-md text-sm font-semibold transition-colors ${
                 viewMode === 'feed'
-                  ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md shadow-blue-950/40 border border-blue-400/30'
-                  : 'text-cyan-200/80 hover:text-white'
+                  ? 'bg-[#1a2c22] text-[#f0f5f0] border border-[#4d6658]'
+                  : 'text-[#b5c5b9] hover:text-[#f0f5f0]'
               }`}
             >
-              <Radio className="w-3.5 h-3.5 text-cyan-300 shrink-0" />
+              <Radio className="w-4 h-4 text-[#49b783] shrink-0" />
               <span className="hidden sm:inline">Live Intelligence Feed</span>
               <span className="sm:hidden">Live Feed</span>
-              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-blue-600/30 text-cyan-300 border border-blue-500/40 shrink-0">
+              <span className="text-[11px] font-medium px-1.5 py-0.5 rounded-md bg-[#1a3828] text-[#49b783] shrink-0">
                 {articles.length}
               </span>
             </button>
           </div>
 
           {/* Quick Info & Direct Jump */}
-          <div className="flex items-center justify-between sm:justify-end gap-3 text-xs text-cyan-300/80 font-medium">
-            <span className="hidden md:inline">Continuous clean surveillance active across <strong className="text-white">55 portals (6 Pillars)</strong></span>
+          <div className="flex items-center justify-between sm:justify-end gap-3 text-xs text-[#b5c5b9] font-medium">
+            <span className="hidden md:inline">Continuous clean surveillance active across <strong className="text-[#f0f5f0]">55 portals (6 Pillars)</strong></span>
             <span className="hidden md:inline">&bull;</span>
             <button
               onClick={() => setIsCrawlModalOpen(true)}
-              className="text-cyan-300 font-bold hover:text-white flex items-center gap-1.5 transition-colors ml-auto sm:ml-0 active:scale-95"
+              className="text-[#49b783] font-bold hover:text-[#71cda2] flex items-center gap-1.5 transition-colors ml-auto sm:ml-0"
             >
-              <Play className="w-3 h-3 fill-blue-400 text-blue-400" />
+              <Play className="w-3 h-3 fill-current" />
               <span>Run Live Crawl</span>
             </button>
           </div>
@@ -252,15 +252,15 @@ export default function DashboardClient({
         {viewMode === 'feed' && (
           <div className="space-y-4">
             {/* Filter controls */}
-            <div className="bg-[#0c2242]/90 backdrop-blur-xl border border-blue-500/20 rounded-2xl p-3.5 sm:p-4 shadow-xl flex flex-col gap-3 text-white">
+            <div className="bg-[#13231b] border border-[#34483d] rounded-xl p-3.5 sm:p-4 flex flex-col gap-3">
               <div className="relative w-full">
-                <Search className="w-4 h-4 text-blue-400/80 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-[#b5c5b9] absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Filter captures by headline, stakeholder, or keyword..."
-                  className="w-full pl-9 pr-4 py-2 text-xs border border-blue-400/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 bg-[#052618]/50 text-white placeholder:text-cyan-300/60 font-medium"
+                  className="w-full pl-9 pr-4 py-2.5 text-sm border border-[#34483d] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#49b783]/30 focus:border-[#49b783] bg-[#0f1d17] text-[#f0f5f0] placeholder:text-[#91a296]"
                 />
               </div>
 
@@ -268,7 +268,7 @@ export default function DashboardClient({
                 <select
                   value={filterRelevance}
                   onChange={(e) => setFilterRelevance(e.target.value)}
-                  className="text-xs border border-blue-500/30 rounded-xl px-2.5 sm:px-3 py-2 bg-[#0a1e38] text-slate-200 font-bold focus:outline-none focus:ring-2 focus:ring-blue-400 truncate"
+                  className="text-sm border border-[#34483d] rounded-lg px-3 py-2 bg-[#0f1d17] text-[#f0f5f0] focus:outline-none focus:ring-2 focus:ring-[#49b783]/30 truncate"
                 >
                   <option value="all">All Relevance</option>
                   <option value="high">Critical (≥ 75%)</option>
@@ -279,7 +279,7 @@ export default function DashboardClient({
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="text-xs border border-blue-500/30 rounded-xl px-2.5 sm:px-3 py-2 bg-[#0a1e38] text-slate-200 font-bold focus:outline-none focus:ring-2 focus:ring-blue-400 truncate"
+                  className="text-sm border border-[#34483d] rounded-lg px-3 py-2 bg-[#0f1d17] text-[#f0f5f0] focus:outline-none focus:ring-2 focus:ring-[#49b783]/30 truncate"
                 >
                   <option value="all">All Article Types</option>
                   <option value="tariff_change">Tariff Changes</option>
@@ -295,8 +295,8 @@ export default function DashboardClient({
                   onClick={() => setOnlyUnreviewed(!onlyUnreviewed)}
                   className={`col-span-2 sm:col-span-1 text-xs px-3 py-2 rounded-xl font-bold border transition-colors flex items-center justify-center gap-1.5 active:scale-95 ${
                     onlyUnreviewed
-                      ? 'bg-amber-500/30 text-amber-300 border-amber-400/50'
-                      : 'bg-[#0a1e38] text-cyan-200 border-blue-500/30 hover:border-blue-400/50'
+                      ? 'bg-[#392f19] text-[#f1dda1] border-[#67562e]'
+                      : 'bg-[#0f1d17] text-[#b5c5b9] border-[#34483d] hover:border-[#4d6658]'
                   }`}
                 >
                   <Clock className="w-3.5 h-3.5" />
@@ -308,7 +308,7 @@ export default function DashboardClient({
             {/* Articles List */}
             <div className="space-y-3">
               {filteredArticles.length === 0 ? (
-                <div className="bg-[#08172c]/90 backdrop-blur-md rounded-2xl border border-blue-500/20 p-8 text-center text-cyan-200/70 text-xs">
+                <div className="bg-[#13231b] rounded-xl border border-[#34483d] p-8 text-center text-[#b5c5b9] text-sm">
                   No articles match your current filter parameters.
                 </div>
               ) : (

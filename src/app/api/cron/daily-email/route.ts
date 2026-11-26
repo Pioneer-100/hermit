@@ -1,60 +1,63 @@
 /**
- * GET /api/cron/daily-email
+ * GET /api/cron/daily-email & POST /api/cron/daily-email
  *
- * Cron-triggered endpoint that sends the daily intelligence brief by email.
- * Intended to be called at a fixed time each morning (e.g. 06:00 CAT).
+ * Cron-triggered endpoint that:
+ * 1. Generates a fresh, dynamic daily executive intelligence brief for today
+ * 2. Compiles the brief into a branded Word document (.docx)
+ * 3. Emails the executive summary + attachment to the recipient configured in .env (REPORT_RECIPIENTS / ALERT_EMAIL_TO)
+ * 4. Invalidates the dashboard cache so the team sees the new brief immediately
  *
- * To schedule this on Vercel, add to vercel.json:
- *   { "crons": [{ "path": "/api/cron/daily-email", "schedule": "0 4 * * *" }] }
- *   (06:00 CAT = 04:00 UTC)
+ * Vercel Cron schedule (07:35 CAT / 05:35 UTC — 5 min after the crawl at 07:30):
+ *   Add to vercel.json:
+ *   { "path": "/api/cron/daily-email", "schedule": "35 5 * * *" }
  *
- * When running on Railway / a VPS, hit this URL with curl from a cron job:
- *   curl -X GET "https://your-app.com/api/cron/daily-email" \
- *        -H "Authorization: Bearer <CRON_SECRET>"
- *
- * Security: protected by the CRON_SECRET environment variable.
+ * Security: protected by the CRON_SECRET environment variable (Bearer header or ?secret= query param).
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyApiAuthorization } from '@/lib/api-auth';
+import { generateAndSendDailyBrief } from '@/lib/daily-brief-service';
 
-export const maxDuration = 60;
+export const maxDuration = 60; // Allow up to 60 seconds for Gemini + docx + Resend
 
-export async function GET(req: NextRequest) {
-  // ── Auth ────────────────────────────────────────────────────────────────────
+async function handleDailyEmailCron(req: NextRequest) {
+  // ── 1. Authorization ────────────────────────────────────────────────────────
   const auth = await verifyApiAuthorization(req, { allowCron: true });
   if (!auth.authorized) {
     return NextResponse.json({ error: auth.reason || 'Unauthorized' }, { status: 401 });
   }
 
-  // ── Delegate to the send route (keeps logic in one place) ──────────────────
-  const baseUrl =
-    process.env.NEXT_PUBLIC_APP_URL ??
-    (req.headers.get('x-forwarded-proto') && req.headers.get('x-forwarded-host')
-      ? `${req.headers.get('x-forwarded-proto')}://${req.headers.get('x-forwarded-host')}`
-      : 'http://localhost:3009');
-
-  const cronSecret = process.env.CRON_SECRET ?? '';
-
   try {
-    const response = await fetch(`${baseUrl}/api/daily-brief/send`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${cronSecret}`,
-      },
+    // ── 2. Run generation and dispatch in-process ─────────────────────────────
+    const result = await generateAndSendDailyBrief({ forceRegenerate: true });
+
+    return NextResponse.json({
+      triggered: true,
+      success: true,
+      emailId: result.emailId,
+      recipients: result.recipients,
+      filename: result.filename,
+      briefDate: result.briefDate,
+      headline: result.headline,
+      timestamp: new Date().toISOString()
     });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error('[cron/daily-email] Send route error:', data);
-      return NextResponse.json({ error: data.error ?? 'Send failed' }, { status: response.status });
-    }
-
-    return NextResponse.json({ triggered: true, ...data });
   } catch (err: any) {
-    console.error('[cron/daily-email] Fetch error:', err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error('[cron/daily-email] Execution error:', err);
+    return NextResponse.json(
+      {
+        triggered: true,
+        success: false,
+        error: err.message || 'Daily brief generation or email delivery failed'
+      },
+      { status: 500 }
+    );
   }
+}
+
+export async function GET(req: NextRequest) {
+  return handleDailyEmailCron(req);
+}
+
+export async function POST(req: NextRequest) {
+  return handleDailyEmailCron(req);
 }

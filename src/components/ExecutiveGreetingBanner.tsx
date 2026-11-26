@@ -85,28 +85,25 @@ export default function ExecutiveGreetingBanner({ userName }: ExecutiveGreetingB
   }, [userName]);
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0a1e3b]/95 via-[#071932]/95 to-[#0a1e3b]/95 border border-blue-400/30 p-3 sm:p-5 shadow-xl shadow-blue-950/40 backdrop-blur-xl">
-      {/* Decorative subtle ambient glow */}
-      <div className="absolute top-0 right-0 w-64 h-32 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none" />
-
+    <div className="relative overflow-hidden rounded-xl bg-[#13231b] border border-[#34483d] px-3.5 py-2.5 sm:px-5 sm:py-3">
       <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-2.5 sm:gap-3">
         <div className="min-w-0 flex-1">
           {/* Metadata pill badge with REAL LIVE WEATHER - Optimized for mobile wrap and readability */}
-          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 text-[10px] font-mono uppercase tracking-wider text-cyan-300">
-            <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-blue-500/20 border border-blue-400/35 max-w-full">
-              <Sun className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-              <span className="font-semibold text-cyan-100 truncate">{weatherHint}</span>
+          <div className="flex flex-wrap items-center gap-1.5 mb-1 text-[10px] font-medium">
+            <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-[#392f19] border border-[#67562e] max-w-full">
+              <Sun className="w-3.5 h-3.5 text-[#e1bd68] shrink-0" />
+              <span className="font-medium text-[#f1dda1] truncate">{weatherHint}</span>
             </span>
             <span className="text-slate-400 hidden xs:inline">•</span>
             <span className="text-slate-300 hidden xs:inline">Live Radar</span>
           </div>
 
           {/* Realistic Typewriter Animated text - Mobile responsive font sizing & height */}
-          <div className="min-h-[48px] sm:min-h-[44px] flex items-center">
-            <h2 className="font-display text-sm sm:text-lg md:text-xl font-bold tracking-tight text-white leading-snug sm:leading-normal">
-              <span>{displayText}</span>
+          <div className="min-h-[24px] flex items-center">
+            <h2 className="font-display text-sm sm:text-base font-semibold tracking-tight text-[#f0f5f0] leading-tight line-clamp-1">
+              <span>{displayText ? displayText : `Welcome, ${userName?.trim() || 'Hermit executive'}`}</span>
               {/* Pulsing blinking typewriter cursor with realistic cyan glow */}
-              <span className="inline-block w-[2.5px] sm:w-[3px] h-3.5 sm:h-5 ml-1 bg-cyan-400 rounded-sm shadow-[0_0_8px_#38bdf8] animate-pulse align-middle" />
+              <span className="inline-block w-[2px] h-4 ml-1 bg-[#49b783] animate-pulse align-middle" />
             </h2>
           </div>
         </div>
